@@ -1,0 +1,6 @@
+	Control	Treated
+GS	4.5	5.6
+JM	3.7	6.4
+HM	5.3	6.4
+JW	5.4	6.0
+PS	3.9	5.7

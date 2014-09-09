@@ -1,0 +1,4 @@
+	Sohn 2007	Raine  2001	Snow 2005
+lower limit	2.3	0.9	3.4
+relative risk	4.5	2.2	4.1
+upper limit	7.8	4.3	5.6

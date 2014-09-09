@@ -1,0 +1,5 @@
+	Success	Failure
+Prior to treatment	87	43
+Day after treatment	23	9
+Three days later	45	8
+One week later	54	6

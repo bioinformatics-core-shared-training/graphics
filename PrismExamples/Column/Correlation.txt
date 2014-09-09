@@ -1,0 +1,22 @@
+	Cost in USD	Miles/Gallon (hiway)	Horsepower	Weight in pounds
+Mustang coupe	19250.	28.	210.	3300.
+Volvo S40	24240.	29.	168.	3234.
+Aston Martin	169750.	19.	450.	3879.
+Chevrolet Aveo	12575.	37.	103.	2381.
+Nissan Maxima	28050.	28.	255.	3591.
+VW Jetta	21990.	32.	200.	3259.
+Honda Accord	23450.	34.	166.	3153.
+Toyota Camry	19520.	33.	158.	3307.
+Camry Hybrid	26200.	38.	192.	3637.
+Toyota Prius	21725.	60.	110.	2932.
+Hundai Elantra	13395.	36.	138.	2723.
+Lexus LS	71000.	27.	380.	4332.
+Subaru Forester	21195.	29.	173.	3140.
+Porsche 911	88400.	26.	325.	3385.
+Mercedes CLS	66900.	22.	382.	4020.
+Mini Cooper	18000.	36.	115.	2524.
+Saturn Ion	12300.	35.	145.	2752.
+Chrysler Sebring	18320.	32.	173.	3287.
+Audi A3	25340.	32.	200.	3263.
+SAAB 9-7X	38520.	21.	290.	4720.
+VW Beetle TDI	18390.	44.	100.	3005.

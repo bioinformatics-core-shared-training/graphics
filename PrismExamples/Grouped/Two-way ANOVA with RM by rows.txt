@@ -1,0 +1,4 @@
+	Before 	Before 	After	After
+Wild type	34.	65.	54.	91.
+Tame	12.	35.	13.	29.
+Raging wild	55.	99.	79.	121.

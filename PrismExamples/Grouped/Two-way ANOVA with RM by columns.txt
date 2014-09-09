@@ -1,0 +1,6 @@
+	Control	Control	Treated	Treated
+Baseline	34.	65.	39.	65.
+Injection	35.	67.	41.	54.
+1 hour later	78.	111.	167.	211.
+6 hours later	54.	98.	143.	178.
+12 hours later	42.	89.	136.	146.

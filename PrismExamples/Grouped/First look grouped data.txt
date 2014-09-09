@@ -1,0 +1,4 @@
+	Control	Control	Control	Treated	Treated	Treated
+Wild type	23.	21.	19.	67.	79.	98.
+Knock-out A	24.	23.		29.	31.	32.
+Knock-out B	21.	25.	27.	65.	69.	71.

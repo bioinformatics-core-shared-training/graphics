@@ -1,0 +1,3 @@
+	HIV antigen	No HIV
+p24 antigen +	48	0
+p24 antigen -	8	382

@@ -1,0 +1,3 @@
+	Cases (lung cancer)	Control
+Smoked	688	650
+Never smoked	21	59
