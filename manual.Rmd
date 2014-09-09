@@ -15,9 +15,19 @@ The different data types are categorised according to the different options avai
 
 ##Linear regression
 
-```{r}
+```{r echo=FALSE}
 myfile <- "PrismExamples/XY/Linear regression.txt"
-data <- read.delim(myfile)
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+data
+
 ```
 
 
