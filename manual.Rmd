@@ -1,0 +1,266 @@
+---
+title: "R Graphics:  worked examples"
+author: "Mark Dunning"
+date: "09/09/2014"
+output: pdf_document
+toc: true
+---
+#Introduction
+
+This document describes how basic statistical analysis and graphical displays can be performed using R. 
+
+The different data types are categorised according to the different options available in GraphPad Prism.
+
+# XY data
+
+##Linear regression
+
+```{r}
+myfile <- "PrismExamples/XY/Linear regression.txt"
+data <- read.delim(myfile)
+```
+
+
+
+
+# Column data
+
+##Frequency distribution data
+
+Example data for this section is given in the Frequency distribution data.txt
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Frequency distribution data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+
+```{r}
+
+data <- read.delim(myfile)
+```
+
+We can make a histogram using the `hist` function
+
+```{r}
+hist(data$Frequency,col="black",main="Frequency distribution data")
+```
+
+
+```{r}
+plot(data$Frequency,pch=16,main="Frequency distribution data")
+```
+
+```{r}
+plot(data$Frequency,pch=16,main="Frequency distribution data",type="b")
+```
+
+##Unpaired t test
+
+The data for this example can be found in the file *Unpaired t test data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Unpaired t test data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+The data consist of `r nrow(data)` rows and `r ncol(data)` columns. The `t.test` function can be to test the null hypothesis that the two groups have the same mean value. The default is to assume that the groups are independent. 
+
+```{r}
+t.test(data$Male, data$Female)
+```
+
+We can use a boxplot to visualise the data. 
+
+
+```{r}
+boxplot(data)
+```
+
+Sometimes we might want to present the observations as points on the graph. We can do this using the `points` function
+
+```{r}
+boxplot(data)
+points(rep(1, nrow(data)), data[,1],pch=16)
+points(rep(2, nrow(data)), data[,2],pch=16)
+
+```
+
+##Paired t test
+
+
+The data for this example can be found in the file *Paired t test data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Paired t test data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+```{r}
+t.test(data$Control, data$Treated,paired=TRUE)
+```
+
+```{r}
+boxplot(data[,-1])
+```
+
+```{r}
+boxplot(data[,-1],horizontal = TRUE)
+```
+
+#Survival
+
+##Comparing two groups
+
+
+The data for this example can be found in the file *Two groups.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Survival//Two groups.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+Survival analysis is performed by a specialist package `survival` which is part of the standard R distribution. The first task is therefore to load this package, which you only have to do once per R-session.
+
+
+```{r}
+library(survival)
+```
+
+The data from Prism require some manipulation before we can apply the survival analysis. Specifically, we need to create *vectors* that contain data about the Time to event, Event and Group. The Time variable
+
+```{r}
+Time <- data$Days.elapsed
+
+Group <- rep("Control", nrow(data))
+Group[which(is.na(data$Control))] <- "Treatment"
+Group
+
+Event <- data$Control
+Event[which(is.na(data$Control))] <- data$Treated[which(is.na(data$Control))]
+Event
+```
+
+The time and data need to be combined into a single vector
+
+```{r}
+survData <- Surv(Time, Event)
+survData
+```
+
+
+```{r}
+plot(survfit(survData~Group))
+
+plot(survfit(survData~Group),col=c("red","blue"),xlab="Days elapsed", 
+     main="Survival proportions: Survival of Two groups",
+     ylab="Percent survival")
+
+```
+
+
+```{r}
+survdiff(survData~Group)
+
+```
+
+
+##Comparing three groups
+
+
+The data for this example can be found in the file *Two groups.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Survival//Three groups.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+
+The data from Prism require some manipulation before we can apply the survival analysis. Specifically, we need to create *vectors* that contain data about the Time to event, Event and Group. The Time variable
+
+```{r}
+Time <- data$Days
+
+Group <- rep("Control", nrow(data))
+Group[which(!is.na(data$Treatment.A))] <- "TreatmentA"
+Group[which(!is.na(data$Treatment.B))] <- "TreatmentB"
+
+Group
+
+Event <- data$Control
+Event[which(!is.na(data$Treatment.A))] <- data$Treatment.A[which(!is.na(data$Treatment.A))]
+Event[which(!is.na(data$Treatment.B))] <- data$Treatment.B[which(!is.na(data$Treatment.B))]
+Event
+```
+
+
+
+The time and data need to be combined into a single vector
+
+```{r}
+survData <- Surv(Time, Event)
+survData
+```
+
+
+```{r}
+plot(survfit(survData~Group))
+
+plot(survfit(survData~Group),col=c("red","blue","green"),xlab="Days elapsed", 
+     main="Survival proportions: Survival of Three groups",
+     ylab="Percent survival")
+
+```
+
+
+```{r}
+survdiff(survData~Group)
+
+```
