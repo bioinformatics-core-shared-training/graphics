@@ -1,25 +1,167 @@
 ---
-title: "Data  Manipulation and Visualisation: An R primer"
+title: 'Data  Manipulation and Visualisation: An R primer'
 author: "Mark Dunning"
 date: "09/09/2014"
-output: html_document
-toc: true
+output: pdf_document
+toc: yes
 ---
 
 #Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This document will guide you through the key concepts and techniques required to manipulate and process data in R.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+1. Read the data into R
+  + What format are the data in? 
+2. Manipulate the data
+  + What columns / rows are needed for the analysis? Do any additional calculations need to be performed?
+3. Plot the data
+  + What type of plot do you need to convey your message? What type of data do you need for the plot
+  
+  
+##About this document
+
+This document was written in RStudio using the **markdown** format. If you see a section like this, you can copy-and-paste the text into RStudio and execute it. 
+ 
+```{r eval=FALSE}
+print("Hello World")
+```
+
+
+Often the output from R will be displayed after the R command
 
 ```{r}
-summary(cars)
+print("Hello World")
 ```
 
-You can also embed plots, for example:
+Sometimes the graphics produced by R will be displayed too.
 
-```{r, echo=FALSE}
-plot(cars)
+```{r}
+plot(runif(1:10))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+#Reading data into R
+
+##Specify a path to the file
+
+R needs to know where the file is located on your hard drive in order to read it. The file location has to be specified within quote marks. If the file is located within your *working directory* then you can just specify the name of the file. You can find out the location of your working directory using the `getwd` function.
+
+```{r eval=FALSE}
+getwd()
+```
+
+If the file is not in your working directory, then you will need to specify the full path to the file. A useful function in this situation is `file.choose`, which will open a dialog box allowing you to navigate to the file. The location can be stored as a variable.
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Linear regression.txt"
+```
+
+##Tab-delimited file
+
+As a *rule-of-thumb*, tab-delimited files have file extensions *.txt* or *.tsv*. If your file is tab-delimited and you have specified the location using the previous section, you will be able to use the `read.delim` function. The `file.exists` is a useful function for checking that the file location is correct; returning `TRUE` if so.
+
+```{r}
+file.exists(myfile)
+mydata <- read.delim(myfile)
+```
+
+Assuming that the function does not produce an error, you should now have a variable `mydata` in your R workspace. This is *data frame* object, described in more detail in the [Appendix](#Appendix). At this point, it is highly recommended that you check the contents of the variable. The `View` command should open a new tab in RStudio.
+
+```{r eval=FALSE}
+View(mydata)
+```
+
+The dimensions and structure of the data can be further interrogated using the following useful functions.
+
+```{r}
+dim(mydata)
+str(mydata)
+head(mydata)
+```
+
+In this case, the object has `r ncol(mydata)` columns and `r nrow(mydata)` rows; as we would expect.
+
+##Comma-separated file
+
+Files that have columns separated by commas can be read using the `read.csv` function.
+
+```{r eval=FALSE}
+mydata <- read.csv(myfile)
+
+dim(mydata)
+str(mydata)
+head(mydata)
+```
+
+
+##Excel file
+
+R is even able to read Excel spreadsheets. For spreadsheet with multiple sheets, you will need to pay attention to the `sheetIndex` parameter, which specifies the sheet to be read. 
+
+
+```{r eval=FALSE}
+library(xlsx)
+myfile <- read.xlsx(myfile,sheetIndex = 1)
+```
+
+##Further options for reading files
+Sometimes we might be faced with 'messy' data that do not have a straightforward format of rows and columns. 
+`read.csv` and `read.delim` are in fact specialised versions of a generic `read.table` function. This function has many options to allow finer-grain control over how files are read into R, as you will see from the manual page. 
+
+```{r eval=FALSE}
+?read.table
+```
+
+###Skipping lines
+
+```{r eval=FALSE}
+mydata <- read.delim(myfile, skip=)
+```
+
+```{r eval=FALSE}
+mydata <- read.delim(myfile, nrows=3)
+```
+
+
+
+###Invalid characters
+
+```{r}
+
+```
+
+
+###Strings as factors
+
+
+
+#Data manipulation
+
+
+
+#Appendix
+
+##Vectors
+
+##Data Frames
+
+##Factors
+
+##Subsetting
+
+##Functions
+
+##Useful functions to know
+
+##R version details
+
+The version of R and the packages used in this document are given below.
+
+
+```{r}
+sessionInfo()
+```
+
