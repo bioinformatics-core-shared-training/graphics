@@ -233,7 +233,7 @@ data
 ```
 
 
-The data from Prism require some manipulation before we can apply the survival analysis. Specifically, we need to create *vectors* that contain data about the Time to event, Event and Group. The Time variable
+The data from Prism require some manipulation before we can apply the survival analysis. Specifically, we need to create *vectors* that contain data about the Time to event, Event and Group. The Time variable can simply be assigned as the `Days` column. However, to get the other two vectors requires a bit more effort.
 
 ```{r}
 Time <- data$Days
