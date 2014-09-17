@@ -15,6 +15,9 @@ The different data types are categorised according to the different options avai
 
 ##Linear regression
 
+###Data exploration
+
+Example data for this example is given in the file `Linear regression.txt`
 ```{r echo=FALSE}
 myfile <- "PrismExamples/XY/Linear regression.txt"
 ```
@@ -23,14 +26,77 @@ myfile <- "PrismExamples/XY/Linear regression.txt"
 myfile <- file.choose()
 ```
 
-
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
 ```{r}
 data <- read.delim(myfile,as.is=TRUE)
-data
-
+head(data)
+dim(data)
 ```
 
+You many notice that a number of entries are listed `NA`. This simply means that these observations are *missing* and should be excluded from numerical calculations. 
 
+The generic `plot` function is able to make a scatter plot of one variable against another. By default we specify the *vector* we want to plot on the x-axis first, followed by a *vector* to be displayed on the y-axis. To extract vectors from our data frame, we can use the `[row,column]` notation, or specify the name of the column with a `$` sign. We will start by the `Control` column against number of minutes. 
+
+```{r}
+plot(data$Minutes, data$Control)
+```
+
+The default settings will plot open circles at every *x* and *y* position specified by the two input vectors. If we want a line through the coordinates, we can modify the `type` argument to `"l"`.
+
+```{r}
+plot(data$Minutes, data$Control,type="l")
+```
+
+Or we can have a combination of points and a line by setting `type="b"`
+
+```{r}
+plot(data$Minutes, data$Control,type="b")
+```
+
+We can put additional lines on the plot, in this case corresponding to other experiments, using the `lines` function. This function assumes that a plot has already been created. We can add a line at a time by specifying different columns from the data frame as our *y* axis in the `lines` function.
+
+```{r}
+plot(data$Minutes, data$Control,type="l")
+lines(data$Minutes, data$Control.1)
+lines(data$Minutes, data$Control.2)
+lines(data$Minutes, data$Treated)
+lines(data$Minutes, data$Treated.1)
+lines(data$Minutes, data$Treated.2)
+```
+
+You will notice however that some of the lines go outside the plotting area. This is because the range of y values for the plot is defined using the range of the first line that we plotted (the `data$Control` vector). We can specify a particular range of values using the `ylim` argument to `plot`. A sensible value to use would be the *maximum* value in our data frame. However, there is a problem when we try and calculate this.
+
+```{r}
+max(data)
+```
+Because we have `NA` values in the data frame, the maximum value cannot be determined. That is, unless, we use the argument `na.rm=TRUE`
+
+```{r}
+max(data,na.rm=TRUE)
+```
+
+We can now specify the y limits for the plot using the `ylim` argument. This argument needs to be a vector (hence we use the `c` function to construct it) consisting the minimum and maximum y values for the plot.
+
+```{r}
+plot(data$Minutes, data$Control,type="l",ylim=c(0,max(data,na.rm=TRUE)))
+lines(data$Minutes, data$Control.1)
+lines(data$Minutes, data$Control.2)
+lines(data$Minutes, data$Treated)
+lines(data$Minutes, data$Treated.1)
+lines(data$Minutes, data$Treated.2)
+```
+
+We have managed to display the raw data on a plot, but it is unlikely to win any prizes for being aesthetically pleasing! A couple of obvious modifications would be to add a proper x and y label, and to colour the lines appropriately. To change the labels we can specify the `xlab`, `ylab` and `main` arguments. 
+
+```{r}
+plot(data$Minutes, data$Control,type="l",ylim=c(0,max(data,na.rm=TRUE)),col="blue",xlab="Minutes",ylab="Count",main="Variation of counts....")
+lines(data$Minutes, data$Control.1,col="blue")
+lines(data$Minutes, data$Control.2,col="blue")
+lines(data$Minutes, data$Treated,col="red")
+lines(data$Minutes, data$Treated.1,col="red")
+lines(data$Minutes, data$Treated.2,,col="red")
+```
 
 
 # Column data
