@@ -1,9 +1,9 @@
 ---
-title: "R Graphics:  worked examples"
+title: 'R Graphics:  worked examples'
 author: "Mark Dunning"
 date: "09/09/2014"
 output: pdf_document
-toc: true
+toc: yes
 ---
 #Introduction
 
@@ -13,7 +13,7 @@ The different data types are categorised according to the different options avai
 
 # XY data
 
-##Linear regression
+##Linear Regression - comparing slopes
 
 ###Data exploration
 
@@ -96,6 +96,401 @@ lines(data$Minutes, data$Control.2,col="blue")
 lines(data$Minutes, data$Treated,col="red")
 lines(data$Minutes, data$Treated.1,col="red")
 lines(data$Minutes, data$Treated.2,,col="red")
+```
+
+##Nonlinear regression
+
+
+Example data for this example is given in the file `Exponential decay.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Exponential decay.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+
+
+You many notice that a number of entries are listed `NA`. This simply means that these observations are *missing* and should be excluded from numerical calculations. 
+
+The generic `plot` function is able to make a scatter plot of one variable against another. By default we specify the *vector* we want to plot on the x-axis first, followed by a *vector* to be displayed on the y-axis. To extract vectors from our data frame, we can use the `[row,column]` notation, or specify the name of the column with a `$` sign. We will start by the `Control` column against number of minutes. 
+
+```{r}
+plot(data$Minutes, data$Control)
+```
+
+The default settings will plot open circles at every *x* and *y* position specified by the two input vectors. If we want a line through the coordinates, we can modify the `type` argument to `"l"`.
+
+```{r}
+plot(data$Minutes, data$Control,type="l")
+```
+
+Or we can have a combination of points and a line by setting `type="b"`
+
+```{r}
+plot(data$Minutes, data$Control,type="b")
+```
+
+We can put additional lines on the plot, in this case corresponding to other experiments, using the `lines` function. This function assumes that a plot has already been created. We can add a line at a time by specifying different columns from the data frame as our *y* axis in the `lines` function.
+
+```{r}
+plot(data$Minutes, data$Control,type="l")
+lines(data$Minutes, data$Control.1)
+lines(data$Minutes, data$Control.2)
+lines(data$Minutes, data$Treated)
+lines(data$Minutes, data$Treated.1)
+lines(data$Minutes, data$Treated.2)
+```
+
+You will notice however that some of the lines go outside the plotting area. This is because the range of y values for the plot is defined using the range of the first line that we plotted (the `data$Control` vector). We can specify a particular range of values using the `ylim` argument to `plot`. A sensible value to use would be the *maximum* value in our data frame. However, there is a problem when we try and calculate this.
+
+```{r}
+max(data)
+```
+Because we have `NA` values in the data frame, the maximum value cannot be determined. That is, unless, we use the argument `na.rm=TRUE`
+
+```{r}
+max(data,na.rm=TRUE)
+```
+
+We can now specify the y limits for the plot using the `ylim` argument. This argument needs to be a vector (hence we use the `c` function to construct it) consisting the minimum and maximum y values for the plot.
+
+```{r}
+plot(data$Minutes, data$Control,type="l",ylim=c(0,max(data,na.rm=TRUE)))
+lines(data$Minutes, data$Control.1)
+lines(data$Minutes, data$Control.2)
+lines(data$Minutes, data$Treated)
+lines(data$Minutes, data$Treated.1)
+lines(data$Minutes, data$Treated.2)
+```
+
+We have managed to display the raw data on a plot, but it is unlikely to win any prizes for being aesthetically pleasing! A couple of obvious modifications would be to add a proper x and y label, and to colour the lines appropriately. To change the labels we can specify the `xlab`, `ylab` and `main` arguments. 
+
+```{r}
+plot(data$Minutes, data$Control,type="l",ylim=c(0,max(data,na.rm=TRUE)),col="blue",xlab="Minutes",ylab="Count",main="Variation of counts....")
+lines(data$Minutes, data$Control.1,col="blue")
+lines(data$Minutes, data$Control.2,col="blue")
+lines(data$Minutes, data$Treated,col="red")
+lines(data$Minutes, data$Treated.1,col="red")
+lines(data$Minutes, data$Treated.2,,col="red")
+```
+
+
+```{r}
+values <- data[,-1]
+Treated <- c(FALSE,FALSE,FALSE,TRUE,TRUE,TRUE)
+
+values[,Treated]
+values[!Treated]
+```
+
+```{r}
+plot(data[,2], type="n",xlab="Minutes",ylab="")
+matlines(data[-1],col=c(rep("steelblue",3),rep("salmon",3)),lty=2)
+rowMeans(values[Treated],na.rm=TRUE)
+points(rowMeans(values[!Treated],na.rm=TRUE),pch=15)
+points(rowMeans(values[Treated],na.rm=TRUE),pch=16)
+```
+
+##Interpolating Unknowns
+
+Example data for this example is given in the file `Assay.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Assay.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Michaelis-Menten data
+Example data for this example is given in the file `Michaelis-Menten data.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Michaelis-Menten data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Correlations
+
+Example data for this example is given in the file `Ozone correlations.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Ozone correlations.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Enzyme kinetics - Competitive inhibition
+
+
+Example data for this example is given in the file `Michaelis-Menten.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Michaelis-Menten.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Dose Response - x is log(dose)
+
+Example data for this example is given in the file `log-dose vs response.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/log-dose vs response.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we 
+print out the first few rows using `head` and print the dimensions
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+
+##Dose Response - X is dose
+
+###Data exploration
+
+
+Example data for this example is given in the file `dose vs.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/dose vs.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+We will now look to visualise the data in R. 
+
+```{r}
+plot(data[,2], type="n",axes=FALSE,xlab="log10 Agonist",ylab="")
+matlines(data[-1],col=c(rep("steelblue",3),rep("salmon",3)),lty=2)
+axis(1,at=1:nrow(data), labels=round(log10(data[,1]),2),)
+axis(2)
+
+```
+
+```{r}
+values <- data[,-1]
+inhibitor <- c(FALSE,FALSE,FALSE,TRUE,TRUE,TRUE)
+
+values[,inhibitor]
+values[!inhibitor]
+
+```
+
+```{r}
+plot(data[,2], type="n",axes=FALSE,xlab="log10 Agonist",ylab="")
+matlines(data[-1],col=c(rep("steelblue",3),rep("salmon",3)),lty=2)
+rowMeans(values[inhibitor],na.rm=TRUE)
+points(rowMeans(values[!inhibitor],na.rm=TRUE),pch=15)
+points(rowMeans(values[inhibitor],na.rm=TRUE),pch=16)
+axis(1,at=1:nrow(data), labels=round(log10(data[,1]),2),)
+axis(2)
+
+```
+
+
+##Dose-response - EC50 shift
+
+Example data for this example is given in the file `EC50 shift.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/EC50 shift.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Binding - Saturation binding to total and non-specific
+
+Example data for this example is given in the file `Total and ns binding data.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Total and ns binding data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Binding - specific binding 
+
+Example data for this example is given in the file `Specific binding data.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Specific binding data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+
+##RIA or ELISA
+
+Example data for this example is given in the file `RIA data.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/RIA data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##Schild data
+Example data for this example is given in the file `Schild data.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Schild data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+
+##Operational model
+
+Example data for this example is given in the file `Operatonal model data.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/Operatonal model data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##XY barplot
+Example data for this example is given in the file `XYbarplot.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/XYbarplot.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
+```
+
+##XY - Frequency
+
+Example data for this example is given in the file `XYFrequency.txt`
+```{r echo=FALSE}
+myfile <- "PrismExamples/XY/XYFrequency.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We know that the input file is *tab-delimited*, so can use the `read.delim` function. Once the data are read, we print out the first few rows using `head` and print the dimensions.
+```{r}
+data <- read.delim(myfile,as.is=TRUE)
+head(data)
+dim(data)
 ```
 
 
@@ -208,6 +603,352 @@ boxplot(data[,-1])
 ```{r}
 boxplot(data[,-1],horizontal = TRUE)
 ```
+
+##t-test one-sample
+
+
+The data for this example can be found in the file *One sample t test data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/One sample t test.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##One-way ANOVA
+The data for this example can be found in the file *One-way ANOVA data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/One-way ANOVA data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##One-way ANOVA repeated measures
+
+The data for this example can be found in the file *Repeated measures one-way ANOVA data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Repeated measures one-way ANOVA data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+
+##ROC Curve
+
+The data for this example can be found in the file *ROC curve data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/ROC curve data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Bland-Altman
+The data for this example can be found in the file *Bland-Altman.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Bland-Altman.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Correlation Matrix
+
+The data for this example can be found in the file *Correlation.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Correlation.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Meta-analysis
+
+The data for this example can be found in the file *Metanalysis.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Metanalysis.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Column Statistics
+
+The data for this example can be found in the file *Plasma level of GP-14858.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Column/Plasma level of GP-14858.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+#Grouped
+
+##Two-way ANOVA, not RM
+
+The data for this example can be found in the file *Two-way ANOVA , not RM.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Grouped/Two-way ANOVA , not RM.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Two-Way ANOVA with RM by columns
+
+The data for this example can be found in the file *Two-way ANOVA with RM by columns.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Grouped/Two-way ANOVA with RM by columns.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+
+
+##Two-Way ANOVA with RM by rows
+
+The data for this example can be found in the file *Two-way ANOVA with RM by rows.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Grouped/Two-way ANOVA with RM by rows.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+
+##Grouped Bar Graph
+
+The data for this example can be found in the file *First look grouped data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Grouped/First look grouped data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Two-way ANOVA ordinary
+
+The data for this example can be found in the file *Two-way ANOVA , not RM.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Grouped/Two-way ANOVA , not RM.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+#Contingency
+
+##Prospective
+The data for this example can be found in the file *Prospective (aspirin and MI).txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Contingency//Prospective (aspirin and MI).txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Retrospective
+The data for this example can be found in the file *Retrospective (smoking and cancer).txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Contingency/Retrospective (smoking and cancer).txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Sensitivity and Specificity
+The data for this example can be found in the file *Sensitivity and specificity (HIV).txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Contingency/Sensitivity and specificity (HIV).txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+##Trend data
+The data for this example can be found in the file *Trend data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
+
+
+```{r echo=FALSE}
+myfile <- "PrismExamples/Contingency/Trend data.txt"
+```
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+We can now read the file using the `read.delim` function.
+
+```{r}
+data <- read.delim(myfile)
+data
+```
+
+
+
 
 #Survival
 
