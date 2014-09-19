@@ -220,6 +220,33 @@ head(data)
 dim(data)
 ```
 
+
+```{r}
+model <- lm(data$micrograms~data$Optical.Density)
+plot(data$Optical.Density, data$micrograms)
+abline(model)
+
+```
+
+```{r}
+
+y <- data$micrograms
+x <- data$Optical.Density
+
+predict(lm(y~x))
+
+topredict <- which(is.na(y))
+
+new <- data.frame(x = x[which(is.na(y))])
+y[which(is.na(y))] <- predict(lm(y~x), new)
+
+cols <- rep("black",length(x))
+cols[topredict] <- "red"
+plot(x,y,pch=16,col=cols)
+
+```
+
+
 ##Michaelis-Menten data
 Example data for this example is given in the file `Michaelis-Menten data.txt`
 ```{r echo=FALSE}
@@ -255,6 +282,30 @@ print out the first few rows using `head` and print the dimensions
 data <- read.delim(myfile,as.is=TRUE)
 head(data)
 dim(data)
+```
+
+Pairwsie plots of all variables
+
+```{r}
+plot(data)
+```
+
+```{r}
+cor(data)
+```
+
+
+
+```{r}
+cor(data,use="c")
+```
+
+```{r}
+
+plot(data$Ozone, data$Wind)
+model <- lm(data$Wind ~ data$Ozone)
+summary(model)
+abline(model,col="red")
 ```
 
 ##Enzyme kinetics - Competitive inhibition
@@ -890,6 +941,11 @@ data <- read.delim(myfile)
 data
 ```
 
+```{r}
+chisq.test(data[,-1])
+```
+
+
 ##Retrospective
 The data for this example can be found in the file *Retrospective (smoking and cancer).txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
 
@@ -908,6 +964,12 @@ We can now read the file using the `read.delim` function.
 data <- read.delim(myfile)
 data
 ```
+
+```{r}
+ chisq.test(data[,-1])
+```
+
+
 
 ##Sensitivity and Specificity
 The data for this example can be found in the file *Sensitivity and specificity (HIV).txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
@@ -928,6 +990,12 @@ data <- read.delim(myfile)
 data
 ```
 
+
+```{r}
+fisher.test(data[,-1])
+```
+
+
 ##Trend data
 The data for this example can be found in the file *Trend data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
 
@@ -947,6 +1015,11 @@ data <- read.delim(myfile)
 data
 ```
 
+```{r}
+
+
+?prop.trend.test
+```
 
 
 
