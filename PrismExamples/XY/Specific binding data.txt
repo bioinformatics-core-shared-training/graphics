@@ -1,0 +1,7 @@
+nM Radiolgiand	Specific binding	Specific binding
+1.	345.	356.
+2.	654.	712.
+4.	999.	878.
+8.	1056.	1158.
+16.	1150.	1237.
+32.	1212.	1198.
