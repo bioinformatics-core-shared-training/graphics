@@ -136,10 +136,43 @@ mydata <- read.delim(myfile, nrows=3)
 
 ###Strings as factors
 
-
+#Writing data to a file
 
 #Data manipulation
 
+##Data subsetting
+
+###match, grep, `%in%`
+
+##Re-ordering data frames
+
+##Adding new columns / variables
+
+##Calculating summary statistics
+
+##apply, tapply, aggregate
+
+#Plotting
+
+##The plot function
+
+`plot` is the generic function in R
+
+##Exporting a plot
+
+R is able to save graphics in a variety of formats..
+
+##Changing the plot appearance
+
+How the `par` function works....
+
+##Creating a layout
+
+`par(mfrow=c...)`
+
+##Adding a legend
+
+`legend("topleft"....)
 
 
 #Appendix

@@ -291,6 +291,15 @@ plot(data)
 ```
 
 ```{r}
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+
+```
+
+
+
+```{r}
 cor(data)
 ```
 
@@ -300,6 +309,12 @@ cor(data)
 cor(data,use="c")
 ```
 
+
+```{r}
+cor(data,use="c")^2
+```
+
+
 ```{r}
 
 plot(data$Ozone, data$Wind)
@@ -307,6 +322,20 @@ model <- lm(data$Wind ~ data$Ozone)
 summary(model)
 abline(model,col="red")
 ```
+
+
+```{r}
+cor.test(data$Ozone, data$Solar.R)
+```
+
+```{r}
+cor.test(data$Ozone, data$Wind)
+```
+
+```{r}
+cor.test(data$Ozone, data$Temp)
+```
+
 
 ##Enzyme kinetics - Competitive inhibition
 
@@ -526,6 +555,11 @@ head(data)
 dim(data)
 ```
 
+```{r}
+barplot(data[,2])
+```
+
+
 ##XY - Frequency
 
 Example data for this example is given in the file `XYFrequency.txt`
@@ -542,6 +576,14 @@ We know that the input file is *tab-delimited*, so can use the `read.delim` func
 data <- read.delim(myfile,as.is=TRUE)
 head(data)
 dim(data)
+```
+
+```{r}
+barplot(data[,2])
+```
+
+```{r}
+barplot(data[,2],horiz = TRUE)
 ```
 
 
@@ -676,6 +718,12 @@ data <- read.delim(myfile)
 data
 ```
 
+```{r}
+summary(data[,1])
+```
+
+
+
 ##One-way ANOVA
 The data for this example can be found in the file *One-way ANOVA data.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
 
@@ -694,6 +742,21 @@ We can now read the file using the `read.delim` function.
 data <- read.delim(myfile)
 data
 ```
+
+```{r}
+boxplot(data)
+```
+
+```{r}
+data.reshape <- stack(data)
+data.reshape
+```
+
+```{r}
+av <- aov(data.reshape[,1] ~ data.reshape[,2])
+anova(av)
+```
+
 
 ##One-way ANOVA repeated measures
 
@@ -755,6 +818,27 @@ data <- read.delim(myfile)
 data
 ```
 
+For the [Bland-Altman plot](http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot), we need to calculate the pairwise differences between points, and the average. We can obtain the values required for the calculation by using the `[row,index]` subsetting notation to select a particular column. Note that we want to retrieve the values for all rows, so leave out the *row* index. 
+
+
+
+```{r}
+Average <- 0.5*(data[,1] + data[,2])
+Difference <- data[,1]- data[,2]
+
+Average
+Difference
+```
+
+The generic `plot` function can now be used to make a scatter plot of the `Average` vector against `Difference`. We can change the plotting character to filled circles by specifying `pch=16`. Also we can add a horizontal line at *y=0* using the `abline` function.
+
+
+```{r}
+plot(Average, Difference,pch=16)
+abline(h=0)
+```
+
+
 ##Correlation Matrix
 
 The data for this example can be found in the file *Correlation.txt*. The first step is to locate the file on your disk using the `file.choose()` command and store the result as a variable. 
@@ -815,6 +899,8 @@ data <- read.delim(myfile)
 data
 ```
 
+
+
 #Grouped
 
 ##Two-way ANOVA, not RM
@@ -836,6 +922,24 @@ We can now read the file using the `read.delim` function.
 data <- read.delim(myfile)
 data
 ```
+
+```{r}
+
+serumData <- stack(data[1,])
+Group <- strsplit(as.character(serumData$ind), ".", fixed=TRUE)
+Group <- unlist(lapply(Group, function(x) x[[1]]))
+serumData$Group <- Group
+serumData$Condition <- "Starved"
+
+normalData <- stack(data[2,])
+Group <- strsplit(as.character(normalData$ind), ".", fixed=TRUE)
+Group <- unlist(lapply(Group, function(x) x[[1]]))
+normalData$Group <- Group
+normalData$Condition <- "Normal"
+data <- rbind(serumData, normalData)
+
+```
+
 
 ##Two-Way ANOVA with RM by columns
 
@@ -899,6 +1003,18 @@ We can now read the file using the `read.delim` function.
 data <- read.delim(myfile)
 data
 ```
+
+
+```{r}
+stData <- stack(data)
+stData$X <- data[,1]
+stData$Group <- c(rep("Control",9),rep("Treated",9))
+```
+
+```{r}
+boxplot(stData$values ~ stData$X*stData$Group)
+```
+
 
 ##Two-way ANOVA ordinary
 
