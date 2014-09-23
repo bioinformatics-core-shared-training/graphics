@@ -59,6 +59,8 @@ myfile <- file.choose()
 myfile <- "PrismExamples/XY/Linear regression.txt"
 ```
 
+We will now discuss various ways of loading tabular data into R. The examples should cover most file types that you might encounter (e.g. csv, txt, tsv, xlsx files). If you have an example file that doesn't seem to fit any of these example, please let us know. Please note that R is not able to import GraphPad Prism files, as this file format is proprietary. You will have to use a commercial version of Prism to export the data table into a text-file. 
+
 ##Tab-delimited file
 
 As a *rule-of-thumb*, tab-delimited files have file extensions *.txt* or *.tsv*. If your file is tab-delimited and you have specified the location using the previous section, you will be able to use the `read.delim` function. The `file.exists` is a useful function for checking that the file location is correct; returning `TRUE` if so.
@@ -106,6 +108,8 @@ R is even able to read Excel spreadsheets. For spreadsheet with multiple sheets,
 library(xlsx)
 myfile <- read.xlsx(myfile,sheetIndex = 1)
 ```
+
+##SPSS file
 
 ##Further options for reading files
 Sometimes we might be faced with 'messy' data that do not have a straightforward format of rows and columns. 
