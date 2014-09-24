@@ -43,7 +43,7 @@ plot(runif(1:10))
 
 ##Specify a path to the file
 
-R needs to know where the file is located on your hard drive in order to read it. The file location has to be specified within quote marks. If the file is located within your *working directory* then you can just specify the name of the file. You can find out the location of your working directory using the `getwd` function.
+R needs to know where the file is located on your hard drive in order to read it. If the file is located within your *working directory* then you can just specify the name of the file. You can find out the location of your working directory using the `getwd` function.
 
 ```{r eval=FALSE}
 getwd()
@@ -55,17 +55,23 @@ If the file is not in your working directory, then you will need to specify the 
 myfile <- file.choose()
 ```
 
-```{r echo=FALSE}
-myfile <- "PrismExamples/XY/Linear regression.txt"
+When specifying the file location, it has to giving within *quote marks*, as in the following example
+
+
+```{r}
+myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
 ```
 
 We will now discuss various ways of loading tabular data into R. The examples should cover most file types that you might encounter (e.g. csv, txt, tsv, xlsx files). If you have an example file that doesn't seem to fit any of these example, please let us know. Please note that R is not able to import GraphPad Prism files, as this file format is proprietary. You will have to use a commercial version of Prism to export the data table into a text-file. 
+
+Once a file has been read into R, we recommend that you **check the dimensions and contents**. Sometimes R will read a file without error, but may not have been able to interpret the structure of the data correctly, which will cause problems for further analysis.
 
 ##Tab-delimited file
 
 As a *rule-of-thumb*, tab-delimited files have file extensions *.txt* or *.tsv*. If your file is tab-delimited and you have specified the location using the previous section, you will be able to use the `read.delim` function. The `file.exists` is a useful function for checking that the file location is correct; returning `TRUE` if so.
 
 ```{r}
+myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
 file.exists(myfile)
 mydata <- read.delim(myfile)
 ```
@@ -86,11 +92,31 @@ head(mydata)
 
 In this case, the object has `r ncol(mydata)` columns and `r nrow(mydata)` rows; as we would expect.
 
+Now notice what happens if we read the file by (incorrectly) calling the `read.csv` function on a *tab-delimited* file
+
+```{r}
+myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
+mydata <- read.csv(myfile)
+dim(mydata)
+str(mydata)
+head(mydata)
+```
+
+R was able to read the file without error, but the dimensions of the resulting object are incorrect.
+
 ##Comma-separated file
 
-Files that have columns separated by commas can be read using the `read.csv` function.
+Files that have columns separated by commas can be read using the `read.csv` function. The file location needs to be specified by either using the `file.choose` function as follows;
 
 ```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+Or by specifying the path to the file within quote marks. Once the file has been read, we check the dimensions and general structure.
+
+
+```{r}
+myfile <- "PrimerExamples/One-sample t-test.csv"
 mydata <- read.csv(myfile)
 
 dim(mydata)
@@ -101,12 +127,34 @@ head(mydata)
 
 ##Excel file
 
-R is even able to read Excel spreadsheets. For spreadsheet with multiple sheets, you will need to pay attention to the `sheetIndex` parameter, which specifies the sheet to be read. 
+R is even able to read Excel spreadsheets. This requires an additional *package* to be installed; `gdata`. This package is loaded as follows;
+
+```{r}
+library(gdata)
+```
 
 
-```{r eval=FALSE}
-library(xlsx)
-myfile <- read.xlsx(myfile,sheetIndex = 1)
+If you do not have `gdata` installed you will get an error message in the following form.
+
+```{r echo=FALSE,warning=FALSE}
+
+error <- try(library(foo),silent = TRUE)
+error[1]
+```
+
+If this error occurs, the package will need to be installed and then loaded
+```{r,eval=FALSE}
+install.packages("gdata")
+library(gdata)
+```
+
+We can now call the `read.xls` function from `gdata`
+
+```{r}
+myfile <- "PrimerExamples//Indepentent two-sample t-test_v2_long.xlsx"
+
+mydata <- read.xls(myfile)
+head(mydata)
 ```
 
 ##SPSS file
