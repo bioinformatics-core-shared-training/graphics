@@ -194,7 +194,40 @@ mydata <- read.delim(myfile, nrows=3)
 
 ##Data subsetting
 
-###match, grep, `%in%`
+###`%in%`
+A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command.
+
+```{r eval=TRUE}
+"BRCA1" %in% c("RAS", "MYC", "BRCA1", "TP53")
+```
+
+In the case above we were only interested in a single text query.  The example below demonstrates both that `%in%` is equally happy working with numeric values, and that a vector of queries can be used in a single command.  Here a vector of `TRUE` or `FALSE` values the same length as the number of queries will be returned. This is far more efficient that trying each in turn.
+
+```{r eval=TRUE}
+c(1,5,11) %in% 1:10
+```
+
+###match,
+
+While the `%in%` command is useful for telling you whether a query appears somewhere, it doesn't specify where in the subject you will find it.  However there are several ways to achieve just this, where perhaps the most straightforward is `which()`.
+
+```{r eval=TRUE}
+which(c("RAS", "MYC", "BRCA1", "TP53") == "BRCA1")
+```
+
+However this approach falls down if one is interested in multiple queries.
+```{r eval=TRUE}
+which(c("RAS", "MYC", "BRCA1", "TP53") == c("BRCA1", "RAS"))
+```
+To avoid the confusion this could cause, it is better the employ the function `match()`
+
+
+```{r eval=TRUE}
+match(x = c("BRCA1", "MYC"), table = c("RAS", "MYC", "BRCA1", "TP53"))
+```
+
+###grep 
+
 
 ##Re-ordering data frames
 
