@@ -160,8 +160,26 @@ dim(mydata)
 head(mydata)
 ```
 
+##Specifying a different separator
+
+
+```{r}
+myfile <- "PrimerExamples/space-separated.csv"
+mydata <- read.csv(myfile)
+dim(mydata)
+head(mydata)
+
+```
+
+```{r}
+mydata <- read.csv(myfile, sep=" ")
+dim(mydata)
+head(mydata)
+```
+
+
 ##SPSS file
-R isable to read data created by SPSS. This requires an additional *package* to be installed; `foreign`. This package is loaded as follows;
+R is able to read data created by SPSS. This requires an additional *package* to be installed; `foreign`. This package is loaded as follows;
 
 ```{r}
 library(foreign)
@@ -188,12 +206,15 @@ Sometimes we might be faced with 'messy' data that do not have a straightforward
 
 ###Skipping lines
 
-```{r eval=FALSE}
-mydata <- read.delim(myfile, skip=)
+```{r}
+myfile <- "PrimerExamples/file-with-header.csv"
+mydata <- read.csv(myfile)
+head(mydata)
 ```
 
-```{r eval=FALSE}
-mydata <- read.delim(myfile, nrows=3)
+```{r}
+mydata <- read.csv(myfile, skip=5)
+head(mydata)
 ```
 
 
@@ -206,6 +227,46 @@ mydata <- read.delim(myfile, nrows=3)
 
 
 ###Strings as factors
+
+###If all else fails...
+
+The `readLines` function can be used...
+
+```{r}
+readLines
+```
+
+##Data in multiple files
+
+#Using pre-built data
+
+R already comes with several datasets ready for exploration and analysis. To see what datasets are available, along with brief descriptions, enter the following;
+
+```{r eval=FALSE}
+data()
+```
+
+If you see a dataset that might be interesting (e.g. the `DNase` dataset), it can be loaded into R in the following manner. 
+
+```{r}
+data(DNase)
+head(DNase)
+```
+Further details on the dataset can be found on its help page.
+```{r eval=FALSE}
+?DNase
+```
+
+
+```{r echo=FALSE}
+par(ask=FALSE)
+```
+
+Moreover, example plots and code can be generated using the `example` function.
+
+```{r}
+example(DNase)
+```
 
 #Writing data to a file
 
