@@ -148,16 +148,35 @@ install.packages("gdata")
 library(gdata)
 ```
 
-We can now call the `read.xls` function from `gdata`
+Note that you will only need to install the package once for a particular R *version*. However, you will need to load this library in every new R session when you require the functionality to read Excel files.
+
+We can now call the `read.xls` function from `gdata` to create a *data frame* from your input file.
 
 ```{r}
 myfile <- "PrimerExamples//Indepentent two-sample t-test_v2_long.xlsx"
 
 mydata <- read.xls(myfile)
+dim(mydata)
 head(mydata)
 ```
 
 ##SPSS file
+R isable to read data created by SPSS. This requires an additional *package* to be installed; `foreign`. This package is loaded as follows;
+
+```{r}
+library(foreign)
+```
+
+You only need to load the library *once* per R-session. We can now call the `read.spss` function from `foreign` to create a *data frame* from your input file.
+
+```{r}
+myfile <- "PrimerExamples/p004.sav"
+
+mydata <- read.spss(myfile,to.data.frame = TRUE)
+dim(mydata)
+head(mydata)
+```
+
 
 ##Further options for reading files
 Sometimes we might be faced with 'messy' data that do not have a straightforward format of rows and columns. 
