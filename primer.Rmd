@@ -98,7 +98,7 @@ file.exists(myfile)
 mydata <- read.delim(myfile)
 ```
 
-Assuming that the function does not produce an error, you should now have a variable `mydata` in your R workspace. This is *data frame* object, described in more detail in the [appendix](#appendix). At this point, it is highly recommended that you check the contents of the variable. The `View` command should open a new tab in RStudio.
+Assuming that the function does not produce an error, you should now have a variable `mydata` in your R workspace. This is *data frame* object, described in more detail in the [appendix](#data-frames). At this point, it is highly recommended that you check the contents of the variable. The `View` command should open a new tab in RStudio.
 
 ```{r eval=FALSE}
 View(mydata)
