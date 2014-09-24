@@ -49,13 +49,26 @@ R needs to know where the file is located on your hard drive in order to read it
 getwd()
 ```
 
-If the file is not in your working directory, then you will need to specify the full path to the file. A useful function in this situation is `file.choose`, which will open a dialog box allowing you to navigate to the file. The location can be stored as a variable.
+You can also interrogate the contents of your working directory using the `dir` function
+
+```{r}
+dir()
+
+```
+The `dir` function has a useful argument `pattern` which will list files that contain a particular *string* of text. For instance, we can list all files of type `.csv` and `.txt` in the current working directory that could potentially be read into R.
+
+```{r}
+dir(pattern=".csv")
+dir(pattern=".txt")
+```
+
+If the file you want to read is not in your working directory, then you will need to specify thepath to the file. A useful function in this situation is `file.choose`, which will open a dialog box allowing you to navigate to the file. The location can be stored as a variable.
 
 ```{r eval=FALSE}
 myfile <- file.choose()
 ```
 
-When specifying the file location, it has to giving within *quote marks*, as in the following example
+When specifying the file location manually, it has to giving within *quote marks*, as in the following example
 
 
 ```{r}
@@ -65,6 +78,15 @@ myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
 We will now discuss various ways of loading tabular data into R. The examples should cover most file types that you might encounter (e.g. csv, txt, tsv, xlsx files). If you have an example file that doesn't seem to fit any of these example, please let us know. Please note that R is not able to import GraphPad Prism files, as this file format is proprietary. You will have to use a commercial version of Prism to export the data table into a text-file. 
 
 Once a file has been read into R, we recommend that you **check the dimensions and contents**. Sometimes R will read a file without error, but may not have been able to interpret the structure of the data correctly, which will cause problems for further analysis.
+
+##What separator should be used?
+
+```{r}
+count.fields("PrimerExamples/Indepentent two-sample t-test_v2_long.txt",sep="\t")
+count.fields("PrimerExamples/Indepentent two-sample t-test_v2_long.txt",sep=",")
+
+```
+
 
 ##Tab-delimited file
 
@@ -102,7 +124,8 @@ str(mydata)
 head(mydata)
 ```
 
-R was able to read the file without error, but the dimensions of the resulting object are incorrect.
+R was able to read the file without error, but the dimensions of the resulting object are incorrect. In particular, it has been unable to separate the columns because an incorrect s
+eparator was used (a `,` rather than a tab). 
 
 ##Comma-separated file
 
@@ -113,7 +136,6 @@ myfile <- file.choose()
 ```
 
 Or by specifying the path to the file within quote marks. Once the file has been read, we check the dimensions and general structure.
-
 
 ```{r}
 myfile <- "PrimerExamples/One-sample t-test.csv"
@@ -133,8 +155,9 @@ R is even able to read Excel spreadsheets. This requires an additional *package*
 library(gdata)
 ```
 
+It is not uncommon for a package to print text to the screen upon loading. You should not mistake this text for an *error* message.
 
-If you do not have `gdata` installed you will get an error message in the following form.
+However, if you do not have `gdata` installed you will get an error message in the following form.
 
 ```{r echo=FALSE,warning=FALSE}
 
@@ -162,14 +185,16 @@ head(mydata)
 
 ##Specifying a different separator
 
+If your file is neither `tab` or `comma` separated, then `read.csv` and `read.delim` will not be able to read the file correctly with their default arguments. In the following example, we try and use to `read.csv` on a file with columns that are separated with a space (`" "`).
 
 ```{r}
 myfile <- "PrimerExamples/space-separated.csv"
 mydata <- read.csv(myfile)
 dim(mydata)
 head(mydata)
-
 ```
+
+We see that the dimensions of the data object are incorrect. Both `read.csv` and `read.delim` have the option to specify a different separator. 
 
 ```{r}
 mydata <- read.csv(myfile, sep=" ")
@@ -233,7 +258,24 @@ head(mydata)
 The `readLines` function can be used...
 
 ```{r}
-readLines
+temp <- readLines("PrimerExamples/Indepentent two-sample t-test_v2_long.txt")
+head(temp)
+```
+
+```{r}
+temp <- readLines("PrimerExamples/One-sample t-test.csv")
+head(temp)
+```
+
+
+```{r}
+temp <- readLines("PrimerExamples/file-with-header.csv")
+head(temp)
+```
+
+```{r}
+temp <- readLines("PrimerExamples/space-separated.csv")
+temp
 ```
 
 ##Data in multiple files
