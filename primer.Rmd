@@ -1,6 +1,6 @@
 ---
 title: 'Data  Manipulation and Visualisation: An R primer'
-author: "Mark Dunning"
+author: "Mark Dunning and Mike Smith"
 date: "09/09/2014"
 output: pdf_document
 toc: yes
@@ -233,7 +233,9 @@ We now summarise the options that prove to be most useful
 
 ###Skipping lines
 
-Sometimes text files can contain lines of header information.
+By default, R will assume that your data table starts on the first line of the file and that the column headers are found on the first line. However, sometimes the data table can be preceeded with several lines of header information. The header may contain useful information for the user, such as the date the file was generated and software versions etc, but is not relevant when we try and read the data table into R. 
+
+If we try and use the default settings of `read.csv` to read a file with arbitrary header information, the following occurs.
 
 ```{r}
 myfile <- "PrimerExamples/file-with-header.csv"
@@ -241,10 +243,20 @@ mydata <- read.csv(myfile)
 head(mydata)
 ```
 
+You will notice that R has tried to interpret the header information as lines of the data table, and therfore the data is not imported correctly.
+
+Fortunately, both `read.csv` and `read.delim` have a `skip` argument so that we can start reading the data table from a pre-determined position in the file. In this example we have to *skip* the first 5 lines of the file in order to reach the table.
+
 ```{r}
 mydata <- read.csv(myfile, skip=5)
 head(mydata)
 ```
+
+In practice, you may have to try different values for the `skip` argument in order to obtain the correct result. Use of the `head` and `dim` functions should help you determine when the data has been read correctly.
+
+###Files with no header
+
+
 
 ###Reading a pre-determined number of lines
 
