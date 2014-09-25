@@ -106,7 +106,7 @@ Assuming that the function does not produce an error, you should now have a vari
 View(mydata)
 ```
 
-The dimensions and structure of the data can be further interrogated using the following useful functions.
+The dimensions and structure of the data can be further interrogated using the following [useful functions](#useful-functions-to-know).
 
 ```{r}
 dim(mydata)
