@@ -206,7 +206,7 @@ head(mydata)
 
 
 ##SPSS file
-R is able to read data created by SPSS. This requires an additional *package* to be installed; `foreign`. This package is loaded as follows;
+R is able to read data created by SPSS. This requires an additional *package* to be loaded; `foreign`.
 
 ```{r}
 library(foreign)
@@ -222,6 +222,7 @@ dim(mydata)
 head(mydata)
 ```
 
+The `foreign` package is also able to read files in `SAS` (`read.export`) and `STATA` (`read.dta`) formats, but sadly not Graphpad Prism.
 
 ##Further options for reading files
 Sometimes we might be faced with 'messy' data that do not have a straightforward format of rows and columns. 
@@ -379,6 +380,23 @@ temp
 ##Strings as factors
 
 ##Data in multiple files
+
+##Data from online sources
+
+The `repmis` package (misellaneous tools for reproducible research) contains useful functions to retrieve online data. 
+
+```{r eval=FALSE}
+install.packages("repmis")
+```
+
+A useful resource for such data is the Github page of [Vincent Arel-Bundock](http://vincentarelbundock.github.io/Rdatasets/datasets.html). We can download data from this page using the `source_data` function. For example, if we browse the web page we can see there is an dataset containing Ovarian Cancer survival data.
+
+```{r}
+library(repmis)
+surv <- source_data("http://vincentarelbundock.github.io/Rdatasets/csv/survival/ovarian.csv")
+head(surv)
+```
+
 
 #Using pre-built data
 
