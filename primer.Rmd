@@ -41,6 +41,10 @@ plot(runif(1:10))
 
 #Reading data into R
 
+The first stage of doing an analysis in R is to import some raw data in a *spreadsheet-like* format. By which we mean data organised in rows and columns like we usually see in a spreadsheet program such a Microsoft Excel.
+
+Unfortunately, importing data can be the source of many errors and frustrations; sometimes halting an analysis before it has even begun. *Well-formatted* data should be easy to read using a small selection of functions, although the user will have to decide which function to use. The key first steps are to locate the relevant raw data file on your hard drive and decide what format it is in. 
+
 More information can be found online at the [R data manual](http://cran.r-project.org/doc/manuals/R-data.html)
 
 ##Specify a path to the file
@@ -379,6 +383,24 @@ temp
 
 ##Strings as factors
 
+R is primarily a statisticslanguage so much of its functionality is geared-up to make things ameanable to statistical analysis. For instance, it will prefer to work with [Factors](#factors) rather than characters. When a data table is read into R, as stored as a data frame, the default behaviour is to store character vectors as factors. This may not always be neccesary. 
+
+```{r}
+myfile <- "PrimerExamples/One-sample t-test.csv"
+mydata <- read.csv(myfile)
+str(mydata)
+```
+
+We do not plan to take advantage of this behaviour and can easily work with the months in character form. Therefore we can set the argument `stringsAsFactors=FALSE`
+
+```{r}
+myfile <- "PrimerExamples/One-sample t-test.csv"
+mydata <- read.csv(myfile,stringsAsFactors=FALSE)
+str(mydata)
+```
+
+
+
 ##Data in multiple files
 
 ##Data from online sources
@@ -389,7 +411,7 @@ The `repmis` package (misellaneous tools for reproducible research) contains use
 install.packages("repmis")
 ```
 
-A useful resource for such data is the Github page of [Vincent Arel-Bundock](http://vincentarelbundock.github.io/Rdatasets/datasets.html). We can download data from this page using the `source_data` function. For example, if we browse the web page we can see there is an dataset containing Ovarian Cancer survival data.
+A useful resource for such data is the Github page of [Vincent Arel-Bundock](http://vincentarelbundock.github.io/Rdatasets/datasets.html), which has csv version of example datasets found in many R packages. We can download data from this page using the `source_data` function. For example, if we browse the web page we can see there is an dataset containing Ovarian Cancer survival data. We can copy the URL of the corresponding `.csv` file and paste into R.
 
 ```{r}
 library(repmis)
@@ -398,7 +420,7 @@ head(surv)
 ```
 
 
-#Using pre-built data
+#Using pre-built datasets
 
 R comes with the `datasets` package which contains many example datasets ready for exploration and analysis. To see what datasets are available, along with brief descriptions, enter the following;
 
