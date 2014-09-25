@@ -41,6 +41,8 @@ plot(runif(1:10))
 
 #Reading data into R
 
+More information can be found online at the [R data manual](http://cran.r-project.org/doc/manuals/R-data.html)
+
 ##Specify a path to the file
 
 R needs to know where the file is located on your hard drive in order to read it. If the file is located within your *working directory* then you can just specify the name of the file. You can find out the location of your working directory using the `getwd` function.
@@ -256,9 +258,44 @@ In practice, you may have to try different values for the `skip` argument in ord
 
 ###Files with no header
 
+Conversely, sometimes files can be created without any column names. By default, R assumes that the first row in the file contains column headings. This can have unexpected consequences when a file does not contain column headings. 
+
+
+```{r}
+myfile <- "PrimerExamples/file-with-no-header.csv"
+mydata <- read.csv(myfile)
+head(mydata)
+dim(mydata)
+colnames(mydata)
+```
+
+In this example, R took the first line of the file to be the column headings and so we have column names `r paste(colnames(mydata),collapse=" & ")`. Moreover, the data frame produced has `r nrow(mydata)` rows rather than `r nrow(mydata)+1`. The remedy is to set the `header` argument to `FALSE`. Both `read.csv` and `read.delim` are able to recognise the `header` argument.
+
+```{r}
+myfile <- "PrimerExamples/file-with-no-header.csv"
+mydata <- read.csv(myfile,header=FALSE)
+head(mydata)
+dim(mydata)
+colnames(mydata)
+```
+
+You can modify the column names of the `mydata` object.
+
+```{r}
+colnames(mydata) <- c("Month", "Value")
+```
 
 
 ###Reading a pre-determined number of lines
+
+It is possible to read only a fixed number of rows by using the`nrows` argument. Useful if you just want to see the first few lines in a file.
+
+```{r}
+subset <- read.csv("PrimerExamples/One-sample t-test.csv",nrows=4)
+subset
+```
+
+
 
 ###Invalid characters
 
