@@ -51,13 +51,13 @@ getwd()
 
 You can also interrogate the contents of your working directory using the `dir` function
 
-```{r}
+```{r eval=FALSE}
 dir()
 
 ```
 The `dir` function has a useful argument `pattern` which will list files that contain a particular *string* of text. For instance, we can list all files of type `.csv` and `.txt` in the current working directory that could potentially be read into R.
 
-```{r}
+```{r eval=FALSE}
 dir(pattern=".csv")
 dir(pattern=".txt")
 ```
@@ -229,7 +229,11 @@ Sometimes we might be faced with 'messy' data that do not have a straightforward
 ?read.table
 ```
 
+We now summarise the options that prove to be most useful
+
 ###Skipping lines
+
+Sometimes text files can contain lines of header information.
 
 ```{r}
 myfile <- "PrimerExamples/file-with-header.csv"
@@ -242,7 +246,7 @@ mydata <- read.csv(myfile, skip=5)
 head(mydata)
 ```
 
-
+###Reading a pre-determined number of lines
 
 ###Invalid characters
 
@@ -251,7 +255,7 @@ head(mydata)
 ```
 
 
-###Strings as factors
+
 
 ###If all else fails...
 
@@ -277,6 +281,8 @@ head(temp)
 temp <- readLines("PrimerExamples/space-separated.csv")
 temp
 ```
+
+##Strings as factors
 
 ##Data in multiple files
 
@@ -309,8 +315,6 @@ Moreover, example plots and code can be generated using the `example` function.
 ```{r}
 example(DNase)
 ```
-
-#Writing data to a file
 
 #Data manipulation
 
@@ -358,6 +362,8 @@ match(x = c("BRCA1", "MYC"), table = c("RAS", "MYC", "BRCA1", "TP53"))
 ##Calculating summary statistics
 
 ##apply, tapply, aggregate
+
+#Writing data to a file
 
 #Plotting
 
