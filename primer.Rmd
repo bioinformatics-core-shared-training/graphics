@@ -237,20 +237,20 @@ We now summarise the options that prove to be most useful
 
 By default, R will assume that your data table starts on the first line of the file and that the column headers are found on the first line. However, sometimes the data table can be preceeded with several lines of header information. The header may contain useful information for the user, such as the date the file was generated and software versions etc, but is not relevant when we try and read the data table into R. 
 
-If we try and use the default settings of `read.csv` to read a file with arbitrary header information, the following occurs.
+If we try and use the default settings of `read.delim` to read a tab-delimited file with arbitrary header information, the following occurs. In this case, the file contains counts for a number of barcodes deteceted on a particular lane of sequencing. Naturally, we might want to read these data into R and perform some exploratory analysis and diagnostics.
 
 ```{r}
-myfile <- "PrimerExamples/file-with-header.csv"
-mydata <- read.csv(myfile)
+myfile <- "PrimerExamples/file-with-header.txt"
+mydata <- read.delim(myfile)
 head(mydata)
 ```
 
 You will notice that R has tried to interpret the header information as lines of the data table, and therfore the data is not imported correctly.
 
-Fortunately, both `read.csv` and `read.delim` have a `skip` argument so that we can start reading the data table from a pre-determined position in the file. In this example we have to *skip* the first 5 lines of the file in order to reach the table.
+Fortunately, both `read.csv` and `read.delim` have a `skip` argument so that we can start reading the data table from a pre-determined position in the file. In this example we have to *skip* the first 11 lines of the file in order to reach the table.
 
 ```{r}
-mydata <- read.csv(myfile, skip=5)
+mydata <- read.delim(myfile, skip=11)
 head(mydata)
 ```
 
@@ -288,7 +288,7 @@ colnames(mydata) <- c("Month", "Value")
 
 ###Reading a pre-determined number of lines
 
-It is possible to read only a fixed number of rows by using the`nrows` argument. Useful if you just want to see the first few lines in a file.
+It is possible to read only a fixed number of rows by using the `nrows` argument. Useful if you just want to see the first few lines in a file.
 
 ```{r}
 subset <- read.csv("PrimerExamples/One-sample t-test.csv",nrows=4)
@@ -299,10 +299,55 @@ subset
 
 ###Invalid characters
 
-```{r}
+Consider the following file, which we are told has the expression levels of 20 genes. We use `read.delim` to read the file (as it is tab-delimited)
 
+```{r}
+myfile <- "PrimerExamples/DiffGenes.tsv"
+mydata <- read.delim(myfile)
+head(mydata)
+dim(mydata)
 ```
 
+However, the number of rows comes out as `r nrow(mydata)`. We can use the `tail` function (analagous to `head`) to look at the last few rows in the file.
+
+```{r}
+tail(mydata)
+```
+
+Problems of this nature are usually due to an extraneous quotation mark `"` or `'` being found somewhere in the file. We can tell `read.delim` to ignore quotation marks in the following way. Of course, we could have editted the raw data to remove the quote mark, but this might not be practical for larger files.
+
+```{r}
+mydata <- read.delim(myfile,quote = "")
+```
+
+We now look at a second example file, which upon first impressions loads without any problems.
+
+```{r}
+myfile <- "PrimerExamples/DiffGenes2.tsv"
+mydata <- read.delim("PrimerExamples/DiffGenes2.tsv",header=FALSE)
+head(mydata)
+dim(mydata)
+```
+A natural data exploration step would be to calculate the mean of the gene expression values, which are stored in the second column. However, we cannot do this even if we tell R to ignore any `NA` values. We can discover that the second has not been treated as numeric values by R.
+
+```{r}
+mean(mydata[,2])
+mean(mydata[,2],na.rm=TRUE)
+summary(mydata[,2])
+str(mydata)
+```
+
+The issue is that our collaborator has chosen to use a `?` to denote a missing value in the second column. This causes R to think that this column contains characters rather than numbers. A solution is to use the `na.strings` argument to specify a particular value that is used to denote a missing value.
+
+```{r}
+myfile <- "PrimerExamples/DiffGenes2.tsv"
+mydata <- read.delim("PrimerExamples/DiffGenes2.tsv",header=FALSE,na.strings="?")
+
+head(mydata)
+str(mydata)
+summary(mydata[,2])
+mean(mydata[,2],na.rm=TRUE)
+```
 
 
 
@@ -322,7 +367,7 @@ head(temp)
 
 
 ```{r}
-temp <- readLines("PrimerExamples/file-with-header.csv")
+temp <- readLines("PrimerExamples/file-with-header.txt")
 head(temp)
 ```
 
@@ -337,13 +382,13 @@ temp
 
 #Using pre-built data
 
-R already comes with several datasets ready for exploration and analysis. To see what datasets are available, along with brief descriptions, enter the following;
+R comes with the `datasets` package which contains many example datasets ready for exploration and analysis. To see what datasets are available, along with brief descriptions, enter the following;
 
 ```{r eval=FALSE}
 data()
 ```
 
-If you see a dataset that might be interesting (e.g. the `DNase` dataset), it can be loaded into R in the following manner. 
+If you see a dataset that might be interesting (e.g. the `DNase` dataset which measures the density of a protein at various concentrations), it can be loaded into R in the following manner. 
 
 ```{r}
 data(DNase)
