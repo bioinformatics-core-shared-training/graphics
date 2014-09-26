@@ -8,7 +8,7 @@ toc: yes
 
 #Introduction
 
-This document will guide you through the key concepts and techniques required to manipulate and process data in R.
+This document will guide you through the key concepts and techniques required to manipulate and process data in R. 
 
 1. Read the data into R
   + What format are the data in? 
@@ -17,7 +17,16 @@ This document will guide you through the key concepts and techniques required to
 3. Plot the data
   + What type of plot do you need to convey your message? What type of data do you need for the plot
   
-  
+#Recommended references
+
+Much [freely-available](http://cran.r-project.org/other-docs.html) documentation about R is available from CRAN. In particular, the R [reference card](http://cran.r-project.org/doc/contrib/Short-refcard.pdf) is recommended. 
+
+There is no shortage of other R tutorials available online. Some that has provided particular inspiration in the construction of this document are listed below:
+
+- [R cookbook](http://www.cookbook-r.com/)
+- [Quick-R](http://www.statmethods.net/)
+- [UC Riverside R & Bioconductor manual](http://manuals.bioinformatics.ucr.edu/home/R_BioCondManual)
+
 ##About this document
 
 This document was written in RStudio using the **markdown** format. If you see a section like this, you can copy-and-paste the text into RStudio and execute it. 
@@ -27,7 +36,7 @@ print("Hello World")
 ```
 
 
-Often the output from R will be displayed after the R command
+Often the output from R will be displayed after the R command. You can compare this to the output that you get from running the command yourself.
 
 ```{r}
 print("Hello World")
@@ -41,11 +50,11 @@ plot(runif(1:10))
 
 #Reading data into R
 
-The first stage of doing an analysis in R is to import some raw data in a *spreadsheet-like* format. By which we mean data organised in rows and columns like we usually see in a spreadsheet program such a Microsoft Excel.
+The first stage of doing an analysis in R is to import some raw data that is presented a *spreadsheet-like* format. By which we mean data organised in rows and columns like we usually see in a spreadsheet program such a Microsoft Excel.
 
-Unfortunately, importing data can be the source of many errors and frustrations; sometimes halting an analysis before it has even begun. *Well-formatted* data should be easy to read using a small selection of functions, although the user will have to decide which function to use. The key first steps are to locate the relevant raw data file on your hard drive and decide what format it is in. 
+Unfortunately, importing data can be the source of many errors and frustrations; sometimes halting an analysis before it has even begun. *Well-formatted* data should be easy to read using a small selection of functions, although the user will have to decide which function to use. The key first steps are to locate the relevant raw data file on your hard drive and decide what format it is in. As a *rule-of-thumb*, [tab-delimited](#tab-delimited-file) files have file extensions *.txt* or *.tsv*, whereas [comma-separated](#comma-separated-file) have an extension *.csv* .
 
-More information can be found online at the [R data manual](http://cran.r-project.org/doc/manuals/R-data.html)
+More information on reading files into R can be found online at the [R data manual](http://cran.r-project.org/doc/manuals/R-data.html) or [an introduction to data cleaning with R](http://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
 
 ##Specify a path to the file
 
@@ -59,7 +68,6 @@ You can also interrogate the contents of your working directory using the `dir` 
 
 ```{r eval=FALSE}
 dir()
-
 ```
 The `dir` function has a useful argument `pattern` which will list files that contain a particular *string* of text. For instance, we can list all files of type `.csv` and `.txt` in the current working directory that could potentially be read into R.
 
@@ -403,6 +411,8 @@ str(mydata)
 
 ##Data in multiple files
 
+If the dataset you want to import is spread over several data files, you will have to read each file individually and combine the respective data frames into a single object. 
+
 ##Data from online sources
 
 The `repmis` package (misellaneous tools for reproducible research) contains useful functions to retrieve online data. 
@@ -452,7 +462,13 @@ example(DNase)
 
 #Data manipulation
 
-##Data subsetting
+The term *data manipulation* is used here to describe the steps that occur after having [read data into R](#reading-data-into-r) and prior to [plotting](#plotting) and/or [statistical analysis](#statistical-analysis).
+
+##Selecting columns from a data frame
+
+
+
+##Row subsetting
 
 ###`%in%`
 A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command.
@@ -488,10 +504,11 @@ match(x = c("BRCA1", "MYC"), table = c("RAS", "MYC", "BRCA1", "TP53"))
 
 ###grep 
 
+##Adding new columns / variables
+
+##Text manipulation
 
 ##Re-ordering data frames
-
-##Adding new columns / variables
 
 ##Calculating summary statistics
 
@@ -521,6 +538,7 @@ How the `par` function works....
 
 `legend("topleft"....)
 
+#Statistical Analysis
 
 #Appendix
 
