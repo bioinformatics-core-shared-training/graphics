@@ -466,9 +466,88 @@ The term *data manipulation* is used here to describe the steps that occur after
 
 ##Selecting columns from a data frame
 
+We will illustrate using the `mtcars` data, one of the in-built datasets in R. We can load the data using the `load` function and query the dimensions and print the first few lines using `dim` and `head`. 
+
+Subsetting in R **always** uses the `[row,column]` notation.
+
+###By column number
+
+```{r}
+data(mtcars)
+head(mtcars)
+dim(mtcars)
+```
+
+Columns in the data frame can be retrived using a numeric index. The *first* column can be retrieved by specifying the *column* as 1 in `[row,column]` notation. However, we if we want values for all observations (rows) we can neglect to specify a value before the `,`. e.g.
+
+
+```{r}
+mtcars[,1]
+```
+
+The output is a *vector* and it's length will be the same as the number of rows in the data frame. Note that we have not altered the `mtcars` data frame in any way. It will still have the same number of columns. 
+
+```{r}
+dim(mtcars)
+```
+
+If we want to do some further calculations on the vector we have extracted, we need to assign it to a variable
+
+```{r}
+myvector <- mtcars[,1]
+length(myvector)
+myvector
+```
+
+
+The notation is very similar to retrieve the second column
+
+```{r}
+myvector <- mtcars[,2]
+length(myvector)
+myvector
+```
+
+If we want to retrieve the first and second columns *at the same time*, we can construct a [vector](*vectors), using the `c` function, comprising the indices we want to retrive and use this in the `[]` notation. The result is a *data frame* itself.
+
+```{r}
+mydf <- mtcars[,c(1,2)]
+head(mydf)
+dim(mydf)
+```
+
+We can also use the `:` shortcut to generate a sequence of consecutive integers
+
+```{r}
+mydf <- mtcars[,c(1:3)]
+head(mydf)
+dim(mydf)
+```
+
+###By column name
+
+We can also extract data using the names of columns
+```{r}
+colnames(mtcars)
+mydf <- mtcars[,"mpg"]
+head(mydf)
+```
+
+The column names can be combined using the `c` function
+```{r}
+mydf <- mtcars[,c("mpg","cyl")]
+head(mydf)
+```
 
 
 ##Row subsetting
+
+###Subset rows by index
+
+
+```{r}
+mtcars[1:5,]
+```
 
 ###`%in%`
 A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command.
@@ -482,6 +561,16 @@ In the case above we were only interested in a single text query.  The example b
 ```{r eval=TRUE}
 c(1,5,11) %in% 1:10
 ```
+
+In our particular example....
+
+```{r}
+myInd <- rownames(mtcars) %in% c("Merc 230", "Merc 280")
+myInd
+mtcars[myInd,]
+```
+
+`myInd` is a *logical* vector (i.e. either `TRUE` or `FALSE`) of length `r nrow(mtcars)`, where each denotes whether that particular rownames is one of the supplied vector. This logical vector can then be used to subset the data frame.
 
 ###match,
 
@@ -502,13 +591,73 @@ To avoid the confusion this could cause, it is better the employ the function `m
 match(x = c("BRCA1", "MYC"), table = c("RAS", "MYC", "BRCA1", "TP53"))
 ```
 
+```{r}
+myInd <- match("Merc 230", rownames(mtcars))
+myInd
+mtcars[myInd,]
+
+```
+
+
 ###grep 
+
+```{r}
+myInd <- grep("Merc", rownames(mtcars))
+myInd
+mtcars[myInd,]
+```
+
 
 ##Adding new columns / variables
 
+##Re-ordering data frames
+
+
+```{r}
+order(mtcars[,"mpg"])
+mtcars[order(mtcars[,"mpg"]),]
+```
+
+```{r}
+order(mtcars[,"mpg"],decreasing=TRUE)
+mtcars[order(mtcars[,"mpg"],decreasing=TRUE),]
+```
+
+```{r}
+sort(rownames(mtcars))
+sort(mtcars[,"mpg"])
+```
+
 ##Text manipulation
 
-##Re-ordering data frames
+###nchar
+
+```{r}
+nchar(rownames(mtcars))
+```
+
+###toupper
+
+```{r}
+toupper(rownames(mtcars))
+```
+
+
+###gsub
+
+###strsplit
+
+```{r}
+strsplit(rownames(mtcars)," ")
+```
+
+
+###substr
+
+```{r}
+substr(rownames(mtcars), 1,4)
+```
+
 
 ##Calculating summary statistics
 
