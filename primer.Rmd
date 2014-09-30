@@ -2,7 +2,7 @@
 title: 'Data  Manipulation and Visualisation: An R primer'
 author: "Mark Dunning and Mike Smith"
 date: "09/09/2014"
-output: pdf_document
+output: html_document
 toc: yes
 ---
 
@@ -692,6 +692,35 @@ How the `par` function works....
 #Appendix
 
 ##Vectors
+
+Vectors are the fundamental data type in R and are composed of an ordered group of single items of data.  There are several ways to construct a vector, but perhaps the simplest and most commonly used is `c()` function. This may seem like an unintuative name (you'll get used to some of R's idosyncracies if you use it long enough), but it stands for *concatonate* as what the function is actually doing is sticking together a number of smaller objects.
+
+```{r}
+numericVector <- c(1, 2, 3, 4)
+```
+
+When you create a variable with a single value, you are still creating a vector - it just has a length of one.  This is why we can describe vectors as the fundamental data type in R, there is nothing smaller to break them down into.
+
+```{r}
+shortVariable <- 1
+shortVariable
+shortVariable[1]
+```
+
+Vectors don't have to contain numbers, they work equally well for storing character data.
+
+```{r}
+characterVector <- c("one", "two", "three", "four")
+```
+
+One important thing to note is the all the values in a vector must be of the same type.  For instance you cannot have numeric and character data in the same vector.  However R won't neccessarily report and error if you try to do this, as the example below shows:
+
+```{r}
+mixedVector <- c(1, 2, "three", "four")
+mixedVector
+```
+
+You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data.frame, which we'll discuss in the next section.
 
 ##Data Frames
 
