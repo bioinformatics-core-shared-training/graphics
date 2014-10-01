@@ -391,7 +391,7 @@ temp
 
 ##Strings as factors
 
-R is primarily a statisticslanguage so much of its functionality is geared-up to make things ameanable to statistical analysis. For instance, it will prefer to work with [Factors](#factors) rather than characters. When a data table is read into R, as stored as a data frame, the default behaviour is to store character vectors as factors. This may not always be neccesary. 
+R is primarily a statisticslanguage so much of its functionality is geared-up to make things ameanable to statistical analysis. For instance, it will prefer to work with [Factors](#factors) rather than characters. When a data table is read into R, as stored as a data frame, the default behaviour is to store character [vectors](#vectors) as factors. This may not always be neccesary. 
 
 ```{r}
 myfile <- "PrimerExamples/One-sample t-test.csv"
@@ -423,7 +423,7 @@ install.packages("repmis")
 
 A useful resource for such data is the Github page of [Vincent Arel-Bundock](http://vincentarelbundock.github.io/Rdatasets/datasets.html), which has csv version of example datasets found in many R packages. We can download data from this page using the `source_data` function. For example, if we browse the web page we can see there is an dataset containing Ovarian Cancer survival data. We can copy the URL of the corresponding `.csv` file and paste into R.
 
-```{r}
+```{r eval=FALSE}
 library(repmis)
 surv <- source_data("http://vincentarelbundock.github.io/Rdatasets/csv/survival/ovarian.csv")
 head(surv)
@@ -485,7 +485,7 @@ Columns in the data frame can be retrived using a numeric index. The *first* col
 mtcars[,1]
 ```
 
-The output is a *vector* and it's length will be the same as the number of rows in the data frame. Note that we have not altered the `mtcars` data frame in any way. It will still have the same number of columns. 
+The output is a [vector](#vectors) and it's length will be the same as the number of rows in the data frame. Note that we have not altered the `mtcars` data frame in any way. It will still have the same number of columns. 
 
 ```{r}
 dim(mtcars)
@@ -556,7 +556,7 @@ A common task in exploratory data analysis is to ask whether a specific value or
 "BRCA1" %in% c("RAS", "MYC", "BRCA1", "TP53")
 ```
 
-In the case above we were only interested in a single text query.  The example below demonstrates both that `%in%` is equally happy working with numeric values, and that a vector of queries can be used in a single command.  Here a vector of `TRUE` or `FALSE` values the same length as the number of queries will be returned. This is far more efficient that trying each in turn.
+In the case above we were only interested in a single text query.  The example below demonstrates both that `%in%` is equally happy working with numeric values, and that a [vector](#vectors) of queries can be used in a single command.  Here a vector of `TRUE` or `FALSE` values the same length as the number of queries will be returned. This is far more efficient that trying each in turn.
 
 ```{r eval=TRUE}
 c(1,5,11) %in% 1:10
@@ -570,7 +570,7 @@ myInd
 mtcars[myInd,]
 ```
 
-`myInd` is a *logical* vector (i.e. either `TRUE` or `FALSE`) of length `r nrow(mtcars)`, where each denotes whether that particular rownames is one of the supplied vector. This logical vector can then be used to subset the data frame.
+`myInd` is a *logical* [vector](#vectors) (i.e. either `TRUE` or `FALSE`) of length `r nrow(mtcars)`, where each denotes whether that particular rownames is one of the supplied vector. This logical vector can then be used to subset the data frame.
 
 ###match,
 
