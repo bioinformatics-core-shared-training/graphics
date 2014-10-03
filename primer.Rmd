@@ -765,7 +765,7 @@ There are a couple of things to note here. Firstly, when dealing with a data fra
 
 Secondly, if you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a data frame.  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop=FALSE` argument seen below.
 
-```{r}
+```{r error=TRUE}
  charNumFrame[3:4]
  charNumFrame[3:4, 1, drop=FALSE]
 ```
