@@ -188,7 +188,7 @@ However, if you do not have `gdata` installed you will get an error message in t
 ```{r echo=FALSE,warning=FALSE}
 
 error <- try(library(foo),silent = TRUE)
-error[1]
+message(gsub("foo", "gdata",error[1]))
 ```
 
 If this error occurs, the package will need to be installed and then loaded
@@ -479,7 +479,7 @@ The term *data manipulation* is used here to describe the steps that occur after
 
 ##Selecting columns from a data frame
 
-We will illustrate using the `mtcars` data, one of the in-built datasets in R. We can load the data using the `load` function and query the dimensions and print the first few lines using `dim` and `head`. 
+We will illustrate using the `mtcars` data, one of the in-built datasets in R. We can load the data using the `data` function and query the dimensions and print the first few lines using `dim` and `head`. 
 
 Subsetting in R **always** uses the `[row,column]` notation.
 
@@ -557,13 +557,61 @@ head(mydf)
 
 ###Subset rows by index
 
+If we know the index of the row we want to retrieve, we can supply these indices in the `[]` notation. The get the first row, we can do
+
+```{r}
+mtcars[1,]
+```
+
+Muliple rows can be specified at a time. For example using the `:` shortcut
 
 ```{r}
 mtcars[1:5,]
 ```
 
-###`%in%`
-A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command.
+###Logical indexing
+
+The term `logical` is used to describe values that are either `TRUE` or `FALSE` (sometimes called `Boolean` values in other languages). We can combine logical values into a [vector](#vectors) and use for subsetting. In particular, they can be used to specify exactly which elements we extract from a vector. In this example, we create a vector of length 10, and another `logical` vector of the same length. Using the logical vector within the square brackets `[]` will tell R to extract elements *only* when the corresponding value in the the logical vector is `TRUE`
+
+```{r}
+myvec <- 1:10
+myvec
+logvec <- c(TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE)
+logvec
+myvec[logvec]
+
+```
+
+In this case, `logvec` has `TRUE` values in positions `r paste(which(logvec),collapse=",")`. So these are the elements of `myvec` that can extracted in `myvec[logvec]`.
+
+There are several arithmetic operations that perform comparisons and produce a logical vector as output. The most common of these are  `>,<,==`. Where `==` is used to test that two numerical values are the same.
+
+If we wanted to restrict the data frame to rows where the `mpg` is less than `15`, we would first create a vector that will test all values of `mpg` to see if they are less than 15. Notice that the vector created is the same length as the number of rows in the data frame (`r nrow(mtcars)`).
+
+```{r}
+myind <- mtcars$mpg < 15
+myind
+length(myind)
+```
+
+The logical vector, can now be used to subset the data frame. Only rows where `myind` has a value of `TRUE` will be returned.
+
+```{r}
+mtcars[myind,]
+```
+
+Note that in the previous command we have created a *subset* of the data frame and not altered the original object; the number of rows is still `r nrow(mtcars)`
+
+```{r}
+subset <- mtcars[myind,]
+subset
+dim(subset)
+dim(mtcars)
+```
+
+
+###%in%
+A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command. Note that we have to specify each gene name within quotation marks `""`. 
 
 ```{r eval=TRUE}
 "BRCA1" %in% c("RAS", "MYC", "BRCA1", "TP53")
@@ -575,9 +623,10 @@ In the case above we were only interested in a single text query.  The example b
 c(1,5,11) %in% 1:10
 ```
 
-In our particular example....
+In our particular example, we could restrict the analysis to just rows that correspond to particular cars. The car names appear in the `rownames` of the data frame
 
 ```{r}
+rownames(mtcars)
 myInd <- rownames(mtcars) %in% c("Merc 230", "Merc 280")
 myInd
 mtcars[myInd,]
