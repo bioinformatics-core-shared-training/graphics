@@ -27,6 +27,18 @@ There is no shortage of other R tutorials available online. Some that has provid
 - [Quick-R](http://www.statmethods.net/)
 - [UC Riverside R & Bioconductor manual](http://manuals.bioinformatics.ucr.edu/home/R_BioCondManual)
 
+#Running R and RStudio
+
+Our recommended way of using R is via the RStudio interface. Like R, this software is freely to download and available on any operating system. You will need to download the latest versions of R and RStudio.
+
+##Installing R
+
+Download links for R can be found on the [CRAN](http://cran.r-project.org/) page (Comprehensive R Archive Network). There are separate downloads for [Windows](http://cran.r-project.org/bin/windows/base/R-3.1.1-win.exe) and [Mac OSX](http://cran.r-project.org/bin/macosx/R-3.1.1-snowleopard.pkg). Unix, or advanced users will need to find the appropriate link to their distribuion, or consider downloading the [source code](http://cran.r-project.org/src/base/R-3/R-3.1.1.tar.gz). 
+
+##Installing RStudio
+
+RStudio was created by a third-party company and available as a free download. You can find an *installer* for your platform on the [download](http://www.rstudio.com/products/rstudio/download/) page. Make sure that you are downloading the **Desktop** version of RStudio, rather than the *server* version.
+
 ##About this document
 
 This document was written in RStudio using the **markdown** format. If you see a section like this, you can copy-and-paste the text into RStudio and execute it. 
@@ -366,32 +378,33 @@ mean(mydata[,2],na.rm=TRUE)
 
 ###If all else fails...
 
-The `readLines` function can be used...
+The `readLines` function can be used. This is a *low-level* function for reading data into R and reads each line in the file as avector, along with the characters used to separate the columns. For example, if we read a file with a `.txt` extension.
 
 ```{r}
 temp <- readLines("PrimerExamples/Indepentent two-sample t-test_v2_long.txt")
 head(temp)
 ```
 
+The fact that a `\t` character can be seen in each item of the vector tells us that we should be using the `read.delim` function. Likewise, with a `.csv`
+
 ```{r}
 temp <- readLines("PrimerExamples/One-sample t-test.csv")
 head(temp)
 ```
+each item in the vector has a `,` character which is used to separate the data into two columns. We should read this file using `read.csv`
 
+If we have a file with `header` information, we can use `readLines` to identify the line on which the data table begins, and hence what we should use as a `skip` argument.
 
 ```{r}
 temp <- readLines("PrimerExamples/file-with-header.txt")
-head(temp)
+temp[1:15]
 ```
+In this case, we can see the column headings for the data table start on line 12. Thus, we should read the file with `skip=11` in the function `read.delim`.
 
-```{r}
-temp <- readLines("PrimerExamples/space-separated.csv")
-temp
-```
 
 ##Strings as factors
 
-R is primarily a statisticslanguage so much of its functionality is geared-up to make things ameanable to statistical analysis. For instance, it will prefer to work with [Factors](#factors) rather than characters. When a data table is read into R, as stored as a data frame, the default behaviour is to store character [vectors](#vectors) as factors. This may not always be neccesary. 
+R is primarily a statistics language so much of its functionality is geared-up to make things ameanable to statistical analysis. For instance, it will prefer to work with [Factors](#factors) rather than characters. When a data table is read into R, as stored as a data frame, the default behaviour is to store character [vectors](#vectors) as factors. This may not always be neccesary. 
 
 ```{r}
 myfile <- "PrimerExamples/One-sample t-test.csv"
