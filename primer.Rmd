@@ -626,6 +626,8 @@ subset
 
 ```
 
+Other ways of combining logical vectors include `|` (*or*) and `!` (*negation*).
+
 ###%in%
 A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command. Note that we have to specify each gene name within quotation marks `""`. 
 
@@ -639,7 +641,7 @@ In the case above we were only interested in a single text query.  The example b
 c(1,5,11) %in% 1:10
 ```
 
-In our particular example, we could restrict the analysis to just rows that correspond to particular cars. The car names appear in the `rownames` of the data frame
+In our particular example, we could restrict the analysis to just rows that correspond to particular cars. The car names appear in the `rownames` of the data frame. 
 
 ```{r}
 rownames(mtcars)
@@ -669,15 +671,19 @@ To avoid the confusion this could cause, it is better the employ the function `m
 match(x = c("BRCA1", "MYC"), table = c("RAS", "MYC", "BRCA1", "TP53"))
 ```
 
+If we just wanted to find which row corresponds to `Merc 230` we can use the `match` function to see the index of  the `rownames(mtcars)` vector that corresponds to the *string* `"Merc 230"`.
+
 ```{r}
 myInd <- match("Merc 230", rownames(mtcars))
 myInd
 mtcars[myInd,]
-
 ```
 
+However, we have to remember that `match` will only return the index of the *first* occurence. If the string we want to find occurs multiple times, then we may get unexpected results further on in the analysis. Also, the text has to *exactly* match. Sometimes it is safer to use the `grep` function.
 
 ###grep 
+
+`grep` will return *all* rownames that contain the string `Merc` *somewhere* in their name we can use the `grep` function.
 
 ```{r}
 myInd <- grep("Merc", rownames(mtcars))
@@ -745,9 +751,94 @@ substr(rownames(mtcars), 1,4)
 
 #Plotting
 
+
+
 ##The plot function
 
 `plot` is the generic function in R
+
+###A histogram
+
+The `hist` function requires a *numeric* vector, which could be the result of some calculation you or have performed or the column from a data frame. In this example, we will read an example file
+
+```{r}
+mydata <- read.csv("PrimerExamples/One-sample t-test.csv")
+mydata
+
+```
+
+The data concern (fictional) failure rates for microarrays in Genomics. To visualise the distribution of the failure rates, we could use a histogram using the `hist` function. We have to select the relevant column from the data frame, in this case the second column. 
+
+
+```{r}
+hist(mydata[,2])
+```
+
+Unfortunately, the default plot that R creates is not that pretty. As with all plotting functions, there is a large amount of customisations that are possible. Details are on the *help* page for `hist`.
+
+```{r eval=FALSE}
+?hist
+```
+
+
+We can specify an alternative colour using the `col` argument.
+
+```{r}
+hist(mydata[,2],col="steelblue")
+```
+
+And add more informative labels and titles using `main` and `xlab`
+
+```{r}
+hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate")
+
+```
+
+Technical modifications include displaying frequencies on the y-axis rather than counts.
+
+```{r}
+hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate",freq =  FALSE)
+
+```
+
+We can also specify the number of *breaks*
+
+```{r}
+hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate",freq =  FALSE,breaks = 12)
+
+```
+
+
+###A scatter plot
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+mydata
+plot(mydata[,1],mydata[,2])
+```
+
+
+###A bar plot
+
+```{r}
+mydata <- read.csv("PrimerExamples/One-sample t-test.csv")
+mydata
+barplot(mydata[,2])
+
+```
+
+
+
+###A boxplot
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+mydata
+boxplot(mydata)
+```
+
+
+###Adding lines, text, points to a plot
 
 ##Exporting a plot
 
