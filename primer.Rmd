@@ -610,6 +610,22 @@ dim(mtcars)
 ```
 
 
+Logical vectors can be used in combination, provided they are the same length. Now if we wanted all cars with `mpg < 15` *and* `drat > 3` we can combine the two conditions using the `&` operation.
+
+```{r}
+myind <- mtcars$mpg < 15 & mtcars$drat > 3
+myind
+length(myind)
+```
+
+Notice that `myind` is still length `r nrow(mtcars)`. 
+
+```{r}
+subset <- mtcars[myind,]
+subset
+
+```
+
 ###%in%
 A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command. Note that we have to specify each gene name within quotation marks `""`. 
 
