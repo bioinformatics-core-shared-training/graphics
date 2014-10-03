@@ -782,13 +782,42 @@ mixedVector <- c(1, 2, "three", "four")
 mixedVector
 ```
 
-You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data.frame, which we'll discuss in the next section.
+You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data frame, which we'll discuss in the next section.
 
 ##Data Frames
+
+If we want to store multiple types of data in a single object with the row and column structure you might expect from a spreadsheet or printed table, we need to use a new object type: the *data frame*.  In the example below we'll create a data frame using two of the vectors created in the previous section.
+
+```{r}
+ charNumFrame <- data.frame(numericVector, characterVector)
+ charNumFrame
+```
 
 ##Factors
 
 ##Subsetting
+
+Sometimes you only want to use a subset of the data stored in an object; perhaps you only want the first five items from a long vector, or you're only interested in the second column from a data frame.  To extract a portion of an object we need to use R subsetting functionality, which is denoted by square brackets `[]`.
+
+```{r}
+ characterVector[2:3]
+ charNumFrame[3:4, ]
+```
+
+In the example above the first line extracts the 2nd and 3rd entries from a vector, while the second line selects rows 3 and 4 from a data frame.  If we wanted to obtain the same rows, but only for the first column we'd need to specify that too:
+
+```{r}
+ charNumFrame[3:4, 1]
+```
+
+There are a couple of things to note here. Firstly, when dealing with a data frame even if you want all the columns you still need to put the comma `,` in the subset command - otherwise you'll get an error as below.  
+
+Secondly, if you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a data frame.  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop=FALSE` argument seen below.
+
+```{r error=TRUE}
+ charNumFrame[3:4]
+ charNumFrame[3:4, 1, drop=FALSE]
+```
 
 ##Functions
 
