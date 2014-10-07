@@ -732,7 +732,7 @@ toupper(rownames(mtcars))
 ###strsplit
 
 ```{r}
-strsplit(rownames(mtcars)," ")
+tmp <- strsplit(rownames(mtcars)," ")
 ```
 
 
@@ -742,6 +742,15 @@ strsplit(rownames(mtcars)," ")
 substr(rownames(mtcars), 1,4)
 ```
 
+###paste
+
+```{r}
+paste("Hello", "World")
+```
+
+```{r}
+paste("Month", 1:12, "is",month.name)
+```
 
 ##Calculating summary statistics
 
@@ -839,6 +848,8 @@ boxplot(mydata)
 
 
 ###Adding lines, text, points to a plot
+
+###Plots with multiple lines
 
 ##Exporting a plot
 
