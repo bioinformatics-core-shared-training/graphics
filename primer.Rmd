@@ -849,6 +849,19 @@ boxplot(mydata)
 
 ###Adding lines, text, points to a plot
 
+###Specifying Colours
+
+```{r eval=FALSE}
+colors()
+```
+
+```{r}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+
+
 ###Plots with multiple lines
 
 ##Exporting a plot
