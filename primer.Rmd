@@ -2,8 +2,10 @@
 title: 'Data  Manipulation and Visualisation: An R primer'
 author: "Mark Dunning and Mike Smith"
 date: "09/09/2014"
-output: html_document
-toc: yes
+output: 
+    html_document:
+        toc: true
+        toc_depth: 2
 ---
 
 #Introduction
@@ -21,7 +23,7 @@ This document will guide you through the key concepts and techniques required to
 
 Much [freely-available](http://cran.r-project.org/other-docs.html) documentation about R is available from CRAN. In particular, the R [reference card](http://cran.r-project.org/doc/contrib/Short-refcard.pdf) is recommended. 
 
-There is no shortage of other R tutorials available online. Some that has provided particular inspiration in the construction of this document are listed below:
+There is no shortage of other R tutorials available online. Some that have provided particular inspiration in the construction of this document are listed below:
 
 - [R cookbook](http://www.cookbook-r.com/)
 - [Quick-R](http://www.statmethods.net/)
@@ -886,7 +888,7 @@ How the `par` function works....
 
 ##Vectors
 
-Vectors are the fundamental data type in R and are composed of an ordered group of single items of data.  There are several ways to construct a vector, but perhaps the simplest and most commonly used is `c()` function. This may seem like an unintuative name (you'll get used to some of R's idosyncracies if you use it long enough), but it stands for *concatonate* as what the function is actually doing is sticking together a number of smaller objects.
+Vectors are the fundamental data type in R and are composed of an ordered group of single items of data.  There are several ways to construct a vector, but perhaps the simplest and most commonly used is `c()` function. This may seem like an unintuative name (you'll get used to some of R's idosyncracies if you use it long enough), but it stands for *concatenate* as what the function is actually doing is sticking together a number of smaller objects.
 
 ```{r}
 numericVector <- c(1, 2, 3, 4)
@@ -915,6 +917,19 @@ mixedVector
 
 You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data frame, which we'll discuss in the next section.
 
+##Matrices
+
+```{r}
+matrix1 <- matrix(1:16, nrow = 4)
+matrix1
+```
+
+```{r}
+matrix2 <- matrix(1:16, nrow = 2)
+matrix2
+```
+
+
 ##Data Frames
 
 If we want to store multiple types of data in a single object with the row and column structure you might expect from a spreadsheet or printed table, we need to use a new object type: the *data frame*.  In the example below we'll create a data frame using two of the vectors created in the previous section.
@@ -941,12 +956,9 @@ In the example above the first line extracts the 2nd and 3rd entries from a vect
  charNumFrame[3:4, 1]
 ```
 
-There are a couple of things to note here. Firstly, when dealing with a data frame even if you want all the columns you still need to put the comma `,` in the subset command - otherwise you'll get an error as below.  
-
-Secondly, if you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a data frame.  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop=FALSE` argument seen below.
+If you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a data frame.  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop=FALSE` argument seen below.
 
 ```{r error=TRUE}
- charNumFrame[3:4]
  charNumFrame[3:4, 1, drop=FALSE]
 ```
 
