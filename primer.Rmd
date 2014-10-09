@@ -5,7 +5,7 @@ date: "09/09/2014"
 output: 
     html_document:
         toc: true
-        toc_depth: 2
+        toc_depth: 3
 ---
 
 #Introduction
@@ -782,10 +782,10 @@ The data concern (fictional) failure rates for microarrays in Genomics. To visua
 
 
 ```{r}
-hist(mydata[,2])
+hist(mydata$Failure.rate)
 ```
 
-Unfortunately, the default plot that R creates is not that pretty. As with all plotting functions, there is a large amount of customisations that are possible. Details are on the *help* page for `hist`.
+Unfortunately, the default plot that R creates is not that pretty. As with all plotting functions, there is a [large amount of customisations](#changing-the-plot-appearance) that are possible. Details are on the *help* page for `hist`.
 
 ```{r eval=FALSE}
 ?hist
@@ -849,7 +849,93 @@ boxplot(mydata)
 ```
 
 
+
+
+##Exporting a plot
+
+R is able to save graphics in a variety of formats. The easiest way of saving a plot is to use the *Export* tab in the plot window in RStudio. You will then have the option of saving the plot as a *.pdf* or a variety of other file formats such as *.jpeg*, *.png*, *.tif*.
+
+N.B. *.pdf* plots can be futher altered in a graphics program such as *Photoshop*, whereas *.jpeg*, *.png* can be more easily inserted into presentations. Journals often require high-resolution images in *.tiff* or *.eps* format.
+
+The lines of code required to save a plot to a file are almost identical to producing the plot within RStudio; the only difference is that you need to send the the plot to an alternative *graphics device* other than RStudio, and close the device afterwards. 
+
+There are various functions can be used to create an alternative graphics device. These include `pdf`, `jpeg`, `png` and have to be called before the code that creates the plot. You have to specify a file name that the plot will be written to. However, the file does not have to exist prior to creating the plot.
+
+In the following example, we will save a boxplot as a *.png* file. We will therefore use the `png` function to write the plot to a file. If you run the code, you will notice that the plot is no longer displayed in RStudio. This is because the plot has been created in an alternative graphics *device*. We therefore have to use the `dev.off` function to close this device and allow us to open the file.
+
+```{r echo=FALSE, results='hide'}
+if(file.exists("myboxplot.png")) file.remove("myboxplot.png")
+```
+
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+file.exists("myboxplot.png")
+list.files(pattern=".png")
+png("myboxplot.png")
+boxplot(mydata)
+dev.off()
+
+
+```
+
+You should notice that a file `myboxplot.png` has been created in your working directory. We can verify this using the `file.exists` and `list.files` functions.
+
+```{r}
+file.exists("myboxplot.png")
+list.files(pattern=".png")
+```
+
+To create a *.jpeg* instead of a *.png*, we simply use `jpeg` instead of `png`.
+
+```{r}
+jpeg("myboxplot.jpeg")
+boxplot(mydata)
+dev.off()
+```
+
+You can specify the height and width of the plot by adjusting the `height` and `width` arguments. This can be done in the same way for the `jpeg` and `png` functions. The values for `height` and `width` should be the required number of pixels. 
+
+
+```{r}
+jpeg("myboxplot2.jpeg",width=800,height=500)
+boxplot(mydata)
+dev.off()
+```
+
+
+*.pdf* documents as created in much the same way using the `pdf` function. However, you should note that the dimensions of the plot are specified in *inches* rather than *pixels*.
+
+```{r}
+pdf("myboxplot.pdf",width=8,height=4)
+boxplot(mydata)
+dev.off()
+```
+
+An important different between *.jpeg*, *.png* and *.pdf* is that *.pdf* documents can have multiple pages. In the following example, we have multiple lines of code between the `pdf` and `dev.off` lines. Each plot is saved onto a separate page in the pdf document.
+
+```{r}
+pdf("myplots.pdf")
+hist(mydata[,1])
+hist(mydata[,2])
+boxplot(mydata)
+dev.off()
+```
+
+
+##Changing the plot appearance
+
 ###Adding lines, text, points to a plot
+
+`lines` adds lines to an existing plot
+
+`points` adds points to an existing plot
+
+`text` adds text to an existing plot
+
+###Titles and labels
+
+`main`, `xlab`, `ylab`
 
 ###Specifying Colours
 
@@ -862,23 +948,16 @@ library(RColorBrewer)
 display.brewer.all()
 ```
 
+**You should make sure that the colour scheme that you choose is suitable for those with colour-blindness**
+
+###The `par` function 
 
 
-###Plots with multiple lines
-
-##Exporting a plot
-
-R is able to save graphics in a variety of formats..
-
-##Changing the plot appearance
-
-How the `par` function works....
-
-##Creating a layout
+##Combining multiple plots
 
 `par(mfrow=c...)`
 
-##Adding a legend
+###Adding a legend
 
 `legend("topleft"....)
 
