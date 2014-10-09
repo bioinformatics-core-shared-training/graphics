@@ -539,13 +539,14 @@ head(mydf)
 dim(mydf)
 ```
 
-###By column name
+###By column name (Recommended)
 
-We can also extract data using the names of columns
+We can also extract data using the names of columns. This is the recommended approach, as you might not be sure that the same variables will *always* be stored in the same column. 
+
+
 ```{r}
-colnames(mtcars)
-mydf <- mtcars[,"mpg"]
-head(mydf)
+myvec <- mtcars[,"mpg"]
+head(myvec)
 ```
 
 The column names can be combined using the `c` function
@@ -553,6 +554,14 @@ The column names can be combined using the `c` function
 mydf <- mtcars[,c("mpg","cyl")]
 head(mydf)
 ```
+
+We can also access columns by name using the `$` operator. By default, this will return all values in the column. This approach can be used in conjunction with *tab-completion*; meaning that you start typing the name of the column and press the `TAB` key. A list of possible column names will then appear.
+
+```{r}
+myvec <- mtcars$mpg
+myvec
+```
+
 
 
 ##Row subsetting
@@ -925,13 +934,7 @@ dev.off()
 
 ##Changing the plot appearance
 
-###Adding lines, text, points to a plot
 
-`lines` adds lines to an existing plot
-
-`points` adds points to an existing plot
-
-`text` adds text to an existing plot
 
 ###Titles and labels
 
@@ -939,16 +942,65 @@ dev.off()
 
 ###Specifying Colours
 
+The simplest way of specifying a colour in R is to use a pre-defined character string. There are `r length(colors())` preset values you can use, which can be printed to the screen using the `colors` function.
+
 ```{r eval=FALSE}
 colors()
 ```
 
-```{r}
+There is a [colour chart](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) available online that can be used to display the colors alongside the names.
+
+**You should make sure that the colour scheme that you choose is suitable for those with colour-blindness**. e.g. avoiding red / green colour schemes. One way of ensuring this is to use predfined pallettes in the `RColorBrewer` package. 
+
+```{r fig.height=10,fig.width=10}
 library(RColorBrewer)
 display.brewer.all()
 ```
 
-**You should make sure that the colour scheme that you choose is suitable for those with colour-blindness**
+```{r}
+mypal <- brewer.pal(8, "Set1")
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1],col=mypal)
+```
+
+###Plotting characters and their values
+
+```{r echo=FALSE}
+i <- 0:24
+
+x <- floor(i /5) + 1
+y <- i %%5
+
+plot(1:10, type="n", xlim = c(1,5), ylim=c(-1,5),axes=F,xlab="",ylab="")
+points(x,y,pch=i+1)
+text(x,y-0.3,i+1)
+
+```
+
+We can specify a new plotting character using the `pch` argument
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1],pch=16)
+
+```
+
+Rather than being a single value, `pch` can be a vector of values
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1],pch=1:nrow(mydata))
+
+```
+
+
+###Adding lines, text, points to a plot
+
+`lines` adds lines to an existing plot
+
+`points` adds points to an existing plot
+
+`text` adds text to an existing plot
 
 ###The `par` function 
 
