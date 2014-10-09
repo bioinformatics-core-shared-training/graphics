@@ -966,6 +966,7 @@ plot(mydata[,1],col=mypal)
 ###Plotting characters and their values
 
 ```{r echo=FALSE}
+par(mar=c(0.1,0.1,0.1,0.1))
 i <- 0:24
 
 x <- floor(i /5) + 1
@@ -977,7 +978,7 @@ text(x,y-0.3,i+1)
 
 ```
 
-We can specify a new plotting character using the `pch` argument
+We can specify a new plotting character using the `pch` argument. For example `pch=16` uses filled rather than open circles.
 
 ```{r}
 mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
