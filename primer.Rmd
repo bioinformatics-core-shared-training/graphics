@@ -10,7 +10,7 @@ output:
 
 #Introduction
 
-This document will guide you through the key concepts and techniques required to manipulate and process data in R. 
+This document will guide you through the key concepts and techniques required to manipulate and process data in R. It is intended to be a reference document that you can refer to when you need to perform a particular task in R. 
 
 1. Read the data into R
   + What format are the data in? 
@@ -723,6 +723,18 @@ sort(rownames(mtcars))
 sort(mtcars[,"mpg"])
 ```
 
+##Transpose a matrix
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+dim(mydata)
+mydata.t <- t(mydata)
+mydata.t
+```
+
+
+
+
 ##Text manipulation
 
 ###nchar
@@ -763,6 +775,8 @@ paste("Hello", "World")
 paste("Month", 1:12, "is",month.name)
 ```
 
+##Long versus wide format
+
 ##Calculating summary statistics
 
 ##apply, tapply, aggregate
@@ -787,7 +801,7 @@ mydata
 
 ```
 
-The data concern (fictional) failure rates for microarrays in Genomics. To visualise the distribution of the failure rates, we could use a histogram using the `hist` function. We have to select the relevant column from the data frame, in this case the second column. 
+The data concern (fictional) failure rates for microarrays in Genomics. To visualise the distribution of the failure rates, we could use a histogram using the `hist` function. We have to [select the relevant column](#selecting-columns-from-a-data-frame) from the data frame, in this case the second column. 
 
 
 ```{r}
@@ -801,7 +815,7 @@ Unfortunately, the default plot that R creates is not that pretty. As with all p
 ```
 
 
-We can specify an alternative colour using the `col` argument.
+We can specify an [alternative colour](#specifying-colours) using the `col` argument.
 
 ```{r}
 hist(mydata[,2],col="steelblue")
@@ -847,6 +861,10 @@ barplot(mydata[,2])
 
 ```
 
+```{r}
+rownames(mydata) <- mydata[,1]
+barplot(mydata[,2])
+```
 
 
 ###A boxplot
@@ -938,7 +956,7 @@ dev.off()
 
 ###Titles and labels
 
-`main`, `xlab`, `ylab`
+It is always a good idea to use informative titles and axis labels on your plots. Unfortunately, the default plots produced by R try and *guess* labels from the data, which may not be that useful. 
 
 ###Specifying Colours
 
@@ -997,11 +1015,74 @@ plot(mydata[,1],pch=1:nrow(mydata))
 
 ###Adding lines, text, points to a plot
 
-`lines` adds lines to an existing plot
+Once a plot has been created, we have various options to modify it. Firstly we can add vertical and horzontal lines to the plot using `abline` (read as *ab line*) with the `v` and `h` arguments respectively. Here we construct a scatter plot as before, and 
 
-`points` adds points to an existing plot
+
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+abline(h=1300)
+abline(v=10)
+```
+
+The appearance of the line can be modified, for example to be [coloured differently](#specifying-colours).
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+abline(h=1000,col="steelblue")
+abline(v=5,col="orange")
+
+```
+
+A dotted line be drawn by specifying `lty=2` and the width can be changed using the `lwd` argument.
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+abline(h=1000,col="steelblue",lty=2,lwd=5)
+abline(v=5,col="orange",lty=3,lwd=10)
+
+```
+
+Another use for the `abline` function is to specify an intercept and coefficient for the line (the *a* and *b* in the `abline` name). For instance, if we wanted the line corresponding to equality of two vectors, *y = x*, we can say.
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1],mydata[,2])
+abline(a=0,b=1)
+```
+
+The `points` function can be used to add points to an existing plot. You need to specify vectors of *x* and *y* positions at which the points will be plotted.
+
+
+```{r}
+data <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(data[,1])
+points(data[,2])
+```
+
+We can [modify the colours](#specifying-colours) in which points are plotted. 
+
+```{r}
+plot(data[,1],col="steelblue")
+points(data[,2],col="orange")
+```
+
+Or change the [plotting characters](#plotting-characters-and-their-values)
+
+```{r}
+plot(data[,1],col="steelblue",pch=16)
+points(data[,2],col="orange",pch=17)
+```
+
 
 `text` adds text to an existing plot
+
+```{r}
+data <- read.csv("PrimerExamples/One-sample t-test.csv")
+plot(data[,2])
+text(data[,2],labels=month.abb)
+```
+
 
 ###The `par` function 
 
