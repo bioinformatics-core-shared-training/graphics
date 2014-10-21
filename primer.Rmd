@@ -1132,6 +1132,10 @@ You can see in the output that all four values have quotation marks around them.
 
 ##Matrices
 
+Sometimes it's useful to store values in two dimensions (rows and columns) rather than in a linear fashion as we can with vectors.  For example if you have an experiment with several samples and multiple time points it may make sense to store data in a format where the rows are samples and columns represent times.  
+
+In order to achieve this we can use a matrix object.  The code below generates a small matrix.
+
 ```{r}
 matrix1 <- matrix(1:16, nrow = 4)
 matrix1
@@ -1142,7 +1146,6 @@ matrix2 <- matrix(1:16, nrow = 2)
 matrix2
 ```
 
-
 ##Data Frames
 
 If we want to store multiple types of data in a single object with the row and column structure you might expect from a spreadsheet or printed table, we need to use a new object type: the *data frame*.  In the example below we'll create a data frame using two of the vectors created in the previous section.
@@ -1150,6 +1153,15 @@ If we want to store multiple types of data in a single object with the row and c
 ```{r}
  charNumFrame <- data.frame(numericVector, characterVector)
  charNumFrame
+```
+
+## Lists
+
+Although it's easy to think of vectors as 'lists' of values, within R a list is a distinct type of object.  Lists are used when you want to group together disparate types of information.  For example, one could store several vectors of numbers, but they need not be the same length, something that a matrix or data frame could not cope with.  Alternatively, a list could contain four elements that are a vector, a matrix, a data frame and another list respectively.
+
+```{r}
+list1 <- list(vec1 = 1:2, vec2 = 3:5, vec3 = 6:9, vec4 = 10:13)
+list2 <- list(vec = 1:10, mat = matrix(1:10, nrow = 2), dat = data.frame(a = 1:5, b = 6:10), lis = list1)
 ```
 
 ##Factors
@@ -1174,6 +1186,12 @@ If you're really paying attention to the example above you'll notice that when w
 ```{r error=TRUE}
  charNumFrame[3:4, 1, drop=FALSE]
 ```
+
+Extracting subsets from a list is slightly more subtle than for other object types.  Where as before we used a single set of square brackets `[]`, lists makes use of both this and a double set of brackets `[[]]`.
+
+When using a single set of brackets on a list, R will return another list.  This makes sense if you're interested in getting a few entries but can be a little unintuative if you're only interested in a single element.
+
+If you wish to extract a single element and have it returned 
 
 ##Functions
 
