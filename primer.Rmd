@@ -1080,7 +1080,55 @@ points(data[,2],col="orange",pch=17)
 ```{r}
 data <- read.csv("PrimerExamples/One-sample t-test.csv")
 plot(data[,2])
-text(data[,2],labels=month.abb)
+text(data[,2],labels=LETTERS[1:10])
+```
+
+The `arrows` function can be used to connect pairs of points on an existing plot. We have to supply *start* ane *end* x and y coordinates. In the example below, we draw and arrow from *(2,1.5)* to *(10,4)*.
+
+```{r}
+plot(data[,2])
+arrows(2, 1.5, 10, 4)
+```
+
+
+Customisations of the arrow are possible and multiple arrows can be drawn by supplying the coordinates as vectors. See the help page for more information.
+
+
+```{r eval=FALSE}
+?arrows
+```
+
+
+This function may not seem very useful initially, but it can be used as a means of drawing *error bars* on a plot. 
+
+```{r}
+randMat <- matrix(rnorm(100),ncol=10)
+
+means <- colMeans(randMat)
+plot(means,ylim=c(-2,2))
+
+err <- apply(randMat, 1, sd)
+
+arrows(1:10, means-err,1:10,means+err,code=3,angle=90)
+
+```
+
+So far in this section, we have shown how to modify scatter plots using `lines`, `points` etc. However, the same modifications can be applied to other types of plot too. 
+
+```{r}
+
+boxplot(randMat)
+abline(h = 0,col="red")
+points(1:10, y = seq(-3,3,length.out = 10),pch=16,col="steelblue")
+text(1:10, y= seq(3,-3,length.out = 10),labels = LETTERS[1:10],col="orange")
+```
+
+```{r}
+barplot(colMeans(randMat),ylim=c(-3,3))
+abline(h = 0,col="red")
+points(1:10, seq(-0.2, 0.6, length.out=10),col="steelblue",pch=16)
+text(1:10, y= seq(0.6,-0.2,length.out = 10),labels = LETTERS[1:10],col="orange")
+
 ```
 
 
