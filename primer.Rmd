@@ -1128,13 +1128,13 @@ mixedVector <- c(1, 2, "three", "four")
 mixedVector
 ```
 
-You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data frame, which we'll discuss in the next section.
+You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data frame, which we'll discuss later.
 
 ##Matrices
 
 Sometimes it's useful to store values in two dimensions (rows and columns) rather than in a linear fashion as we can with vectors.  For example if you have an experiment with several samples and multiple time points it may make sense to store data in a format where the rows are samples and columns represent times.  
 
-In order to achieve this we can use a matrix object.  The code below generates a small matrix.
+In order to achieve this we can use a matrix object.  The code below generates two small matrices, each containing the number 1 to 16.  
 
 ```{r}
 matrix1 <- matrix(1:16, nrow = 4)
@@ -1145,6 +1145,14 @@ matrix1
 matrix2 <- matrix(1:16, nrow = 2)
 matrix2
 ```
+
+The `nrow` argument allows use to specify the dimensions of the matrix we create.  Similarly we can specify the argument `byrow` to change the order in which the values are placed in the matrix.  The default value of this agument is `FALSE`, specifying that the matrix is filled going down the columns.  In the example below we change this behaviour and fill and the values are placed going across columns instead.
+
+```{r}
+matrix(1:16, nrow = 2, byrow = TRUE)
+```
+
+As with vectors, matrices can only contain a single type of data; you can't mix numbers and characters in the same matrix.
 
 ##Data Frames
 
@@ -1164,7 +1172,6 @@ list1 <- list(vec1 = 1:2, vec2 = 3:5, vec3 = 6:9, vec4 = 10:13)
 list2 <- list(vec = 1:10, mat = matrix(1:10, nrow = 2), dat = data.frame(a = 1:5, b = 6:10), lis = list1)
 ```
 
-##Factors
 
 ##Subsetting
 
@@ -1172,26 +1179,35 @@ Sometimes you only want to use a subset of the data stored in an object; perhaps
 
 ```{r}
  characterVector[2:3]
- charNumFrame[3:4, ]
+ matrix1[3:4, ]
 ```
 
-In the example above the first line extracts the 2nd and 3rd entries from a vector, while the second line selects rows 3 and 4 from a data frame.  If we wanted to obtain the same rows, but only for the first column we'd need to specify that too:
+In the example above the first line extracts the 2nd and 3rd entries from a vector, while the second line selects rows 3 and 4 from a matrix.  If we wanted to obtain the same rows, but only for the first column we'd need to specify that too:
 
 ```{r}
- charNumFrame[3:4, 1]
+ matrix1[3:4, 1]
 ```
 
-If you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a data frame.  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop=FALSE` argument seen below.
+If you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a matrix (it assumes you don't need the second dimension).  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop = FALSE` argument seen below.
 
 ```{r error=TRUE}
- charNumFrame[3:4, 1, drop=FALSE]
+ matrix1[3:4, 1, drop=FALSE]
 ```
 
-Extracting subsets from a list is slightly more subtle than for other object types.  Where as before we used a single set of square brackets `[]`, lists makes use of both this and a double set of brackets `[[]]`.
+Extracting subsets from a list is slightly more subtle than for other object types.  Where as before we used a single set of square brackets `[ ]`, lists make use of both this and a double set of brackets `[[ ]]`.
 
-When using a single set of brackets on a list, R will return another list.  This makes sense if you're interested in getting a few entries but can be a little unintuative if you're only interested in a single element.
+When using a single set of brackets on a list, R will return another (probably shorter) list.  In the code below we ask for a list with only the first and third elements (the vector and data frame entries) from the example made earlier.
 
-If you wish to extract a single element and have it returned 
+```{r}
+list2[c(1,3)]
+```
+
+This makes sense if you're interested in getting a few entries but can be a little unintuative if you're only interested in a single element.  Asking for a single entry in the manner shown above will still retrun a list.  If you wish to reference an element directly you use the double braket notation.  This difference is demonstrated in the example below, where we use the function `is()` to ask R what type of object we've got.  
+
+```{r}
+class( list1[1] )
+class( list1[[1]] )
+```
 
 ##Functions
 
