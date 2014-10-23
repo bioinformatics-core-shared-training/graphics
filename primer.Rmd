@@ -845,11 +845,15 @@ hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate",freq
 
 ###A scatter plot
 
+R can produce scatter plots of two vectors. The vector supplied as the first argument will be plotted on the *x* axis and the second vector will be plotted on the *y* axis. Both vectors **must** have the same length. The axis limits and limits are inferred from the data. 
+
 ```{r}
 mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
 mydata
 plot(mydata[,1],mydata[,2])
 ```
+
+
 
 
 ###A bar plot
@@ -870,11 +874,19 @@ barplot(mydata[,2])
 ###A boxplot
 
 ```{r}
-mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
-mydata
-boxplot(mydata)
+randmat <- matrix(rnorm(100,10,5),ncol=10)
+boxplot(randmat)
 ```
 
+```{r}
+expression1 <- rnorm(5,4,1)
+expression2 <- rnorm(5,6,1)
+
+expression.all <- c(expression1, expression2)
+group <- c(rep("A",5),rep("B",5))
+
+boxplot(expression.all~group)
+```
 
 
 
