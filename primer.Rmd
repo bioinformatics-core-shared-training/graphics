@@ -981,6 +981,20 @@ mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
 plot(mydata[,1],col=mypal)
 ```
 
+If you wish to use Cancer Research Uk or Cambridge University branding, you can use the colours defined in the `crukCIMisc` package. This package includes a function, `CRUKcol` which can be used to generate the Cancer Research UK blue or pink colours.
+
+
+```{r}
+library(crukCIMisc)
+plot(mydata[,1], col=CRUKcol("Blue"),pch=16)
+points(mydata[,2],col=CRUKcol("Pink"),pch=16)
+
+```
+
+```{r}
+boxplot(mydata, col=c(CRUKcol("Blue"),CRUKcol("Pink")))
+```
+
 ###Plotting characters and their values
 
 ```{r echo=FALSE}
