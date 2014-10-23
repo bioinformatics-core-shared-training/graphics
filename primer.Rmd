@@ -853,7 +853,17 @@ mydata
 plot(mydata[,1],mydata[,2])
 ```
 
+```{r}
+plot(mydata[,1])
+```
 
+```{r}
+plot(mydata[,1],type="l")
+```
+
+```{r}
+plot(mydata[,1],type="b")
+```
 
 
 ###A bar plot
@@ -1077,27 +1087,35 @@ plot(mydata[,1],mydata[,2])
 abline(a=0,b=1)
 ```
 
+
+```{r}
+data <- read.delim("PrimerExamples/Linear regression.txt")
+
+plot(data$Minutes, data$Control)
+```
+
+
+
 The `points` function can be used to add points to an existing plot. You need to specify vectors of *x* and *y* positions at which the points will be plotted.
 
 
 ```{r}
-data <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
-plot(data[,1])
-points(data[,2])
+plot(data[,2])
+points(data[,3])
 ```
 
 We can [modify the colours](#specifying-colours) in which points are plotted. 
 
 ```{r}
-plot(data[,1],col="steelblue")
-points(data[,2],col="orange")
+plot(data[,2],col="steelblue")
+points(data[,3],col="orange")
 ```
 
 Or change the [plotting characters](#plotting-characters-and-their-values)
 
 ```{r}
-plot(data[,1],col="steelblue",pch=16)
-points(data[,2],col="orange",pch=17)
+plot(data[,2],col="steelblue",pch=16)
+points(data[,3],col="orange",pch=17)
 ```
 
 
@@ -1113,7 +1131,7 @@ The `arrows` function can be used to connect pairs of points on an existing plot
 
 ```{r}
 plot(data[,2])
-arrows(2, 1.5, 10, 4)
+arrows(2, 40, 10, 120)
 ```
 
 
