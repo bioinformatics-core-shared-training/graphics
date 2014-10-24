@@ -845,24 +845,10 @@ hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate",freq
 
 ###A scatter plot
 
-R can produce scatter plots of two vectors. The vector supplied as the first argument will be plotted on the *x* axis and the second vector will be plotted on the *y* axis. Both vectors **must** have the same length. The axis limits and limits are inferred from the data. 
-
 ```{r}
 mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
 mydata
 plot(mydata[,1],mydata[,2])
-```
-
-```{r}
-plot(mydata[,1])
-```
-
-```{r}
-plot(mydata[,1],type="l")
-```
-
-```{r}
-plot(mydata[,1],type="b")
 ```
 
 
@@ -884,19 +870,11 @@ barplot(mydata[,2])
 ###A boxplot
 
 ```{r}
-randmat <- matrix(rnorm(100,10,5),ncol=10)
-boxplot(randmat)
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+mydata
+boxplot(mydata)
 ```
 
-```{r}
-expression1 <- rnorm(5,4,1)
-expression2 <- rnorm(5,6,1)
-
-expression.all <- c(expression1, expression2)
-group <- c(rep("A",5),rep("B",5))
-
-boxplot(expression.all~group)
-```
 
 
 
@@ -1087,35 +1065,27 @@ plot(mydata[,1],mydata[,2])
 abline(a=0,b=1)
 ```
 
-
-```{r}
-data <- read.delim("PrimerExamples/Linear regression.txt")
-
-plot(data$Minutes, data$Control)
-```
-
-
-
 The `points` function can be used to add points to an existing plot. You need to specify vectors of *x* and *y* positions at which the points will be plotted.
 
 
 ```{r}
-plot(data[,2])
-points(data[,3])
+data <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(data[,1])
+points(data[,2])
 ```
 
 We can [modify the colours](#specifying-colours) in which points are plotted. 
 
 ```{r}
-plot(data[,2],col="steelblue")
-points(data[,3],col="orange")
+plot(data[,1],col="steelblue")
+points(data[,2],col="orange")
 ```
 
 Or change the [plotting characters](#plotting-characters-and-their-values)
 
 ```{r}
-plot(data[,2],col="steelblue",pch=16)
-points(data[,3],col="orange",pch=17)
+plot(data[,1],col="steelblue",pch=16)
+points(data[,2],col="orange",pch=17)
 ```
 
 
@@ -1131,7 +1101,7 @@ The `arrows` function can be used to connect pairs of points on an existing plot
 
 ```{r}
 plot(data[,2])
-arrows(2, 40, 10, 120)
+arrows(2, 1.5, 10, 4)
 ```
 
 
