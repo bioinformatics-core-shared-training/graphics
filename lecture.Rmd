@@ -1,0 +1,272 @@
+---
+title: "Data Manipulation in R"
+author: "Mark Dunning"
+date: "28/10/2014"
+output: beamer_presentation
+---
+
+## Introducing the dataset
+These data were obtained from a [Guardian blog of June 2011](http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health).
+
+```{r}
+birth <- read.delim("data/UKBirthRate.tsv")
+
+```
+
+## Exploring the data
+
+You should *always check* that the data have been imported correctly.
+```{r}
+head(birth)
+dim(birth)
+```
+
+## Exploring the data
+
+```{r}
+summary(birth)
+str(birth)
+```
+
+##Data representation
+
+The data are stored in a data frame. These are subset using square brackets `[]`
+
+```{r}
+birth[1:10,1]
+```
+
+##Data representation
+
+We can get particular columns and rows by *omitting* the row or column index. The result is a `vector`
+
+```{r}
+birth[1,]
+birth[,1]
+```
+
+##Data representation
+
+The data frame is *not altered*
+
+```{r}
+dim(birth)
+birth[1,]
+dim(birth)
+```
+
+##Assignment to a variable
+
+Again, the result is a `vector`
+```{r}
+mBirth <- birth[,2]
+mBirth
+```
+
+##Assignment to a variable
+
+Note that we can access columns by *name* with the `$` operator
+
+```{r}
+mBirth <- birth$Male.babies
+mBirth
+```
+
+##Data visualisation
+
+Suppose we want to look at the change in male birth rate over the years. `plot` is the general-purpose plotting function in R
+
+```{r}
+plot(mBirth)
+```
+
+##Data visualisation
+
+```{r}
+years <- birth$Age
+plot(years, mBirth)
+```
+
+##Data visualisation
+
+```{r}
+barplot(mBirth)
+```
+
+##Data visualisation
+
+Can plot one vector against another
+```{r}
+fBirth <- birth$Female.babies
+
+plot(mBirth, fBirth)
+```
+
+
+##How to improve the plot
+
+- Axis labels?
+- Title?
+- Circles?
+- Use of colour?
+- Line of best fit?
+
+##How to improve the plot
+
+The `plot` function is able to recognise a series of optional *arguments* 
+```{r fig.height=4,fig.width=4}
+plot(mBirth, fBirth,xlab="Male birth rate")
+```
+
+##How to improve the plot
+
+Many of these arguments can be specified at the same time
+```{r fig.height=4,fig.width=4}
+plot(mBirth, fBirth,xlab="Male birth rate"
+     ,ylab="Female birth rate")
+```
+##How to improve the plot
+
+```{r fig.height=4,fig.width=4}
+plot(mBirth, fBirth,xlab="Male birth rate"
+     ,ylab="Female birth rate",
+     main="Comparison of birth rates")
+```
+
+
+##How to improve the plot
+
+```{r fig.height=4,fig.width=4}
+plot(mBirth, fBirth,xlab="Male birth rate"
+     ,ylab="Female birth rate",
+     main="Comparison of birth rates",
+     pch=16,col="steelblue")
+```
+
+##Adding points
+
+```{r}
+plot(years, mBirth)
+```
+
+##Adding points
+Points can be added to a plot you've previously generated using `points`
+
+```{r eval=FALSE}
+points(years,fBirth)
+```
+
+```{r echo=FALSE}
+plot(years, mBirth)
+points(years,fBirth)
+```
+
+##Adding points
+Different colour schemes can be applied
+```{r}
+plot(years, mBirth,pch=16,col="steelblue")
+points(years,fBirth,pch=17,col="orange")
+```
+
+##Adding points
+However, labels and titles have to supplied in `plot`
+
+```{r}
+plot(years, mBirth,pch=16,col="steelblue",xlab="M",ylab="F")
+points(years,fBirth,pch=17,col="orange")
+```
+
+##Adding points
+However, labels and titles have to supplied in `plot`
+
+```{r}
+plot(years, mBirth,pch=16,col="steelblue")
+points(years,fBirth,pch=17,col="orange",xlab="M",ylab="F")
+```
+
+##Specify the axis limits
+
+Suppose we would rather not include values from 2014 onwards
+
+```{r}
+plot(years, mBirth,pch=16,col="steelblue",xlim=c(1850,2014))
+points(years,fBirth,pch=17,col="orange")
+```
+
+##Adding lines
+```{r}
+plot(years, mBirth,pch=16,col="steelblue",xlim=c(1850,2014))
+points(years,fBirth,pch=17,col="orange")
+grid()
+```
+
+##Adding lines
+```{r}
+plot(years, mBirth,pch=16,col="steelblue",xlim=c(1850,2014))
+points(years,fBirth,pch=17,col="orange")
+abline(v=c(1900,1950,2000))
+```
+
+##Adding lines
+```{r}
+plot(years, mBirth,pch=16,col="steelblue",xlim=c(1850,2014))
+points(years,fBirth,pch=17,col="orange")
+abline(h=c(40,50,60,70))
+```
+
+
+
+##Adding lines
+```{r eval=FALSE}
+plot(years, mBirth,pch=16,col="steelblue",xlim=c(1850,2014))
+points(years,fBirth,pch=17,col="orange")
+abline(h=c(40,50,60,70))
+abline(v=c(1900,1950,2000))
+```
+
+##Adding lines
+```{r echo=FALSE}
+plot(years, mBirth,pch=16,col="steelblue",xlim=c(1850,2014))
+points(years,fBirth,pch=17,col="orange")
+abline(h=c(40,50,60,70))
+abline(v=c(1900,1950,2000))
+```
+
+##Analysis questions
+
+Suppose we are interested in
+
+- Total population
+- Difference in birth rate
+
+These questions cannot be answered from the data directly
+
+
+##Computing new variables
+R can recognise the standard arithmetic operations `+, -, /, *`
+
+They can be applied to *vectors*
+```{r}
+
+Total.babies <- birth$Male.babies + birth$Female.babies
+length(Total.babies)
+
+```
+
+##Computing new variables
+
+Could also have done
+
+```{r}
+Total.babies2 <- mBirth + fBirth
+```
+
+
+
+##Computing new variables
+
+```{r}
+diff <- fBirth- mBirth
+plot(years,diff,pch=16,col="steelblue")
+```
+
