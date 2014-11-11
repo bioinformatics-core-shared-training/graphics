@@ -154,8 +154,8 @@ sds <- apply(data, 2, sd,na.rm=TRUE)
 ##Bar plots
 
 ```{r}
-bp <- barplot(colMeans(data,na.rm=TRUE))
-arrows(bp, mns + sds,1:ncol(data), mns - sds,code=3,angle=90)
+bp <- barplot(colMeans(data,na.rm=TRUE),ylim=c(0,400))
+arrows(bp, mns + sds,bp, mns,code=3,angle=90)
 ```
 
 
