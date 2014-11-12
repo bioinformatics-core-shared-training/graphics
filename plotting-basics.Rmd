@@ -75,15 +75,34 @@ mBirth <- birth$Male.babies
 mBirth
 ```
 
+##Thinking about the data
+What variables do we have?
+
+- Year (Continuous)
+- Birth Rate (Continuous)
+- Gender (Discrete)
+
+What are we interested in?
+
+- Trend
+- Relationship
+
+Any repeated observations?
+
+- No
+
 ##Scatter plots 
 
-Suppose we want to look at the change in male birth rate over the years. `plot` is the general-purpose plotting function in R
+Suppose we want to look at the change in male birth rate (continuous)
+
+- `plot` is the general-purpose plotting function in R
 
 ```{r}
 plot(mBirth)
 ```
 
 ##Data visualisation
+male birth rate (continuous) versus years (continuous)
 
 ```{r}
 years <- birth$Age
@@ -99,64 +118,32 @@ fBirth <- birth$Female.babies
 plot(mBirth, fBirth)
 ```
 
+##Adding lines and points
+
 #Visualising Distributions
 
 ##The dataset
 
-Describes weather conditions on different days over a period of months
 
-```{r echo=FALSE}
-
-data <- read.delim("FromFran/hAREG.txt")
-head(data)
-```
 
 ##The boxplot
 
-Can use the `~` sign to signify the grouping of the data
-
-```{r}
-boxplot(data)
-```
 
 ##Plotting individual points
-
-```{r}
-stripchart(data,vertical=TRUE)
-
-```
 
 
 ##Plotting individual points
 
-```{r}
-library(beeswarm)
-beeswarm(data,vertical=TRUE)
 
-```
 
 ##Overlaying points
 
-```{r}
-boxplot(data)
-beeswarm(data,vertical=TRUE,add=TRUE)
-```
-
 ##Summarising the data
 
-```{r}
-colMeans(data,na.rm=TRUE)
-mns <- colMeans(data,na.rm=TRUE)
-sds <- apply(data, 2, sd,na.rm=TRUE)
-```
 
 
 ##Bar plots
 
-```{r}
-bp <- barplot(colMeans(data,na.rm=TRUE),ylim=c(0,400))
-arrows(bp, mns + sds,bp, mns,code=3,angle=90)
-```
 
 
 #Count data
