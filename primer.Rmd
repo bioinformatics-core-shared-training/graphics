@@ -984,6 +984,39 @@ mydata <- read.delim("PrimerExamples/Linear regression.txt")
 plot(mydata[,1],mydata[,2],main="My Title", xlab="X axis", ylab="Y axis")
 ```
 
+```{r}
+randMat <- matrix(runif(100),ncol=10)
+boxplot(randMat, main="Some Random numbers" ,xlab="Column",ylab="Value")
+```
+
+```{r}
+barplot(randMat[,1], main="Barplot of random values",ylab="Value",xlab="Column")
+```
+
+```{r}
+hist(randMat[,1],main="A random histogram", xlab="Value", ylab="Frequency of value")
+```
+
+Functions such as `points`, `lines`, `text` and `abline` cannot modify the title or axis labels. We can set the plot title to be blank (the empty string `""`) at the time the plot is created, and add a title manually later-on using the `title` function. The following also demonstrates that the colour and font of the title can be modified.
+
+```{r}
+plot(cars, main = "")
+title(main = list("Stopping Distance versus Speed", cex = 1.5,
+                   col = "red", font = 3))
+```
+
+###Rotating axes
+
+###Adding custom axes
+
+Sometimes you might not like the axes that R creates.
+
+
+
+
+
+
+###Text in the margins (`mtext`)
 
 ###Specifying Colours
 
@@ -1174,10 +1207,11 @@ text(1:10, y= seq(0.6,-0.2,length.out = 10),labels = LETTERS[1:10],col="orange")
 ```
 
 
-###The `par` function 
+##The `par` function 
 
+###Adding extra space around a plot
 
-##Combining multiple plots
+###Combining multiple plots
 
 `par(mfrow=c...)`
 
