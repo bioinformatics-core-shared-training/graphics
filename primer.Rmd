@@ -981,8 +981,7 @@ It is always a good idea to use informative titles and axis labels on your plots
 
 ```{r}
 mydata <- read.delim("PrimerExamples/Linear regression.txt")
-mydata
-plot(mydata[,1],mydata[,2],main="My Title", xlab="X axis", ylab="X axis")
+plot(mydata[,1],mydata[,2],main="My Title", xlab="X axis", ylab="Y axis")
 ```
 
 
