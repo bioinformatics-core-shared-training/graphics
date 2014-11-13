@@ -9,28 +9,30 @@ output: beamer_presentation
 #The scatter plot
 
 ## Introducing the dataset
-These data were obtained from a [Guardian blog of June 2011](http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health).
+These data were obtained from the [supplementary data](http://faculty.washington.edu/heagerty/Books/Biostatistics/index-chapter.html) to *Biostatistics: A Methodology for the Health Sciences*
 
-other [datasets](http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets) are available
+
+```{r echo=FALSE}
+if(!file.exists("data/ozone.csv")) download.file(url = "http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/ozone.csv", destfile = "data/ozone.csv")
+```
 
 ```{r}
-birth <- read.delim("data/UKBirthRate.tsv")
-
+data <- read.csv("data/ozone.csv")
 ```
 
 ## Exploring the data
 
 You should *always check* that the data have been imported correctly.
 ```{r}
-head(birth)
-dim(birth)
+head(data)
+dim(data)
 ```
 
 ## Exploring the data
 
 ```{r}
-summary(birth)
-str(birth)
+summary(data)
+str(data)
 ```
 
 ##Data representation
@@ -38,7 +40,7 @@ str(birth)
 The data are stored in a data frame. These are subset using square brackets `[]`
 
 ```{r}
-birth[1:10,1]
+data[1:10,1]
 ```
 
 ##Data representation
@@ -46,8 +48,8 @@ birth[1:10,1]
 We can get particular columns and rows by *omitting* the row or column index. The result is a `vector`
 
 ```{r}
-birth[1,]
-birth[,1]
+data[1,]
+data[,1]
 ```
 
 ##Data representation
@@ -55,34 +57,24 @@ birth[,1]
 The data frame is *not altered*
 
 ```{r}
-dim(birth)
-birth[1,]
-dim(birth)
+dim(data)
+data[1,]
+dim(data)
 ```
 
 ##Assignment to a variable
 
 Again, the result is a `vector`
 ```{r}
-mBirth <- birth[,2]
-mBirth
+ozone <- data$Ozone
 ```
 
-##Assignment to a variable
-
-Note that we can access columns by *name* with the `$` operator
-
-```{r}
-mBirth <- birth$Male.babies
-mBirth
-```
 
 ##Thinking about the data
 What variables do we have?
 
-- Year (Continuous)
-- Birth Rate (Continuous)
-- Gender (Discrete)
+- Ozone, Wind, Temp (Continuous)
+- Month, Day (Discrete)
 
 What are we interested in?
 
@@ -95,39 +87,156 @@ Any repeated observations?
 
 ##Scatter plots 
 
-Suppose we want to look at the change in male birth rate (continuous)
+Suppose we want to look at the change in Ozone level (continuous)
 
 - `plot` is the general-purpose plotting function in R
+- Given a *vector* it will plot the values in the vector on the **y** axis, and index on the **x** axis
 
-```{r}
-plot(mBirth)
+```{r fig.width=8,fig.height=4}
+plot(data$Ozone)
 ```
+
+##Scatter plots 
+
+- We have `r nrow(data)` points on the plot
+- Axis labels, points, title and colours can be altered
+
+```{r fig.width=8,fig.height=4}
+plot(data$Ozone)
+```
+
 
 ##Data visualisation
-male birth rate (continuous) versus years (continuous)
 
-```{r}
-years <- birth$Age
-plot(years, mBirth)
+- Can plot one vector against another
+- First *argument* is plotted on the x axis, second *argument* on the y axis
+
+```{r fig.width=8,fig.height=4}
+plot(data$Ozone,data$Wind)
 ```
 
-##Data visualisation
+##Adding lines
 
-Can plot one vector against another
-```{r}
-fBirth <- birth$Female.babies
-
-plot(mBirth, fBirth)
+```{r fig.width=8,fig.height=4}
+plot(data$Ozone)
+abline(v= c(50,100,150))
+abline(h=100)
 ```
 
-##Adding lines and points
+##Adding points
+
+- Suppose we are interested in days with Ozone level over 100
+- We can form a *logical* vector and get the `TRUE` values using the `which` function
+
+```{r}
+highOzone <- which(data$Ozone > 100)
+data[highOzone,]
+```
+
+##Adding points
+
+- The `points` funtion is used to add points to an existing plot
+- We need to give it a set of *x* and *y* coordinates
+- The *x* values are the indices we've jsut computed. 
+- *y* values are obtained by subsetting the *Ozone* variable
+
+```{r}
+newX <- highOzone
+newY <- data$Ozone[newX]
+```
+
+##Adding points
+
+- We use a different colour and character for the points. More on this later
+
+```{r fig.width=8,fig.height=4}
+highOzone <- which(data$Ozone > 100)
+plot(data$Ozone)
+abline(h=100)
+points(newX, newY,col="red",pch=16)
+```
+
+
+
+##Multiple comparisons
+
+- The `plot` function will try and *guess* what plot to make based on the data
+- If given a *data frame* it make pairwise comparisons of all columns
+
+```{r}
+plot(data[,1:4])
+```
+
+##Exercises
+
+- Read the tab-delimited version of the weather data and check the dimensions
+- Plot the *Temperature* variable
+- Which days have a temperature > 90
+- Highlight these days on the scatter plot
+- Plot the Temperature against the Ozone level
+
+##Answers
+
+```{r}
+data2 <- read.delim("data/ozone.txt")
+```
+
+```{r fig.width=8,fig.height=4}
+plot(data$Temp)
+```
+
+##Answers
+
+```{r fig.width=8,fig.height=4}
+highTemp <- which(data$Temp > 90)
+plot(data$Temp)
+newX <- highTemp
+newY <- data$Temp[highTemp]
+abline(h=90)
+points(newX,newY,col="red",pch=16)
+```
+
+##Comments
+- Don't need to create `newX` and `newY` variables
+```{r fig.width=8,fig.height=4}
+plot(data$Temp)
+abline(h=90)
+points(highTemp, data$Temp[highTemp],col="red",pch=16)
+```
+
+##Comments
+
+- Better not to *hard-code* the limit
+
+```{r fig.width=8,fig.height=4}
+tempLim <- 95
+highTemp <- which(data$Temp > tempLim)
+plot(data$Temp)
+abline(h=tempLim)
+points(highTemp, data$Temp[highTemp],col="red",pch=16)
+
+```
+
+##Answers
+
+```{r}
+plot(data$Temp,data$Ozone)
+```
+
+##Comments
+
+- The variables seem to be related. We can quantify the correlation and test for significance
+```{r}
+cor(data$Temp,data$Ozone,use="c")
+cor.test(data$Temp,data$Ozone,use="c")
+```
 
 #Visualising Distributions
 
 ##The dataset
 
 ```{r}
-data <- read.delim("PrismExamples/Column/Plasma level of GP-14858.txt")
+data <- read.delim("data/plasma.txt")
 data
 ```
 
@@ -135,16 +244,29 @@ data
 
 ##The boxplot
 
-```{r}
+```{r fig.width=8,fig.height=4}
 boxplot(data)
 ```
 
 
 ##Plotting individual points
 
-```{r}
+- `vertical = TRUE` ensures the plot is in the same orientation as the boxplot
+
+```{r fig.width=8,fig.height=4}
 stripchart(data,vertical=TRUE)
 ```
+
+##Plotting individual points
+
+- We can *stack* or *jitter* points if required
+
+```{r fig.width=8,fig.height=4}
+stripchart(data,vertical=TRUE,method="jitter")
+```
+
+
+
 
 
 
@@ -158,7 +280,9 @@ beeswarm(data,vertical=TRUE)
 
 ##Overlaying points
 
-```{r}
+- `add=TRUE` argument overlays the stripchart on an existing plot
+
+```{r fig.width=8,fig.height=4}
 boxplot(data)
 stripchart(data,vertical=TRUE,add=TRUE)
 
@@ -178,12 +302,199 @@ summary(data)
 barplot(colMeans(data))
 ```
 
+
+##Adding error bars
+
+```{r echo=FALSE}
+dpPlot <- function(data){
+  
+  mns <- colMeans(data,na.rm=TRUE)
+  sds <- apply(data, 2, sd, na.rm=TRUE)
+  
+  err <- mns + sds
+  xs <- barplot(mns,ylim=c(0, max(err)),axes=F)
+  
+  arrows(xs, mns, xs, err,code=3,angle=90)
+  axis(2,at=pretty(0:floor(max(err))))
+}
+```
+
+```{r}
+dpPlot(data)
+```
+
+
 ##What to do with long data
+
+- Recall our weather data
+- We do not have separate columns for each month
+
+```{r}
+data <- read.csv("data/ozone.csv")
+head(data)
+```
+
+##Boxplot of long data
+
+- Month is a variable in the data frame
+- We use *formula* syntax with the `~` symbol
+
+```{r}
+boxplot(data$Ozone~data$Month)
+```
+
+##Boxplot of long data
+
+```{r}
+boxplot(data$Temp~data$Month)
+```
+
+##stripchart of long data
+
+```{r}
+stripchart(data$Ozone~data$Month,vertical=TRUE)
+```
+
+##Boxplot of long data
+
+```{r}
+boxplot(data$Ozone~data$Month)
+stripchart(data$Ozone~data$Month,vertical=TRUE,add=TRUE)
+```
+
+##Boxplot of long data
+
+- This is equivalent and a bit more concise
+```{r}
+boxplot(Ozone~Month,data)
+stripchart(Ozone~Month,data,vertical=TRUE,add=TRUE)
+```
+
+##Melting a dataset
+
+We can convert a dataset from *wide* to *long* using the `reshape` package
+
+```{r}
+library(reshape2)
+data <- read.delim("data/plasma.txt")
+plasma <- melt(data)
+dim(plasma)
+head(plasma)
+```
+
+##Boxplot of the new data
+
+- Compare to before...
+
+```{r}
+boxplot(value ~ variable,plasma)
+```
 
 
 
 #Count data
 
+##Making a barplot
+
+```{r fig.width=8,fig.height=4}
+clinical <- read.delim("data/NKI295.pdata.txt")
+table(clinical$ER)
+barplot(table(clinical$ER))
+```
+
+##Making a barplot
+```{r fig.width=4,fig.height=4}
+pie(table(clinical$ER))
+```
+
+##Stacking 
+
+```{r fig.width=8,fig.height=4}
+table(clinical$ER,clinical$grade)
+barplot(table(clinical$grade,clinical$ER))
+```
+
+##Stacking 
+
+```{r fig.width=8,fig.height=4}
+table(clinical$ER,clinical$grade)
+barplot(table(clinical$grade,clinical$ER),beside=TRUE)
+```
+
 #Curves
 
 ##Survival curves
+
+To perform a survival analysis we need the following pieces of information
+
+- Time to Event
+- Event (e.g. dead or alive)
+- Group
+
+##Example data
+
+```{r}
+clinical <- read.delim("data/NKI295.pdata.txt")
+
+Event <- clinical$event_death
+Time <- clinical$survival.death.
+Group <- clinical$ER
+
+```
+
+##The survival package
+
+```{r}
+library(survival)
+survData <- Surv(Time, Event)
+survData[1:10]
+```
+
+
+##Making the Survival curve
+
+```{r}
+plot(survfit(survData ~ Group))
+```
+
+##Testing
+
+```{r}
+survdiff(survData~Group)
+```
+
+##Data from Prism
+
+- Survival data in Prism have an annoying format. Time is easily obtained from the table
+
+```{r}
+sData <- read.delim("data/Two groups.txt")
+head(sData)
+Time <- sData$Days.elapsed
+```
+
+##Data from Prism
+
+- However, a bit of fiddling required to get a Event and Group vector
+
+```{r}
+Group <- rep("Control", nrow(sData))
+Group[which(is.na(sData$Control))] <- "Treatment"
+Group
+```
+
+##Data from Prism
+
+```{r}
+Event <- sData$Control
+Event[which(is.na(sData$Control))] <- sData$Treated[which(is.na(sData$Control))]
+Event
+```
+
+##Making the survival curve
+
+```{r}
+survData <- Surv(Time, Event)
+plot(survfit(survData~Group))
+```
+
