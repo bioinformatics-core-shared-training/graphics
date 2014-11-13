@@ -11,6 +11,8 @@ output: beamer_presentation
 ## Introducing the dataset
 These data were obtained from a [Guardian blog of June 2011](http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health).
 
+other [datasets](http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets) are available
+
 ```{r}
 birth <- read.delim("data/UKBirthRate.tsv")
 
@@ -124,28 +126,64 @@ plot(mBirth, fBirth)
 
 ##The dataset
 
+```{r}
+data <- read.delim("PrismExamples/Column/Plasma level of GP-14858.txt")
+data
+```
+
 
 
 ##The boxplot
 
+```{r}
+boxplot(data)
+```
+
 
 ##Plotting individual points
 
+```{r}
+stripchart(data,vertical=TRUE)
+```
+
+
 
 ##Plotting individual points
+```{r}
+library(beeswarm)
+beeswarm(data,vertical=TRUE)
+```
 
 
 
 ##Overlaying points
 
+```{r}
+boxplot(data)
+stripchart(data,vertical=TRUE,add=TRUE)
+
+```
+
+
 ##Summarising the data
 
+```{r}
+summary(data)
+```
 
 
 ##Bar plots
+
+```{r}
+barplot(colMeans(data))
+```
+
+##What to do with long data
 
 
 
 #Count data
 
 #Curves
+
+##Survival curves
