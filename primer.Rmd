@@ -2,10 +2,12 @@
 title: 'Data  Manipulation and Visualisation: An R primer'
 author: "Mark Dunning and Mike Smith"
 date: "09/09/2014"
-output: 
-    html_document:
-        toc: true
-        toc_depth: 3
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
 ---
 
 #Introduction
