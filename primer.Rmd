@@ -787,11 +787,8 @@ paste("Month", 1:12, "is",month.name)
 
 #Plotting
 
+A plot can be created in R simply by calling the `plot` function with a valid R object. However, there are many optional arguments can be altered to change the apperance of the plots; from the title, labels, colour and shapes used to plot, 
 
-
-##The plot function
-
-`plot` is the generic function in R
 
 ###A histogram
 
@@ -861,7 +858,19 @@ We can in fact just specify one vector, in which case the x axis is assumed to b
 plot(mydata[,2])
 ```
 
+By default, a open circle is drawn at each x and y combination. If we wish, we can draw a *line* through the points by using the argument `type="l"`
 
+```{r}
+plot(mydata[,2],type="l")
+```
+
+Or choose to have both a line and the points by specifying `type="b"`
+
+```{r}
+plot(mydata[,2],type="b")
+```
+
+Later on, we will show how to add extra lines and points to this basic plot
 
 ###A bar plot
 
@@ -965,9 +974,17 @@ dev.off()
 
 
 
+
 ###Titles and labels
 
-It is always a good idea to use informative titles and axis labels on your plots. Unfortunately, the default plots produced by R try and *guess* labels from the data, which may not be that useful. 
+It is always a good idea to use informative titles and axis labels on your plots. Unfortunately, the default plots produced by R try and *guess* labels from the data, which may not be that useful. The `plot` function has `main`, `ylab` and `xlab` arguments that can be used to specify these labels (which must be a character vector). Moreover, other plotting functions such as `boxplot`, `barplot` and `histogram` also use the same argument names. 
+
+```{r}
+mydata <- read.delim("PrimerExamples/Linear regression.txt")
+mydata
+plot(mydata[,1],mydata[,2],main="My Title", xlab="X axis", ylab="X axis")
+```
+
 
 ###Specifying Colours
 
