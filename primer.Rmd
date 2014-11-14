@@ -877,24 +877,57 @@ Later on, we will show how to add extra lines and points to this basic plot
 ```{r}
 mydata <- read.csv("PrimerExamples/One-sample t-test.csv")
 mydata
-barplot(mydata[,2])
 
 ```
 
+We can add a name underneath each bar by changing the `names.arg` argument.
+
 ```{r}
-rownames(mydata) <- mydata[,1]
-barplot(mydata[,2])
+barplot(mydata[,2],names.arg=mydata[,1])
+```
+
+However, the default positioning of the labels is parallel to the axis and not all of the labels will fit in this space. We can change the orientation of the labels using the `las` argument. 0:= always parallel to the axis [default], 1:
+=always horizontal,2:=always perpendicular to the axis,3:=always vertical.
+
+```{r}
+barplot(mydata[,2],names.arg=mydata[,1],las=2)
 ```
 
 
 ###A boxplot
 
+The boxplot is a convenient way of comparing the distributions of numeric data. If given a numeric matrix, or data frame, it will display the summary statistics of each column in a separate box.
+
 ```{r}
-mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
-mydata
+mydata <- matrix(rnorm(100),ncol=10)
 boxplot(mydata)
 ```
 
+```{r}
+
+boxplot(mydata,outline = FALSE)
+```
+
+
+The title and axis labels can be modified in the [usual manner](#titles-and-axis-labels).
+
+```{r}
+boxplot(mydata,outline = FALSE,main="My boxplot", xlab="Columns")
+```
+
+A boxplot can also be generated if our data are in *long* rather than *wide* format. One such dataset is the `mtcars` dataset, which is one of the built-in datasets in R.
+
+One of the variables, `cyl` can only take certain values and is therefore a *categorical* variable. We can therefore use it to split our observations into different groups. The `mpg` variable (miles-per-gallon) is continuous. By treating the data in an appropriate way, we can get the distribution of `mpg` values for each distinct value of `cyl` in the data. Such an aggregation is done by specifying a *formula* using the `~` operator; the expression `mtcars$mpg~mtcars$cyl` does just this.
+
+```{r}
+data(mtcars)
+head(mtcars)
+str(mtcars)
+length(mtcars$mpg)
+length(mtcars$cyl)
+table(mtcars$cyl)
+boxplot(mtcars$mpg~mtcars$cyl)
+```
 
 
 
@@ -995,28 +1028,91 @@ barplot(randMat[,1], main="Barplot of random values",ylab="Value",xlab="Column")
 
 ```{r}
 hist(randMat[,1],main="A random histogram", xlab="Value", ylab="Frequency of value")
+
 ```
 
 Functions such as `points`, `lines`, `text` and `abline` cannot modify the title or axis labels. We can set the plot title to be blank (the empty string `""`) at the time the plot is created, and add a title manually later-on using the `title` function. The following also demonstrates that the colour and font of the title can be modified.
 
 ```{r}
-plot(cars, main = "")
-title(main = list("Stopping Distance versus Speed", cex = 1.5,
+plot(randMat, main = "")
+title(main = list("Pairwise plots of the random matrix", cex = 1.5,
                    col = "red", font = 3))
 ```
 
-###Rotating axes
-
 ###Adding custom axes
 
-Sometimes you might not like the axes that R creates.
+It is possible to create your own axes. First, you can to create a plot with the `axes=FALSE` argument. You will see in the resulting plot that no axes are plotted
 
+```{r}
+plot(randMat, axes=FALSE)
+```
 
+We can use the `axis` function to plot an axis at each side of the plot (1=below, 2=left, 3=above and 4=right). Each time the `axis` function is called, a new axis is overlaid on the current plot.
 
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+```
 
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+axis(2)
+```
 
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+axis(2)
+axis(3)
+```
 
-###Text in the margins (`mtext`)
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+axis(2)
+axis(3)
+axis(4)
+```
+
+You don't need to specify an axis for each side of the plot. The `box` function will enclose the remaining sides without giving an axis.
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(2)
+box()
+```
+
+The font and colour of each axis can also be changed
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1,font=1,col="red")
+axis(2,font=2,col="orange")
+axis(3,font=3,col="yellow")
+axis(4,font=4,col="blue")
+```
+
+We can change the position and labels of the tick marks
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1,font=1,col="red",at=seq(0,1,length.out = 4))
+axis(2,font=2,col="orange",at=seq(0,1,length.out = 5),labels=letters[1:5])
+axis(3,font=3,col="yellow",at=seq(0,1,length.out = 6),labels=month.name[1:6])
+axis(4,font=4,col="blue",at=seq(0.2,1,length.out = 3),labels=c("Low","Medium","High"))
+```
+
+The tick labels can be rotated so that they are perpendicular to the axis
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1,font=1,col="red",at=seq(0,1,length.out = 4),las=2)
+axis(2,font=2,col="orange",at=seq(0,1,length.out = 5),labels=letters[1:5],las=2)
+axis(3,font=3,col="yellow",at=seq(0,1,length.out = 6),labels=month.name[1:6])
+axis(4,font=4,col="blue",at=seq(0.2,1,length.out = 3),labels=c("Low","Medium","High"),las=2)
+```
+
 
 ###Specifying Colours
 
@@ -1117,6 +1213,21 @@ abline(v=5,col="orange",lty=3,lwd=10)
 
 ```
 
+The `grid` function can be used to draw horizontal and vertical lines at regular intervals in the background.
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+grid()
+```
+
+The colour of the grid lines can be changed in the [usual way](#specifying-colours). 
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+grid(col="steelblue")
+```
+
+
 Another use for the `abline` function is to specify an intercept and coefficient for the line (the *a* and *b* in the `abline` name). For instance, if we wanted the line corresponding to equality of two vectors, *y = x*, we can say.
 
 ```{r}
@@ -1206,18 +1317,127 @@ text(1:10, y= seq(0.6,-0.2,length.out = 10),labels = LETTERS[1:10],col="orange")
 
 ```
 
+###Adding a legend
+
+The `legend` function can be used to add a legend to an existing plot. In the following example, we generate a random matrix and plot the second, third and fourth columns against the first. We use red circles, blue squares and orange triangles respectively to represent these variabes. We can define the x and y coordinates of where the legend will appear. Alternatively, the strings `topleft`, `topright`, `bottomleft` and `bottomright` are conveniant shortcuts. The names to be used in the legend are defined by the `legend` argument, and we can also define the relevant colours and plotting characters.
+
+
+```{r}
+randMat <- matrix(rnorm(100),ncol=10)
+plot(randMat[,1],randMat[,2],ylim=c(-3,3),pch=16,col="red",xlab="Column1",ylab="y")
+points(randMat[,1],randMat[,3], pch=15,col="steelblue")
+points(randMat[,1],randMat[,4], pch=17,col="chocolate3")
+
+legend("topright", legend=c("Column 2", "Column 3","Column 4"), col = c("red", "steelblue", "chocolate3"), pch=c(16,15,17))
+```
+
+```{r}
+plot(randMat[,1],randMat[,2],ylim=c(-3,3),pch=16,col="red",xlab="Column1",ylab="y")
+points(randMat[,1],randMat[,3], pch=15,col="steelblue")
+points(randMat[,1],randMat[,4], pch=17,col="chocolate3")
+
+legend("topleft", legend=c("Column 2", "Column 3","Column 4"), col = c("red", "steelblue", "chocolate3"), pch=c(16,15,17))
+```
+
+A legend can be added to all types of plots; as shown here for a [boxplot](#a-boxplot).
+
+```{r}
+boxplot(randMat[,1:4],col=c("bisque1", "red", "steelblue","chocolate3"))
+legend("bottomright", legend=c("Column 1", "Column 2", "Column 3","Column 4"),fill= c("bisque1","red", "steelblue", "chocolate3"))
+
+```
+
+###Text in the margins
+
+Sometimes, we want to add annotations to the plot outside of the plotting window. This can be achieved by using the `mtext` function. We use the [paste](#paste) function to construct our labels and have to specify the x coordinates at which to put the text. The `line` argument specifies how far from the border of the plot to plot to write the text.
+
+```{r}
+data(mtcars)
+boxplot(mtcars$mpg~mtcars$cyl)
+table(mtcars$cyl)
+labs <- paste("n=", table(mtcars$cyl))
+labs
+mtext(side=3, at=1:3,text=labs,line=2,col="blue",font=3)
+```
+
+In the above example, we set the x coordinates to be 1,2,3 because we had three groups in the boxplot. Unfortunately, the `barplot` function does not place the centers of the bars in such a uniform manner.
+
+```{r}
+barplot(1:10)
+box()
+mtext(side=1, at=1:10,text=LETTERS[1:10])
+```
+
+To get around this, we can assign the result of `barplot` to a variable. This variable then contains the midpoints of each bar, which we can then use as input for the `mtext` function.
+
+```{r}
+bp <- barplot(1:10)
+bp
+box()
+mtext(side=1, at=bp,text=LETTERS[1:10])
+```
+
+
 
 ##The `par` function 
 
+The `par` function can be used to alter various graphical parameters. These parameters will be applied to the next plot to be created. We will now go through some of the most-popular uses of the par function. For a comprehensive list of parameters that can be changed, see the help page for `par`; `?par`.
+
 ###Adding extra space around a plot
+
+Taking the `mtcars` dataset as an example, we can sometimes create a plot where they is not adequate space to fit all the labels. Here we make a barplot of the `mpg` variable and [modify the axes](#adding-custom-axes). However, we see there is not enough room to fit the labels
+
+```{r}
+data(mtcars)
+barplot(mtcars$mpg,names.arg = rownames(mtcars),las=2)
+```
+
+We can use the `par` function before the plot is created to give us more room. The variable we need to change is `mar` which should be a vector of length 4; referring to the amount of space 1) below 2) left 3) above 4) to the right. The default setting is `c(1,1,1,1)` which gives one line of space at each edge of the plot. In this example, we allow more lines below the plot.
+
+```{r}
+data(mtcars)
+par(mar=c(8,2,1,1))
+barplot(mtcars$mpg,names.arg = rownames(mtcars),las=2)
+```
+
 
 ###Combining multiple plots
 
-`par(mfrow=c...)`
+The `mfrow` variable can be set by the `par` function, which will change the layout of future plots. It requires a vector of length 2 corresponding to how many *rows* and *columns* the plotting device is divided into. The following arranges the plotting window into 3 rows and 1 column
 
-###Adding a legend
 
-`legend("topleft"....)
+```{r}
+data(mtcars)
+par(mfrow=c(3,1)) 
+hist(mtcars$wt)
+hist(mtcars$mpg)
+hist(mtcars$disp)
+```
+
+Similarly, we could have 1 row and 3 columns;
+
+```{r}
+data(mtcars)
+par(mfrow=c(1,3)) 
+hist(mtcars$wt)
+hist(mtcars$mpg)
+hist(mtcars$disp)
+```
+
+We are not restricted to having the same type of plot, or even the same dataset plotted in each cell.
+
+```{r}
+data(mtcars)
+randMat <- matrix(rnorm(100),ncol=10)
+par(mfrow=c(1,3)) 
+hist(mtcars$wt,main="Histogram of wt")
+barplot(mtcars$mpg, main="barplot of miles per gallon")
+boxplot(randMat, main="boxplot of random matrix")
+```
+
+
+
+
 
 #Statistical Analysis
 
