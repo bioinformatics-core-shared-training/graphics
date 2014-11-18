@@ -777,9 +777,36 @@ paste("Hello", "World")
 paste("Month", 1:12, "is",month.name)
 ```
 
+```{r}
+paste("The number of letters in ", month.name , "is", nchar(month.name))
+```
+
+```{r}
+paste(month.name, nchar(month.name), sep=":")
+```
+
+
 ##Long versus wide format
 
 ##Calculating summary statistics
+
+
+```{r}
+mydata <- matrix(runif(1000),ncol=5)
+summary(mydata)
+```
+
+```{r}
+colMeans(mydata)
+rowMeans(mydata)
+```
+
+
+```{r}
+IQR(mydata[,1])
+sd(mydata[,1])
+```
+
 
 ##apply, tapply, aggregate
 
@@ -872,6 +899,9 @@ plot(mydata[,2],type="b")
 
 Later on, we will show how to add extra lines and points to this basic plot
 
+###Pie chart
+
+
 ###A bar plot
 
 ```{r}
@@ -893,15 +923,61 @@ However, the default positioning of the labels is parallel to the axis and not a
 barplot(mydata[,2],names.arg=mydata[,1],las=2)
 ```
 
+The `colMeans` function can be used to calculate the *mean* of each column in a data frame, and returns the result as *vector*. Consequently, we can plot this vector as a barplot. Here we illustrate by first creating a matrix of random numbers.
+
+```{r}
+mydata <- matrix(rnorm(100),ncol=10)
+means <- colMeans(mydata)
+barplot(means)
+```
+
+The [A.B.M](http://lib.stat.cmu.edu/S/Harrell/data/descriptions/abm.html) dataset describes cases of Acute Bacerial Meningitis. 
+
+```{r}
+abm <- read.csv("data//ABM.csv")
+head(abm)
+dim(abm)
+table(abm$sex)
+barplot(table(abm$sex))
+```
+
+We can notice from the table and plot that a third gender category has been included; `.`. In this dataset, the `.` character is being used to represent a missing value. We can change this behaviour at the point of reading the data by changing the `na.strings` argument to `read.csv`. 
+
+```{r}
+abm <- read.csv("data//ABM.csv",na.strings=".")
+table(abm$sex)
+barplot(table(abm$sex))
+```
+
+```{r}
+table(abm$sex,abm$race)
+
+barplot(table(abm$sex,abm$race))
+barplot(table(abm$sex,abm$race),beside=TRUE)
+        
+```
+
+The plot can be improved by [adding a legend](#adding-a-legend) and some [colour](#specifying-colours).
+
+```{r}
+barplot(table(abm$sex,abm$race),beside=TRUE,col=c("red","blue"))
+legend("topright", fill=c("red","blue"),legend=c("female","male"))
+```
+
+###'dynamite-plunger' plot
+
+
 
 ###A boxplot
 
-The boxplot is a convenient way of comparing the distributions of numeric data. If given a numeric matrix, or data frame, it will display the summary statistics of each column in a separate box.
+The boxplot is a convenient way of comparing the distributions of numeric data. If given a numeric matrix, or data frame, it will construct a box from the quartiles of the data . The whiskers are plotted at 1.5 times the inter-quartile range. Outliers are defined to be more than 1.5 times away from the box and plotted as circle.
 
 ```{r}
 mydata <- matrix(rnorm(100),ncol=10)
 boxplot(mydata)
 ```
+
+Outliers can be omitted from the plotting
 
 ```{r}
 
@@ -909,11 +985,14 @@ boxplot(mydata,outline = FALSE)
 ```
 
 
+
 The title and axis labels can be modified in the [usual manner](#titles-and-axis-labels).
 
 ```{r}
 boxplot(mydata,outline = FALSE,main="My boxplot", xlab="Columns")
 ```
+
+
 
 A boxplot can also be generated if our data are in *long* rather than *wide* format. One such dataset is the `mtcars` dataset, which is one of the built-in datasets in R.
 
@@ -928,6 +1007,25 @@ length(mtcars$cyl)
 table(mtcars$cyl)
 boxplot(mtcars$mpg~mtcars$cyl)
 ```
+
+A boxplot can sometimes be misleading, as it does not provide any information about how many observations are in each group. One thing we can do is adjust the widths of the bars to reflect the differing number of observations.
+
+```{r}
+mydata[1:7,1] <- NA
+boxplot(mydata, varwidth = TRUE)
+```
+
+###Dotchart / stripchart
+
+```{r}
+mydata <- matrix(rnorm(100),ncol=10)
+boxplot(mydata)
+stripchart(as.data.frame(mydata),add=TRUE,vertical=TRUE)
+```
+
+dotchart(mydata,vertical=TRUE)
+
+##Survival Curve
 
 
 
@@ -1004,9 +1102,6 @@ dev.off()
 
 
 ##Changing the plot appearance
-
-
-
 
 ###Titles and axis labels
 
