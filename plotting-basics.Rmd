@@ -5,7 +5,6 @@ date: "12/12/2014"
 output: beamer_presentation
 ---
 
-
 #The scatter plot
 
 ## Introducing the dataset
@@ -16,13 +15,23 @@ These data were obtained from the [supplementary data](http://faculty.washington
 if(!file.exists("data/ozone.csv")) download.file(url = "http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/ozone.csv", destfile = "data/ozone.csv")
 ```
 
+
+You can load these data into Excel for reference
+
+##Reading the data
+
+To import these data into R we use the `read.csv` function, which will create a *data-frame* representation
+
 ```{r}
 data <- read.csv("data/ozone.csv")
 ```
 
+
 ## Exploring the data
 
-You should *always check* that the data have been imported correctly.
+You should **always check** that the data have been imported correctly by previewing and checking the *dimensions*.
+
+
 ```{r}
 head(data)
 dim(data)
@@ -39,13 +48,14 @@ str(data)
 
 The data are stored in a data frame. These are subset using square brackets `[]`
 
+e.g. print rows 1 to 10 from the first column
 ```{r}
 data[1:10,1]
 ```
 
 ##Data representation
 
-We can get particular columns and rows by *omitting* the row or column index. The result is a `vector`
+We can get entire columns and rows by *omitting* the row or column index. The result is a `vector`
 
 ```{r}
 data[1,]
@@ -61,6 +71,13 @@ dim(data)
 data[1,]
 dim(data)
 ```
+
+##About NA
+
+- You may have noticed some `NA` entries in the vector
+- This is R's way of denoting *missing values*
+
+
 
 ##Assignment to a variable
 
@@ -99,7 +116,7 @@ plot(data$Ozone)
 ##Scatter plots 
 
 - We have `r nrow(data)` points on the plot
-- Axis labels, points, title and colours can be altered
+- Axis labels, points, title and colours can be altered (see later)
 
 ```{r fig.width=8,fig.height=4}
 plot(data$Ozone)
@@ -115,47 +132,6 @@ plot(data$Ozone)
 plot(data$Ozone,data$Wind)
 ```
 
-##Adding lines
-
-```{r fig.width=8,fig.height=4}
-plot(data$Ozone)
-abline(v= c(50,100,150))
-abline(h=100)
-```
-
-##Adding points
-
-- Suppose we are interested in days with Ozone level over 100
-- We can form a *logical* vector and get the `TRUE` values using the `which` function
-
-```{r}
-highOzone <- which(data$Ozone > 100)
-data[highOzone,]
-```
-
-##Adding points
-
-- The `points` funtion is used to add points to an existing plot
-- We need to give it a set of *x* and *y* coordinates
-- The *x* values are the indices we've jsut computed. 
-- *y* values are obtained by subsetting the *Ozone* variable
-
-```{r}
-newX <- highOzone
-newY <- data$Ozone[newX]
-```
-
-##Adding points
-
-- We use a different colour and character for the points. More on this later
-
-```{r fig.width=8,fig.height=4}
-highOzone <- which(data$Ozone > 100)
-plot(data$Ozone)
-abline(h=100)
-points(newX, newY,col="red",pch=16)
-```
-
 
 
 ##Multiple comparisons
@@ -167,80 +143,25 @@ points(newX, newY,col="red",pch=16)
 plot(data[,1:4])
 ```
 
-##Exercises
-
-- Read the tab-delimited version of the weather data and check the dimensions
-- Plot the *Temperature* variable
-- Which days have a temperature > 90
-- Highlight these days on the scatter plot
-- Plot the Temperature against the Ozone level
-
-##Answers
-
-```{r}
-data2 <- read.delim("data/ozone.txt")
-```
-
-```{r fig.width=8,fig.height=4}
-plot(data$Temp)
-```
-
-##Answers
-
-```{r fig.width=8,fig.height=4}
-highTemp <- which(data$Temp > 90)
-plot(data$Temp)
-newX <- highTemp
-newY <- data$Temp[highTemp]
-abline(h=90)
-points(newX,newY,col="red",pch=16)
-```
-
-##Comments
-- Don't need to create `newX` and `newY` variables
-```{r fig.width=8,fig.height=4}
-plot(data$Temp)
-abline(h=90)
-points(highTemp, data$Temp[highTemp],col="red",pch=16)
-```
-
-##Comments
-
-- Better not to *hard-code* the limit
-
-```{r fig.width=8,fig.height=4}
-tempLim <- 95
-highTemp <- which(data$Temp > tempLim)
-plot(data$Temp)
-abline(h=tempLim)
-points(highTemp, data$Temp[highTemp],col="red",pch=16)
-
-```
-
-##Answers
-
-```{r}
-plot(data$Temp,data$Ozone)
-```
-
-##Comments
-
-- The variables seem to be related. We can quantify the correlation and test for significance
-```{r}
-cor(data$Temp,data$Ozone,use="c")
-cor.test(data$Temp,data$Ozone,use="c")
-```
 
 #Visualising Distributions
 
 ##The dataset
+
+We have made some observations of cell in different conditions
+
+- Three different groups (categories) in the dataset
+- Repeated measurements for each group
+- Are the data distributed differently in the different groups?
 
 ```{r}
 data <- read.delim("data/plasma.txt")
 data
 ```
 
+##The data
 
+The data are stored in a data frame
 
 ##The boxplot
 
@@ -264,11 +185,6 @@ stripchart(data,vertical=TRUE)
 ```{r fig.width=8,fig.height=4}
 stripchart(data,vertical=TRUE,method="jitter")
 ```
-
-
-
-
-
 
 ##Plotting individual points
 ```{r}
@@ -298,8 +214,22 @@ summary(data)
 
 ##Bar plots
 
-```{r}
+To display the data as a barplot, we need to compute the mean of each *column*. The `colMeans` function is convenient for this.
+
+```{r fig.width=8,fig.height=4}
 barplot(colMeans(data))
+```
+
+N.B. see also `rowMeans`, `colSums`, `rowSums`
+
+##Calculating error bars
+
+To add *error bars* we need to calculate the standard deviations
+
+```{r}
+sd(data$Untreated)
+sd(data$Placebo)
+sd(data$Treated)
 ```
 
 
@@ -321,6 +251,19 @@ dpPlot <- function(data){
 
 ```{r}
 dpPlot(data)
+```
+
+
+##We can still overlay points
+
+```{r echo=FALSE,fig.show='hide'}
+bp <- barplot(colMeans(data))
+
+```
+
+```{r echo=FALSE}
+dpPlot(data)
+points(rep(bp, each=nrow(data)), unlist(data))
 ```
 
 
@@ -463,38 +406,11 @@ plot(survfit(survData ~ Group))
 survdiff(survData~Group)
 ```
 
-##Data from Prism
+##Growth Curve
 
-- Survival data in Prism have an annoying format. Time is easily obtained from the table
-
-```{r}
-sData <- read.delim("data/Two groups.txt")
-head(sData)
-Time <- sData$Days.elapsed
-```
-
-##Data from Prism
-
-- However, a bit of fiddling required to get a Event and Group vector
 
 ```{r}
-Group <- rep("Control", nrow(sData))
-Group[which(is.na(sData$Control))] <- "Treatment"
-Group
-```
-
-##Data from Prism
-
-```{r}
-Event <- sData$Control
-Event[which(is.na(sData$Control))] <- sData$Treated[which(is.na(sData$Control))]
-Event
-```
-
-##Making the survival curve
-
-```{r}
-survData <- Surv(Time, Event)
-plot(survfit(survData~Group))
+data <- read.delim("PrimerExamples/Linear regression.txt")
+head(data)
 ```
 

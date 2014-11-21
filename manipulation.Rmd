@@ -1,0 +1,101 @@
+---
+title: "Data Manipulation"
+author: "Mark Dunning"
+date: "20/11/2014"
+output: beamer_presentation
+---
+
+##Calculating new variables
+
+```{r}
+data <- read.csv("data/ozone.csv")
+TempCelc <- (data$Temp - 32)/1.8
+plot(TempCelc)
+```
+
+
+##General Subsetting
+
+- We have already seen how to subset using numeric indexes
+- We can also subset using *logical* vectors
+- i.e. a vector of `TRUE` or `FALSE` values
+- The `TRUE` or `FALSE` values can be derived from a test such as
+  - `<`, `>`, `==`
+- Mulitple conditions can be tested using `&` (`and`)  `|` (*or*)
+
+## Revisit the ozone dataset
+
+```{r}
+data <- read.csv("data/ozone.csv")
+```
+
+## Adding points
+
+- Suppose we are interested in days with Ozone level over 100
+- We can form a *logical* vector and get the `TRUE` values using the `which` function
+
+```{r}
+highOzone <- which(data$Ozone > 100)
+data[highOzone,]
+```
+
+## Adding points
+
+- The `points` funtion is used to add points to an existing plot
+- We need to give it a set of *x* and *y* coordinates
+- The *x* values are the indices we've jsut computed. 
+- *y* values are obtained by subsetting the *Ozone* variable
+
+```{r}
+newX <- highOzone
+newY <- data$Ozone[newX]
+```
+
+## Adding points
+
+- We use a different colour and character for the points. More on this later
+
+```{r fig.width=8,fig.height=4}
+highOzone <- which(data$Ozone > 100)
+plot(data$Ozone)
+abline(h=100)
+points(newX, newY,col="red",pch=16)
+```
+
+##Combining data from files
+
+- Each row corresponds to a *gene*
+- Each column is a *sample*
+
+```{r}
+evalues <- read.delim("data/NKI295.exprs.txt")
+dim(evalues)
+evalues[1:5,1:5]
+```
+
+##Clinical data
+
+- Each row is a *sample*
+- Each column is a different *clinical* variable
+
+```{r}
+clindata <- read.delim("data/NKI295.pdata.txt")
+clindata[1:5,1:5]
+```
+
+##Gene annotation
+
+- Each row is a *gene* in the experiment
+- Each column is *annotation* about that gene
+
+```{r}
+annodata <- read.delim("data/NKI295.fdata.txt")
+annodata[1:5,1:5]
+```
+
+##Example analyses
+
+- Extract the expression values for a given gene
+- Extract the arrays representing a particular clinical subgroup
+- Plot gene expression against particular clinical variables
+- Compare expression of one gene against another
