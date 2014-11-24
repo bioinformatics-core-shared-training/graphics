@@ -1,0 +1,205 @@
+---
+title: "Customising a Plot"
+author: "Mark Dunning"
+date: "20/11/2014"
+output: beamer_presentation
+---
+
+#Outline
+
+
+# Changing how a plot is created
+
+## Specifying extra arguments to plot
+
+- The `plot` function creates a very basic plot
+- Many optional arguments can be specified See `?plot`
+
+##Lets re-visit the ozone dataset
+
+The default plots are ugly; No title, Meaningless labels, No colour
+
+```{r fig,width=4,fig.height=4}
+data <- read.csv("data/ozone.csv")
+plot(data[,1],data[,2])
+```
+
+
+##Use of colours
+
+```{r}
+plot(data[,1],col="red")
+```
+
+##Plotting characters
+
+```{r}
+plot(data[,1], pch=16)
+```
+
+##Size of points
+
+```{r}
+plot(data[,1], cex=2)
+```
+
+```{r}
+plot(data[,1], cex=0.2)
+```
+
+
+##Adding a title
+
+```{r}
+plot(data[,1], 
+     main="Relationship between ozone level and Solar")
+```
+
+
+##Axis labels
+
+```{r}
+plot(data[,1], xlab="Ozone level")
+```
+
+##Axis labels
+
+```{r}
+plot(data[,1], ylab="Solar")
+```
+
+##Axis limits
+
+```{r}
+plot(data[,1], ylim=c(50,150))
+```
+
+
+##Multiple options at the same time
+
+```{r eval=FALSE,fig.width=4,fig.height=4}
+plot(data[,1], pch=16,col="red",
+     main="Relationship between ozone level and Solar",
+     xlab="Ozone level",
+     ylab="Solar")
+
+```
+
+##Multiple options at the same time
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+plot(data[,1], pch=16,col="red",
+     main="Relationship between ozone level and Solar",
+     xlab="Ozone level",
+     ylab="Solar")
+
+```
+
+
+##Applicable to other types of plot
+
+```{r eval=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+data
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col=c("red","blue","green"))
+```
+
+##Applicable to other types of plot
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col=c("red","blue","green"))
+```
+
+
+
+# Modifying an existing plot
+
+##Initial plot
+
+```{r}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+```
+
+##The points function
+
+- `points` can be used to set of points to an *existing* plot
+- it requires a vector of x and y coordinates
+- Note that axis limits of the existing plot are not altered
+
+##Adding points
+
+```{r}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind)
+```
+
+##Adding points
+
+`points` can also use the `pch`, `col` arguments. Useful for distinguishing between variables
+
+```{r fig.height=4,fig.width=8}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind,pch=15,col="red")
+```
+
+
+##Adding points
+
+- Each set of points can have a different colour and shape
+- Axis labels and title and limits are defined by the plot
+- You can add points ad-nauseum. Try not to make the plot cluttered!
+- A call to `plot` will start a new graphics window
+
+```{r fig.height=4,fig.width=8}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+```
+
+
+
+##Adding points
+
+- Be careful about the order in which you add points
+
+```{r fig.height=4,fig.width=8}
+plot(data$Ozone, data$Wind,pch=16)
+points(data$Ozone, data$Solar.R,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+```
+
+##Adding points
+
+- Can define suitable axis limits in initial plot
+
+```{r fig.height=4,fig.width=8}
+plot(data$Ozone, data$Wind,pch=16,ylim=c(0,350))
+points(data$Ozone, data$Solar.R,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+```
+
+
+
+
+
+
+## Adding a legend
+
+```{r fig.height=4,fig.width=8}
+plot(data$Ozone, data$Wind,pch=16,ylim=c(0,350))
+points(data$Ozone, data$Solar.R,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+legend("topright", legend=c("Solar","Wind","Temp"), col="black", pch=c(16,15,17))
+```
+
+
+
+# Combining multiple plots
+
