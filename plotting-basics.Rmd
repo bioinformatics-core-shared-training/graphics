@@ -368,6 +368,11 @@ barplot(table(clinical$grade,clinical$ER),beside=TRUE)
 
 ##Survival curves
 
+![Survival Curve](images//Surv.jpg)
+
+##Survival curves
+
+
 To perform a survival analysis we need the following pieces of information
 
 - Time to Event
@@ -408,9 +413,27 @@ survdiff(survData~Group)
 
 ##Growth Curve
 
+Goal is to produce following 
+![Growth Curve](images//LinearRegression.jpg)
+
+##Growth Curve
 
 ```{r}
 data <- read.delim("PrimerExamples/Linear regression.txt")
 head(data)
 ```
+
+##Thinking about the data
+
+Variables in the data 
+
+- Time 
+- Count 
+- Group (Control vs Treatment)
+
+Want to visualise difference in treatment over time
+
+
+##Procedure
+
 
