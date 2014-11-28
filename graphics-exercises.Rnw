@@ -1,0 +1,66 @@
+%\VignetteIndexEntry{Strings and Ranges Practical}
+%\VignettePackage{GeneticsHTSCourse}
+%\VignetteEngine{knitr::knitr}
+
+% To compile this document
+% library('knitr'); rm(list=ls()); knit('DESeq2.Rnw')
+
+\documentclass[12pt]{article}
+\usepackage{wasysym,marvosym}
+\newcommand{\usecase}{\textit{\textbf{Use Case: }}}
+\newcommand{\exercise}{\textit{\textbf{Exercise: }}}
+\newcommand{\notebell}{\bell}
+\newcommand{\noteright}{\Pointinghand}
+\newcommand{\textinfo}{\Info}
+<<knitr, echo=FALSE, results="hide">>=
+library("knitr")
+opts_chunk$set(tidy=FALSE,dev="png",fig.show="hide",
+               fig.width=4,fig.height=4.5,
+               message=FALSE,eval=F)
+@ 
+
+<<style, eval=TRUE, echo=FALSE, results="asis">>=
+BiocStyle::latex()
+@
+
+\usepackage{ifthen} 
+\newboolean{includethis} 
+\setboolean{includethis}{true} 
+\newcommand{\ifinclude}[1]{\ifthenelse{\boolean{includethis}}{#1}{}} 
+
+\title{Exercises}
+
+\author{Mark Dunning}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+
+\tableofcontents
+
+\section{Plotting basics}
+
+\exercise Read the 'tab-delimited' version of the ozone data into R. You will find this in the data folder
+
+<<>>=
+ozone <- read.delim("data/ozone.txt",sep=" ",header=FALSE)
+dim(ozone)
+head(ozone)
+@
+
+
+
+\exercise Plot the weather variable
+
+\exercise Read the birth rate data
+
+<<>>=
+births <- read.delim("data/UKBirthRate.tsv")
+head(births)
+@
+
+
+
+\end{document}
