@@ -42,23 +42,52 @@ BiocStyle::latex()
 
 \section{Plotting basics}
 
-\exercise Read the 'tab-delimited' version of the ozone data into R. You will find this in the data folder
+\subsection{Weather Data}
+
+\exercise Read the ozone data into your Rstudio. You will find this in the data folder
 
 <<>>=
-ozone <- read.delim("data/ozone.txt",sep=" ",header=FALSE)
+ozone <- read.csv("data/ozone.csv")
 dim(ozone)
 head(ozone)
 @
 
 
 
-\exercise Plot the weather variable
+\exercise Make a Scatter Plot of the temperature variable
 
-\exercise Read the birth rate data
+<<>>=
+plot(ozone$Temp)
+
+@
+
+\subsection{Birth Rate data}
+
+\exercise Data describing birth rates of males and females are given in the file 'UKBirthRate.tsv'. What function do you think you would use to read these data? Using your chosen function, read these data into RStudio and check the dimensions.
 
 <<>>=
 births <- read.delim("data/UKBirthRate.tsv")
+dim(births)
 head(births)
+@
+HINT: You should get 243 columns and 4 rows.
+
+\subsection{A.B.M data}
+
+\exercise
+
+<<>>=
+abm <- read.csv("data//ABM.csv")
+@
+
+
+\subsection{Liver data}
+
+http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/liverdoc.txt
+
+<<>>=
+liver <- read.delim("http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/liver.txt")
+
 @
 
 
