@@ -1211,7 +1211,7 @@ axis(4,font=4,col="blue",at=seq(0.2,1,length.out = 3),labels=c("Low","Medium","H
 
 ###Specifying Colours
 
-The simplest way of specifying a colour in R is to use a pre-defined character string. There are `r length(colors())` preset values you can use, which can be printed to the screen using the `colors` function.
+The simplest way of specifying a colour in R is to use a pre-defined character string. There are `r length(colors())` preset values you can use, and their names can be printed to the screen using the `colors` function.
 
 ```{r eval=FALSE}
 colors()
@@ -1226,10 +1226,14 @@ library(RColorBrewer)
 display.brewer.all()
 ```
 
+You can pick one of these palette using the `brewer.pal()` function, where we specify first the number of distinct colours we want and then the name of the palette taken from the list in the image above.
+
+To use the colours in a figure, most plotting functions include the argument `col` to indicate the colours you wish to use.
+
 ```{r}
 mypal <- brewer.pal(8, "Set1")
 mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
-plot(mydata[,1],col=mypal)
+plot(mydata[,1], col = mypal, pch = 19)
 ```
 
 If you wish to use Cancer Research Uk or Cambridge University branding, you can use the colours defined in the `crukCIMisc` package. This package includes a function, `CRUKcol` which can be used to generate the Cancer Research UK blue or pink colours.
@@ -1247,6 +1251,8 @@ boxplot(mydata, col=c(CRUKcol("Blue"),CRUKcol("Pink")))
 ```
 
 ###Plotting characters and their values
+
+You may have noticed that in some of the example scatter plots above not only the colour of the points has been changing, but also the shape that is being drawn.  The default is an open circle, but R has a variety of alternative shapes, which are listed in the diagram below.
 
 ```{r echo=FALSE}
 par(mar=c(0.1,0.1,0.1,0.1))
@@ -1266,10 +1272,9 @@ We can specify a new plotting character using the `pch` argument. For example `p
 ```{r}
 mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
 plot(mydata[,1],pch=16)
-
 ```
 
-Rather than being a single value, `pch` can be a vector of values
+Rather than being a single value, `pch` can be a vector of values that will be cycled through as each data point is plotted.
 
 ```{r}
 mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
@@ -1641,7 +1646,7 @@ When using a single set of brackets on a list, R will return another (probably s
 list2[c(1,3)]
 ```
 
-This makes sense if you're interested in getting a few entries but can be a little unintuative if you're only interested in a single element.  Asking for a single entry in the manner shown above will still retrun a list.  If you wish to reference an element directly you use the double braket notation.  This difference is demonstrated in the example below, where we use the function `is()` to ask R what type of object we've got.  
+This makes sense if you're interested in getting a few entries but can be a little unintuative if you're only interested in a single element.  Asking for a single entry in the manner shown above will still return a list.  If you wish to reference an element directly you use the double braket notation.  This difference is demonstrated in the example below, where we use the function `class()` to ask R what type of object we've got.  
 
 ```{r}
 class( list1[1] )
