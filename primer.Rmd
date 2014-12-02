@@ -1277,13 +1277,11 @@ plot(mydata[,1],pch=16)
 Rather than being a single value, `pch` can be a vector of values that will be cycled through as each data point is plotted.
 
 ```{r}
-mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
 plot(mydata[,1],pch=1:nrow(mydata))
-
 ```
 
 
-###Adding lines, text, points to a plot
+###Adding lines, points to a plot
 
 Once a plot has been created, we have various options to modify it. Firstly we can add vertical and horzontal lines to the plot using `abline` (read as *ab line*) with the `v` and `h` arguments respectively. Here we construct a scatter plot as before, and 
 
@@ -1304,11 +1302,11 @@ abline(v=5,col="orange")
 
 ```
 
-A dotted line be drawn by specifying `lty=2` and the width can be changed using the `lwd` argument.
+A dotted line be drawn by specifying `lty=2` (line type) and the width can be changed using the `lwd`(line width) argument.
 
 ```{r}
 plot(mydata[,1],pch=1:nrow(mydata))
-abline(h=1000,col="steelblue",lty=2,lwd=5)
+abline(h=1000, col="steelblue", lty=2, lwd=5)
 abline(v=5,col="orange",lty=3,lwd=10)
 
 ```
@@ -1360,15 +1358,6 @@ plot(data[,1],data[,2],col="steelblue",pch=16)
 points(data[,1],data[,3],col="orange",pch=17)
 ```
 
-
-`text` adds text to an existing plot
-
-```{r}
-plot(data[,1],data[,2],col="steelblue",pch=16)
-points(data[,1],data[,3],col="orange",pch=17)
-text(data[,1],data[,3],labels=LETTERS[1:10])
-```
-
 The `arrows` function can be used to connect pairs of points on an existing plot. We have to supply *start* ane *end* x and y coordinates. In the example below, we draw and arrow from *(2,1.5)* to *(10,4)*.
 
 ```{r}
@@ -1402,7 +1391,6 @@ arrows(1:10, means-err,1:10,means+err,code=3,angle=90)
 So far in this section, we have shown how to modify scatter plots using `lines`, `points` etc. However, the same modifications can be applied to other types of plot too. 
 
 ```{r}
-
 boxplot(randMat)
 abline(h = 0,col="red")
 points(1:10, y = seq(-3,3,length.out = 10),pch=16,col="steelblue")
@@ -1419,35 +1407,37 @@ text(1:10, y= seq(0.6,-0.2,length.out = 10),labels = LETTERS[1:10],col="orange")
 
 ###Adding a legend
 
-The `legend` function can be used to add a legend to an existing plot. In the following example, we generate a random matrix and plot the second, third and fourth columns against the first. We use red circles, blue squares and orange triangles respectively to represent these variabes. We can define the x and y coordinates of where the legend will appear. Alternatively, the strings `topleft`, `topright`, `bottomleft` and `bottomright` are conveniant shortcuts. The names to be used in the legend are defined by the `legend` argument, and we can also define the relevant colours and plotting characters.
+The `legend` function can be used to add a legend to an existing plot. In the following example, we generate a random matrix and plot the second, third and fourth columns against the first. We use red circles, blue squares and orange triangles respectively to represent these variables and we will use the legend to indicate this mapping.
 
+
+
+The names to be used in the legend are defined by the `legend` argument, while `col` and `pch` can be used to define the relevant colours and plotting characters in the same way as they are in the plot itself.  For fine control over the position of the legend we can specify the x and y coordinates of where the legend will appear. However this can be tedious if you change the size of the plot, so the strings `topleft`, `topright`, `bottomleft` and `bottomright` are conveniant shortcuts for the most common locations. 
 
 ```{r}
 randMat <- matrix(rnorm(100),ncol=10)
-plot(randMat[,1],randMat[,2],ylim=c(-3,3),pch=16,col="red",xlab="Column1",ylab="y")
+plot(randMat[,1],randMat[,2],ylim=c(-3,4),pch=16,col="red",xlab="Column1",ylab="y")
 points(randMat[,1],randMat[,3], pch=15,col="steelblue")
 points(randMat[,1],randMat[,4], pch=17,col="chocolate3")
 
-legend("topright", legend=c("Column 2", "Column 3","Column 4"), col = c("red", "steelblue", "chocolate3"), pch=c(16,15,17))
+legend(x = "topleft", legend=c("Column 2", "Column 3","Column 4"), col = c("red", "steelblue", "chocolate3"), pch=c(16,15,17))
 ```
 
-```{r}
-plot(randMat[,1],randMat[,2],ylim=c(-3,3),pch=16,col="red",xlab="Column1",ylab="y")
-points(randMat[,1],randMat[,3], pch=15,col="steelblue")
-points(randMat[,1],randMat[,4], pch=17,col="chocolate3")
-
-legend("topleft", legend=c("Column 2", "Column 3","Column 4"), col = c("red", "steelblue", "chocolate3"), pch=c(16,15,17))
-```
-
-A legend can be added to all types of plots; as shown here for a [boxplot](#a-boxplot).
+A legend can be added to all types of plots; as shown here for a [boxplot](#a-boxplot). Unlike the previous example, here we're not interested in the shape off the plotting character and only wanted to indicte the colour in the legend.  To achieve this we need to use `fill` argument instead of the combination of `pch` & `col` we used before.
 
 ```{r}
 boxplot(randMat[,1:4],col=c("bisque1", "red", "steelblue","chocolate3"))
-legend("bottomright", legend=c("Column 1", "Column 2", "Column 3","Column 4"),fill= c("bisque1","red", "steelblue", "chocolate3"))
+legend("bottomright", legend=c("Column 1", "Column 2", "Column 3","Column 4"), fill = c("bisque1","red", "steelblue", "chocolate3"))
 
 ```
 
-###Text in the margins
+###Adding text to plots
+
+A common task is to add labels to points in a plot.  This can be achieved using the function `text()`, which adds text to an existing plot.  In the example below we first plot 10 points.  These same values are used in the `text` command to position the labels.  The argument `pos = 4` indicates we want to text to be placed to the right of the specified coordinates; if we didn't specify this the label would cover the points. The in this example the labels are the first 10 letters of the alphabet, but the could equally be longer words such as the names of samples.
+
+```{r}
+plot(data[,1], data[,2], col="steelblue", pch=16)
+text(x = data[,1], y = data[,2], pos = 4, labels=LETTERS[1:10])
+```
 
 Sometimes, we want to add annotations to the plot outside of the plotting window. This can be achieved by using the `mtext` function. We use the [paste](#paste) function to construct our labels and have to specify the x coordinates at which to put the text. The `line` argument specifies how far from the border of the plot to plot to write the text.
 
