@@ -72,13 +72,48 @@ head(births)
 @
 HINT: You should get 243 columns and 4 rows.
 
+\exercise Plot how the Male birth rate changes over the years
+
+<<>>=
+plot(births$Age, births$Male.babies)
+@
+
+
+\exercise Plot the difference between Male and Female birth rate
+
+<<>>=
+plot(births$Male.babies, births$Female.babies)
+@
+
 \subsection{A.B.M data}
 
-\exercise
+\exercise Read the ABM data using the commands you have seen so far
 
 <<>>=
 abm <- read.csv("data//ABM.csv")
 @
+
+\exercise Make a barplot of the race of each subject
+
+<<>>=
+barplot(table(abm$race))
+@
+
+How many categories do you see
+
+<<>>=
+abm <- read.csv("data//ABM.csv",na.strings=".")
+@
+
+Now, re-try the barplot
+
+<<>>=
+barplot(table(abm$race))
+@
+
+\exercise Make a histogram of the years
+
+\exercise cross-tabulate the race and gender
 
 
 \subsection{Liver data}
@@ -86,10 +121,32 @@ abm <- read.csv("data//ABM.csv")
 http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/liverdoc.txt
 
 <<>>=
-liver <- read.delim("http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/liver.txt")
+liver <- read.delim("http://faculty.wshington.edu/heagerty/Books/Biostatistics/DATA/liver.txt")
 
 @
 
+
+\subsection{Chick weight data}
+
+\exercise: Load the in-built dataset `chickwts`
+
+<<>>=
+data(chickwts)
+head(chickwts)
+@
+
+
+\exercise: Visualise the difference in weight of chicks that were fed with different diets
+
+<<>>=
+boxplot(chickwts$weight ~ chickwts$feed)
+@
+
+\exercise: Overlay the individual points and try and jitter
+
+<<>>=
+stripchart(chickwts$weight ~ chickwts$feed)
+@
 
 
 \end{document}
