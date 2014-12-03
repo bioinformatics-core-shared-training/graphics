@@ -266,7 +266,7 @@ We now summarise the options that prove to be most useful
 
 By default, R will assume that your data table starts on the first line of the file and that the column headers are found on the first line. However, sometimes the data table can be preceeded with several lines of header information. The header may contain useful information for the user, such as the date the file was generated and software versions etc, but is not relevant when we try and read the data table into R. 
 
-If we try and use the default settings of `read.delim` to read a tab-delimited file with arbitrary header information, the following occurs. In this case, the file contains counts for a number of barcodes deteceted on a particular lane of sequencing. Naturally, we might want to read these data into R and perform some exploratory analysis and diagnostics.
+If we try and use the default settings of `read.delim` to read a tab-delimited file with arbitrary header information, the following occurs. In this case, the file contains counts for a number of barcodes detected on a particular lane of sequencing. Naturally, we might want to read these data into R and perform some exploratory analysis and diagnostics.
 
 ```{r}
 myfile <- "PrimerExamples/file-with-header.txt"
@@ -861,8 +861,9 @@ sd(mydata[,1])
 
 #Plotting
 
-A plot can be created in R simply by calling the `plot` function with a valid R object. However, there are many optional arguments can be altered to change the apperance of the plots; from the title, labels, colour and shapes used to plot, 
+A plot can be created in R simply by calling the `plot` function with a valid R object. 
 
+There are many optional arguments can be altered to change the apperance of the plots e.g adding titles or labels, altering the colour and shapes used to plot, or modifying the range of axes.  Many of these options are available across a multitude of plotting functions.  We'll initially demonstrate them using the histogram function but most can be applied to whatever type of plot you are trying to generate.
 
 ###A histogram
 
