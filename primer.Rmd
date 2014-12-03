@@ -709,20 +709,28 @@ We can perform much more complex queries (e.g. only searching for words *startin
 
 ##Re-ordering data frames
 
+Often we want to sort data based on one or more properties.  R has several options for performing this type of operation.  
+
+First we'll look at the `order()` function.  In its simplest form this function takes a list of values and returns their ordering in *ascending* value.  So in our example below the 15th entry is the lowest, followed by the 16th, while the 20th entry is the highest.
+
+If we actually want to put the data in this order, we need to use the [subsetting](#row-subsetting) approach.
 
 ```{r}
 order(mtcars[,"mpg"])
 mtcars[order(mtcars[,"mpg"]),]
 ```
 
+To list the entries in the opposite order we can specify the argument `decreasing = TRUE`.
+
 ```{r}
-order(mtcars[,"mpg"],decreasing=TRUE)
 mtcars[order(mtcars[,"mpg"],decreasing=TRUE),]
 ```
 
+Alternatively, R also includes the commnad `sort()`, which will perform the reordering automatically.  It is also useful to note that both `order()` and `sort()` will work on character data too where items will be sorted alphabetically.
+
 ```{r}
-sort(rownames(mtcars))
 sort(mtcars[,"mpg"])
+sort(rownames(mtcars))
 ```
 
 ##Transpose a matrix
@@ -739,7 +747,7 @@ mydata.t
 
 ##Text manipulation
 
-
+Since we often begin an anaylsis be reading data from text files or spreadsheets, one frequently finds they require tools to manipulate this text data in ways that make further analysis easier e.g. extracting componant parts from complex sample IDs or manipulating date and time information.
 
 ###Finding the number of characters
 
@@ -761,18 +769,18 @@ tolower(exampleNames)
 
 
 
-###strsplit
+###Splitting into parts
 
-The function `strsplit()` allows you to break a string into smaller parts, based on a specifc criteria.  In the example below we break our sample names where there is a space.
+The function `strsplit()` allows you to break a string into smaller parts, based on a specified criteria.  In the example below we break our sample names where there is a space.
 
 ```{r}
 exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
 strsplit(x = exampleNames, split = " ")
 ```
 
-The output from this is a [list](#Lists), where the *i*th entry is the result of breaking the *i*th string passed to the function.
+The output from this is a [list](#lists), where the *i*th entry is the result of breaking the *i*th string passed to the function.
 
-In cases like our example above, where we know every entry will be split into a consitent number of parts, it's often easier to transform this output into a matrix or data.frame where each row represents an entry.
+In cases like our example above, where we know every entry will be split into a consistent number of parts, it's often easier to transform this output into a matrix where each row represents an entry.  To do this we make use of the `unlist()` function, which transforms our list into a [vector](#vectors) followed by the command to create a [matrix](#matrices).
 
 ```{r}
 exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
@@ -780,13 +788,13 @@ namesList <- strsplit(x = exampleNames, split = " ")
 matrix( unlist( namesList ), ncol = 2, byrow = TRUE )
 ```
 
-
 ###Extracting substrings
 
-If we only want to retain a portion of a string we can use the `substring` function.  In addition to the strings we want to process this takes two arguments: `start` and `stop` which are integers specifying the first and last characters we want to retain.  In the example below we retain the first 4 characters.
+If we only want to retain a portion of a string we can use the `substring` function.  In addition to the strings we want to process this takes two arguments: `start` and `stop` which are integers specifying the first and last characters we want to retain.  In the example below we retain the last 5 characters (note the space is treated just like any other character).
 
 ```{r}
-substr(rownames(mtcars), start = 1, stop = 4)
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+substr(exampleNames, start = 4, stop = 8)
 ```
 
 ###Replacing parts of strings
