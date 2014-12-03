@@ -13,6 +13,61 @@ TempCelc <- (data$Temp - 32)/1.8
 plot(TempCelc)
 ```
 
+## Revisit the ozone dataset
+
+```{r}
+data <- read.csv("data/ozone.csv")
+```
+
+##Re-ordering and sorting
+
+- At the moment, these data are in date-order
+
+```{r}
+head(data)
+```
+- We might want to know the hottest days
+
+##Re-ordering and sorting
+
+```{r}
+sort(data$Temp)
+```
+
+##Re-ordering and sorting
+
+```{r}
+sort(data$Temp,decreasing = TRUE)
+```
+
+##Re-ordering and sorting
+
+- What is the difference between the output of `sort` and `order`?
+```{r}
+tempOrder <- order(data$Temp, decreasing = TRUE)
+
+tempOrder
+```
+
+##Re-ordering and sorting
+
+- `sort` gives the *values* in sorted order
+- `order` gives *indices*
+- we can use the result of `order` to subset the data
+```{r} 
+tempOrder[1:5]
+data[tempOrder[1:5],]
+```
+
+##Writing a new file
+
+- At this point, we might want to write our re-ordered data to a file
+
+```{r}
+newData <- data[tempOrder,]
+write.csv(newData, file="reorderedWeather.csv")
+```
+
 
 ##General Subsetting
 
@@ -23,11 +78,6 @@ plot(TempCelc)
   - `<`, `>`, `==`
 - Mulitple conditions can be tested using `&` (`and`)  `|` (*or*)
 
-## Revisit the ozone dataset
-
-```{r}
-data <- read.csv("data/ozone.csv")
-```
 
 ## Adding points
 
@@ -43,7 +93,7 @@ data[highOzone,]
 
 - The `points` funtion is used to add points to an existing plot
 - We need to give it a set of *x* and *y* coordinates
-- The *x* values are the indices we've jsut computed. 
+- The *x* values are the indices we've just computed. 
 - *y* values are obtained by subsetting the *Ozone* variable
 
 ```{r}
@@ -53,7 +103,6 @@ newY <- data$Ozone[newX]
 
 ## Adding points
 
-- We use a different colour and character for the points. More on this later
 
 ```{r fig.width=8,fig.height=4}
 highOzone <- which(data$Ozone > 100)
@@ -61,6 +110,65 @@ plot(data$Ozone)
 abline(h=100)
 points(newX, newY,col="red",pch=16)
 ```
+
+
+##Subsetting by text
+
+
+```{r}
+clinical <- read.delim("data/NKI295.pdata.txt")
+```
+
+##Subsetting by text
+
+- Note the double `==`
+
+```{r}
+
+clinical$ER == "Negative"
+
+```
+
+##Returning indices
+
+```{r}
+which(clinical$ER == "Negative")
+```
+
+##Potential trap number 1.
+
+```{r}
+which(clinical$ER == "negative")
+```
+
+##Potential trap number 2.
+
+
+```{r}
+which(clinical$er == "Negative")
+```
+
+##Potential trap number 3.
+
+```{r}
+match("Negative", clinical$ER)
+```
+
+
+##Use in subsetting
+
+```{r}
+clinical[which(clinical$ER == "Negative"),]
+```
+
+##Alternative
+
+```{r}
+clinical[grep("Negative",clinical$ER),]
+```
+
+
+
 
 ##Combining data from files
 

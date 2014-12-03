@@ -150,4 +150,33 @@ stripchart(chickwts$weight ~ chickwts$feed)
 @
 
 
+\section{Plot options}
+
+\subsection{Birth rate date}
+
+\exercise Read the UK birth rate data and plot the male and female birth rates on the same x axis. Choose different colours for male and female. 
+
+<<>>=
+births <- read.delim("data/UKBirthRate.tsv")
+plot(births$Age, births$Male.babies, col="red",pch=15,xlab="Year", ylab="Birth Rate",main="Comparison of male and female birth rates")
+points(births$Age, births$Female.babies,col="blue",pch=14, ylab="Birth Rate")
+@
+
+\exercise Add a legend in the top-left corner
+
+<<>>=
+legend("topleft", legend=c("Male", "Female"), col=c("red","blue"),pch=c(15,14))
+@
+
+\exercise We decide that we are only interested in the 20th century (years 1900 to 2000). Modify your axis accordingly and repeat the plot
+
+<<>>=
+plot(births$Age, births$Male.babies, col="red",pch=15,xlab="Year", ylab="Birth Rate",xlim=c(1900,2000))
+points(births$Age, births$Female.babies,col="blue",pch=14, ylab="Birth Rate")
+
+@
+
+
+
+
 \end{document}

@@ -342,13 +342,51 @@ abline(0,1)
 ```
 
 
+##Adding lines
+
+Lines can also be added to other plots
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+```
+
+```{r fig.height=4,fig.width=8}
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col="red")
+abline(h=c(4,5,6),col="steelblue")
+```
+
+##Adding lines
+
+Lines can also be added to other plots
+
+```{r fig.height=4,fig.width=8}
+barplot(colMeans(data))
+abline(h=c(4,5,6),col="steelblue")
+```
+
+
 # Plot layout options
 
-##The 
+##The `par` function
+
+- Using the `par` function prior to creating a plot allows several plot defaults to be set
+- ?par for details
+
+```{r}
+
+```
+
+
+##Multiple figures
+
 - We can have *m*ultiple *f*igures per *row* using `mfrow`
 - e.g. one row and three columns
 - each new call to plot is added in a new panel
 - see also `mfcol`
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.csv("data/ozone.csv")
+```
 
 ```{r fig.height=4,fig.width=8}
 par(mfrow=c(1,3))
@@ -358,3 +396,56 @@ plot(data[,1],data[,4])
 
 ```
 
+##Margin size
+
+- the `mar` vector specifies that amount of space around each edge of the plot
+-  `c(bottom, left, top, right)`
+
+
+```{r echo=FALSE,results='hide'}
+dev.off()
+```
+
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+
+par(mar = c(5,1,5,1))
+plot(data[,1],data[,2])
+
+
+```
+
+#Exporting a plot
+
+##As a png
+- `png` function prior to code to create plot
+- file is created in your working directory (doesn't need to exist)
+- `dev.off()` afterwards
+
+```{r}
+png("mycoolplot.png")
+plot(data[,1],data[,2])
+dev.off()
+```
+
+
+##As a pdf
+
+- As before, except use `pdf`
+
+```{r}
+pdf("mycoolplot.pdf")
+plot(data[,1],data[,2])
+dev.off()
+```
+
+##As a pdf
+
+- However, a pdf can have multiple pages
+
+```{r}
+pdf("mycoolmultipageplot.pdf")
+plot(data[,1],data[,2])
+plot(data[,1],data[,3])
+dev.off()
+```
