@@ -754,20 +754,30 @@ Sometimes it can be useful to standardise the case of any character information 
 R includes the functions `toupper()` and `tolower()` that will perform this transformation for you, rather than needing to edit the data directly.
 
 ```{r}
-exampleName <- "Sample 4"
-toupper(exampleName)
-tolower(exampleName)
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+toupper(exampleNames)
+tolower(exampleNames)
 ```
-
 
 
 
 ###strsplit
 
-The function `strsplit()` allows you to break a string into smaller parts, based on a specifc criteria.  In the example below we break the name of first entry in the mtcars data where there is a space.
+The function `strsplit()` allows you to break a string into smaller parts, based on a specifc criteria.  In the example below we break our sample names where there is a space.
 
 ```{r}
-strsplit(x = rownames(mtcars)[1], split = " ")
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+strsplit(x = exampleNames, split = " ")
+```
+
+The output from this is a [list](#Lists), where the *i*th entry is the result of breaking the *i*th string passed to the function.
+
+In cases like our example above, where we know every entry will be split into a consitent number of parts, it's often easier to transform this output into a matrix or data.frame where each row represents an entry.
+
+```{r}
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+namesList <- strsplit(x = exampleNames, split = " ")
+matrix( unlist( namesList ), ncol = 2, byrow = TRUE )
 ```
 
 
@@ -779,7 +789,22 @@ If we only want to retain a portion of a string we can use the `substring` funct
 substr(rownames(mtcars), start = 1, stop = 4)
 ```
 
-###gsub
+###Replacing parts of strings
+
+In addition to extracting portions of strings, you can replace them using the function `sub()`, much like one might use find and replace in a text editor.  In the following example we start with 3 sample names.  We then use the `sub()` command to replace "Person" with "Sample" and include a space before the number.
+
+```{r}
+names <- c("Person1", "Person2", "Person3")
+sub(pattern = "Person", replacement = "Sample ", x = names)
+```
+
+The us a second substitution function called `gsub()`.  This works in much the same way as `sub()`, but replaces every instance of the pattern it finds, where as `sub()` only replaces the first occurance.
+
+```{r}
+repeatExample <- c("Here Here")
+sub(pattern = "Here", replacement = "Hear", x = repeatExample)
+gsub(pattern = "Here", replacement = "Hear", x = repeatExample)
+```
 
 ###Combining strings
 
@@ -794,7 +819,7 @@ We can combine more than two strings, as seen below.  This example also highligh
 paste("Month", 1:12, "is", month.name)
 ```
 
-The default behavious of `paste()` is to place spaces between the string.  If we want to alter this we need to specify the `sep` argument.  Here we combine the months of the year with the number of characters in each word.
+The default behaviour of `paste()` is to place spaces between the string.  If we want to alter this we need to specify the `sep` argument.  Here we combine the months of the year with the number of characters in each word.
 
 ```{r echo=FALSE}
 paste(month.name, nchar(month.name), sep=":")
@@ -1609,7 +1634,7 @@ If we want to store multiple types of data in a single object with the row and c
  charNumFrame
 ```
 
-## Lists
+##Lists
 
 Although it's easy to think of vectors as 'lists' of values, within R a list is a distinct type of object.  Lists are used when you want to group together disparate types of information.  For example, one could store several vectors of numbers, but they need not be the same length, something that a matrix or data frame could not cope with.  Alternatively, a list could contain four elements that are a vector, a matrix, a data frame and another list respectively.
 
