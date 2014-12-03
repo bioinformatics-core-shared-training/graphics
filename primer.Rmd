@@ -1391,25 +1391,23 @@ arrows(1:10, means-err,1:10,means+err,code=3,angle=90)
 So far in this section, we have shown how to modify scatter plots using `lines`, `points` etc. However, the same modifications can be applied to other types of plot too. 
 
 ```{r}
+par(mfrow = c(1,2))
+# Boxplot
 boxplot(randMat)
 abline(h = 0,col="red")
 points(1:10, y = seq(-3,3,length.out = 10),pch=16,col="steelblue")
 text(1:10, y= seq(3,-3,length.out = 10),labels = LETTERS[1:10],col="orange")
-```
 
-```{r}
+# Barplot
 barplot(colMeans(randMat),ylim=c(-3,3))
 abline(h = 0,col="red")
 points(1:10, seq(-0.2, 0.6, length.out=10),col="steelblue",pch=16)
 text(1:10, y= seq(0.6,-0.2,length.out = 10),labels = LETTERS[1:10],col="orange")
-
 ```
 
 ###Adding a legend
 
 The `legend` function can be used to add a legend to an existing plot. In the following example, we generate a random matrix and plot the second, third and fourth columns against the first. We use red circles, blue squares and orange triangles respectively to represent these variables and we will use the legend to indicate this mapping.
-
-
 
 The names to be used in the legend are defined by the `legend` argument, while `col` and `pch` can be used to define the relevant colours and plotting characters in the same way as they are in the plot itself.  For fine control over the position of the legend we can specify the x and y coordinates of where the legend will appear. However this can be tedious if you change the size of the plot, so the strings `topleft`, `topright`, `bottomleft` and `bottomright` are conveniant shortcuts for the most common locations. 
 
