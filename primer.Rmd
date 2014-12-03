@@ -703,7 +703,7 @@ myInd <- grep("Merc", rownames(mtcars))
 myInd
 mtcars[myInd,]
 ```
-
+We can perform much more complex queries (e.g. only searching for words *starting* with 'Merc', or finding specific patterns of numbers and letter) using a tool called "Regular Expression" or "Regex".  However, this beyond the scope of this document but a comprehensive introduction can be found at [http://www.zytrax.com/tech/web/regex.htm](http://www.zytrax.com/tech/web/regex.htm)
 
 ##Adding new columns / variables
 
@@ -739,52 +739,66 @@ mydata.t
 
 ##Text manipulation
 
-###nchar
+
+
+###Finding the number of characters
 
 ```{r}
 nchar(rownames(mtcars))
 ```
 
-###toupper
+###Changing case
+
+Sometimes it can be useful to standardise the case of any character information you're working with.  It is not uncommon to import data from different sources where alternative choices have been made regarding capitalisation.  For example it is not hard to imagine reading two tables relating to the same experiment where in one the entries are labelled "SAMPLE N" and in the other "Sample N".  It is much easier to try and match entries in these two tables if they are converted to the same format.
+
+R includes the functions `toupper()` and `tolower()` that will perform this transformation for you, rather than needing to edit the data directly.
 
 ```{r}
-toupper(rownames(mtcars))
+exampleName <- "Sample 4"
+toupper(exampleName)
+tolower(exampleName)
 ```
 
 
-###gsub
+
 
 ###strsplit
 
+The function `strsplit()` allows you to break a string into smaller parts, based on a specifc criteria.  In the example below we break the name of first entry in the mtcars data where there is a space.
+
 ```{r}
-tmp <- strsplit(rownames(mtcars)," ")
+strsplit(x = rownames(mtcars)[1], split = " ")
 ```
 
 
-###substr
+###Extracting substrings
+
+If we only want to retain a portion of a string we can use the `substring` function.  In addition to the strings we want to process this takes two arguments: `start` and `stop` which are integers specifying the first and last characters we want to retain.  In the example below we retain the first 4 characters.
 
 ```{r}
-substr(rownames(mtcars), 1,4)
+substr(rownames(mtcars), start = 1, stop = 4)
 ```
 
-###paste
+###gsub
+
+###Combining strings
+
+To combine two strings we can use `paste()`.  The result is a single string.
 
 ```{r}
 paste("Hello", "World")
 ```
+We can combine more than two strings, as seen below.  This example also highlights how shorter sets of strings (in this case "Month" and "is") will be reused as many times as necessary.
 
 ```{r}
-paste("Month", 1:12, "is",month.name)
+paste("Month", 1:12, "is", month.name)
 ```
 
-```{r}
-paste("The number of letters in ", month.name , "is", nchar(month.name))
-```
+The default behavious of `paste()` is to place spaces between the string.  If we want to alter this we need to specify the `sep` argument.  Here we combine the months of the year with the number of characters in each word.
 
-```{r}
+```{r echo=FALSE}
 paste(month.name, nchar(month.name), sep=":")
 ```
-
 
 ##Long versus wide format
 
