@@ -12,11 +12,11 @@
 \newcommand{\notebell}{\bell}
 \newcommand{\noteright}{\Pointinghand}
 \newcommand{\textinfo}{\Info}
-<<knitr, echo=FALSE, results="hide">>=
+<<knitr, echo=TRUE, results="hide",echo=FALSE>>=
 library("knitr")
-opts_chunk$set(tidy=FALSE,dev="png",fig.show="hide",
-               fig.width=4,fig.height=4.5,
-               message=FALSE,eval=F)
+opts_chunk$set(tidy=FALSE,dev="png",
+               fig.width=8,fig.height=4.5,
+               message=FALSE,eval=FALSE,echo=FALSE)
 @ 
 
 <<style, eval=TRUE, echo=FALSE, results="asis">>=
@@ -45,10 +45,21 @@ BiocStyle::latex()
 
 \subsection{Weather Data}
 
-\exercise Read the ozone data into your Rstudio. You will find this in the data folder
+\exercise Read the ozone data into your Rstudio. Practice using the 'file.choose' to locate the file on your hard drive
+
+<<echo=TRUE,eval=FALSE>>=
+myfile <- file.choose()
+ozone <- read.csv(myfile)
+@
+
+\exercise Verify that the dimensions and first few lines are as we expect. HINT: use the \Rfunction{dim} and \Rfunction{head} functions.
+
+
+<<echo=FALSE>>=
+ozone <- read.csv("data/ozone.csv")
+@
 
 <<>>=
-ozone <- read.csv("data/ozone.csv")
 dim(ozone)
 head(ozone)
 @
@@ -57,9 +68,8 @@ head(ozone)
 
 \exercise Make a Scatter Plot of the temperature variable
 
-<<>>=
+<<echo=FALSE>>=
 plot(ozone$Temp)
-
 @
 
 \subsection{Birth Rate data}
@@ -84,6 +94,34 @@ plot(births$Age, births$Male.babies)
 
 <<>>=
 plot(births$Male.babies, births$Female.babies)
+@
+
+
+
+
+\subsection{Chick weight data}
+
+\exercise: Load the in-built dataset `chickwts`
+
+<<>>=
+data(chickwts)
+head(chickwts)
+@
+
+
+\exercise: Visualise the difference in weight of chicks that were fed with different diets
+
+<<>>=
+boxplot(chickwts$weight ~ chickwts$feed)
+stripchart(chickwts$weight ~ chickwts$feed,vertical = TRUE,add=TRUE)
+@
+
+
+\exercise: Overlay the individual points and try and jitter
+
+<<>>=
+boxplot(chickwts$weight ~ chickwts$feed)
+stripchart(chickwts$weight ~ chickwts$feed,vertical = TRUE,add=TRUE)
 @
 
 \subsection{A.B.M data}
@@ -117,39 +155,6 @@ barplot(table(abm$race))
 \exercise cross-tabulate the race and gender
 
 
-\subsection{Liver data}
-
-http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/liverdoc.txt
-
-<<>>=
-liver <- read.delim("http://faculty.wshington.edu/heagerty/Books/Biostatistics/DATA/liver.txt")
-
-@
-
-
-\subsection{Chick weight data}
-
-\exercise: Load the in-built dataset `chickwts`
-
-<<>>=
-data(chickwts)
-head(chickwts)
-@
-
-
-\exercise: Visualise the difference in weight of chicks that were fed with different diets
-
-<<>>=
-boxplot(chickwts$weight ~ chickwts$feed)
-@
-
-\exercise: Overlay the individual points and try and jitter
-
-<<>>=
-stripchart(chickwts$weight ~ chickwts$feed)
-@
-
-
 \section{Plot options}
 
 \subsection{Birth rate date}
@@ -164,7 +169,7 @@ points(births$Age, births$Female.babies,col="blue",pch=14, ylab="Birth Rate")
 
 \exercise Add a legend in the top-left corner
 
-<<>>=
+<<eval=FALSE>>=
 legend("topleft", legend=c("Male", "Female"), col=c("red","blue"),pch=c(15,14))
 @
 
@@ -177,6 +182,134 @@ points(births$Age, births$Female.babies,col="blue",pch=14, ylab="Birth Rate")
 @
 
 
+\subsection{Weather data}
 
+\exercise Read the Weather data back into R. Produce a boxplot with the temperature on the y axis, and month on the x axis.
+
+<<>>=
+ozone <- read.csv("data/ozone.csv")
+boxplot(ozone$Temp ~ ozone$Month)
+@
+
+\exercise Repeat the plot with a different colour for each box. First create a vector with five valid colour names (i.e. the name appears in the output of \Rfunction{colours()}) and use this as the col argument to \Rfunction{plot}.
+
+<<>>=
+boxplot(ozone$Temp ~ ozone$Month,col=c("Red", "Orange", "Yellow", "Green","Blue"))
+@
+
+\exercise Now, load the \Rpackage{RColorBrewer} package and see what palettes are available using \Rfunction{display.brewer.all()}. Create a palette of length 5 from one of the available options and use this palette to colour the boxplot.
+
+<<>>=
+library(RColorBrewer)
+mypal <- brewer.pal(5, "Set1")
+boxplot(ozone$Temp ~ ozone$Month,col=mypal)
+@
+
+We will now re-visit the scatter plot of Ozone level and Temperature
+
+<<>>=
+plot(ozone$Temp,ozone$Ozone,pch=16)
+@
+
+Lets consider the steps required to colour each point according to the month that the observations were made. Our goal is to produce a vector of length \Sexpr{nrow(ozone)}, where each item in the vector is the colour to be used to plot the corresponding point.
+
+Step 1: Using the table function on the Month variable, you will see how many observations are present for each month
+
+<<>>=
+table(ozone$Month)
+@
+
+\exercise Create a vector of the string red repeated 31 times and assign it to a variable. HINT Use the \Rfunction{rep} for this task.
+
+<<>>=
+vec1 <- rep("red", 31)
+@
+
+\exercise Repeat the same exercise to create colour vectors of the appropriate length for all the other months
+
+<<>>=
+vec2 <- rep("orange", 30)
+vec3 <- rep("yellow", 31)
+vec4 <- rep("green", 31)
+vec5 <- rep("blue", 30)
+@
+
+\exercise Now combine all your vectors together and use this as the col argument when creating the scatter plot. Check that the length of your combined vector is \Sexpr{nrow(ozone)}.
+
+<<>>=
+cols <- c(vec1,vec2,vec3,vec4,vec5)
+length(cols)
+plot(ozone$Temp,ozone$Ozone,pch=16,col=cols)
+@
+
+In R, there are usually multiple ways of completing the same task. 
+
+\exercise One can use the \Rfunction{rep} function in a different manner. This time we can use the times argument
+
+
+<<>>=
+cols2 <- rep(mypal, times = table(ozone$Month))
+plot(ozone$Temp,ozone$Ozone,pch=16,col=cols2)
+@
+
+\section{Data Manipulation}
+
+\subsection{Calculating new variables}
+
+<<>>=
+library(survival)
+sdata <- read.delim("data/Two groups.txt")
+Time <- sdata$Days.elapsed
+@
+
+<<>>=
+Group <- rep("Control", nrow(sdata))
+Group[which(is.na(sdata$Control))] <- "Treated"
+@
+
+
+<<>>=
+Event <- sdata$Control
+Event[which(is.na(Event))] <- sdata$Treated[which(is.na(Event))]
+@
+
+
+<<>>=
+SurvData <- Surv(Time,Event)
+plot(survfit(SurvData ~ Group))
+@
+
+
+\subsection{Combining data from multiple files}
+
+<<>>=
+emat <- read.delim("data/NKI295.exprs.txt")
+fmat <- read.delim("data/NKI295.fdata.txt")
+pmat <- read.delim("data/NKI295.pdata.txt")
+@
+
+<<>>=
+dim(emat)
+dim(pmat)
+@
+
+<<>>=
+colnames(emat)[1:10]
+pmat[1:10,1]
+@
+
+<<>>=
+emat[1:10,1]
+fmat[1:10,]
+@
+
+
+\subsection{Subsetting the patients}
+
+\exercise
+
+<<>>=
+
+@
 
 \end{document}
