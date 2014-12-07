@@ -16,7 +16,7 @@
 library("knitr")
 opts_chunk$set(tidy=FALSE,dev="png",
                fig.width=8,fig.height=4.5,
-               message=FALSE,eval=FALSE,echo=FALSE)
+               message=FALSE,eval=TRUE,echo=TRUE)
 @ 
 
 <<style, eval=TRUE, echo=FALSE, results="asis">>=
@@ -282,8 +282,12 @@ plot(survfit(SurvData ~ Group))
 
 \subsection{Combining data from multiple files}
 
+In this section we will consider the published data from the NKI breast cancer series
+
+http://ccb.nki.nl/data/
+
 <<>>=
-emat <- read.delim("data/NKI295.exprs.txt")
+emat <- read.delim("data/NKI295.exprs.txt",stringsAsFactors=FALSE)
 fmat <- read.delim("data/NKI295.fdata.txt")
 pmat <- read.delim("data/NKI295.pdata.txt")
 @
@@ -303,13 +307,51 @@ emat[1:10,1]
 fmat[1:10,]
 @
 
-
 \subsection{Subsetting the patients}
 
-\exercise
+\exercise Find the sample names of the ER negative patients. You will first need to identify which column in the phenotypic data holds the ER status of each patient.
 
 <<>>=
 
+which(pmat$ER == "Negative")
+
+erNegSamples <- pmat$sampleNames[which(pmat$ER == "Negative")]
 @
+
+\exercise Now match these sample names to the columns in the expression matrix
+
+<<>>=
+erNegMatix <- emat[,match(erNegSamples, colnames(emat))]
+
+@
+
+
+\subsection{Retrieving the data for a particular gene}
+
+\exercise Find the probe ID that corresponds to the gene symbol "ESR1"
+
+<<>>=
+
+grep("ESR1", fmat$symbol)
+fmat$probeID[grep("ESR1", fmat$symbol)]
+@
+
+\exercise Match the probe ID that you just found to relevant row in the expression matrix
+
+<<>>=
+match("18904", emat[,1])
+
+erVals <- emat[18889,-1]
+@
+
+\subsection{Correlate gene expression with clinical variables}
+
+\exercise Take the gene expression values for ESR1, and 
+
+<<>>=
+boxplot(as.numeric(erVals) ~ pmat$ER)
+@
+
+
 
 \end{document}
