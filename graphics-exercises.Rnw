@@ -280,6 +280,43 @@ plot(survfit(SurvData ~ Group))
 @
 
 
+Return to the birth rate data
+
+\exercise Read the birth rate data into R
+
+<<>>=
+births <- read.delim("data/UKBirthRate.tsv")
+@
+
+
+\exercise Create a subset of the data that contains just the years 1900 - 2000.
+
+<<>>=
+centdata <- births[births$Age > 1900 & births$Age < 2001,]
+@
+
+\exercise Create a new variable that captures the decade
+
+<<>>=
+decade <- substr(centdata$Age, 3, 3)
+@
+
+
+\exercise Create a boxplot that shows the increase in Female birth rates for each decade
+
+<<>>=
+boxplot(centdata$Female.babies ~ decade,col="mistyrose")
+@
+
+\exercise Add boxes to show the increase in Male birth rate over the same period
+
+<<>>=
+boxplot(centdata$Female.babies ~ decade,col="mistyrose")
+boxplot(centdata$Male.babies ~ decade,col="steelblue",add=TRUE)
+@
+
+
+
 \subsection{Combining data from multiple files}
 
 In this section we will consider the published data from the NKI breast cancer series
