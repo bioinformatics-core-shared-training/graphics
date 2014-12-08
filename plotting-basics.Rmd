@@ -20,10 +20,38 @@ You can load these data into Excel for reference
 
 ##Reading the data
 
+Like other programs, we need to specify some details about the file when we read it in
+
+
+```{r echo=FALSE,fig.width=4,fig.height=4}
+library(png)
+library(grid)
+img <- readPNG("images/dataImport.png")
+grid.raster(img)
+```
+
+##Reading the data
+
+- File location
+- Column *separator*
+- Use column headings in file?
+- Skip any rows?
+
+##Reading the data
+
 To import these data into R we use the `read.csv` function, which will create a *data-frame* representation
 
 ```{r}
 data <- read.csv("data/ozone.csv")
+```
+
+##Reading the data
+
+If we don't know where the file is located, we can use the `file.choose` function
+
+```{r eval=FALSE}
+myfile <- file.choose()
+data <- read.csv(myfile)
 ```
 
 
@@ -79,12 +107,6 @@ dim(data)
 
 
 
-##Assignment to a variable
-
-Again, the result is a `vector`
-```{r}
-ozone <- data$Ozone
-```
 
 
 ##Thinking about the data
@@ -102,13 +124,65 @@ Any repeated observations?
 
 - No
 
+##Thinking about the plot
+
+
+```{r eval=FALSE, echo=FALSE}
+library(ggplot2)
+library(xkcd) 
+xrange <- range(data$Ozone,na.rm = TRUE) 
+yrange <- range(data$Temp,na.rm=TRUE) 
+  
+p1 <- ggplot(data=data, aes(x=Ozone, y=Temp)) +  
+        geom_point(shape=20) +                                                  # use solid circles 
+    xkcdaxis(xrange,yrange) +                                           # plot the xkcd-styled axis 
+        xlab("Ozone Level") +                # label the x-axis 
+        ylab("Temperature")                                                # label the y-axis 
+ggsave(p1,file="plotSketch.png")
+
+```
+
+```{r echo=FALSE,fig.width=8,fig.height=3}
+library(png)
+library(grid)
+img <- readPNG("images/plotSketch.png")
+grid.raster(img)
+```
+
+##Thinking about the plot
+
+A figure consists of
+
+- Data points; each defined by an *x* and *y* coordinate
+- Axes; defining the range of the data and a label
+- Title
+
+```{r echo=FALSE,fig.width=4,fig.height=2}
+library(png)
+library(grid)
+img <- readPNG("images/plotSketch.png")
+grid.raster(img)
+```
+
+
+##Assignment to a variable
+
+- We can extract named columns from a data frame using the `$` operator
+
+- The result is a `vector`
+
+```{r}
+ozone <- data$Ozone
+```
+
+
 ##Scatter plots 
 
 Suppose we want to look at the change in Ozone level (continuous)
 
 - `plot` is the general-purpose plotting function in R
 - Given a *vector* it will plot the values in the vector on the **y** axis, and index on the **x** axis
-
+- It will create axes and labels automatically
 ```{r fig.width=8,fig.height=4}
 plot(data$Ozone)
 ```
@@ -129,19 +203,16 @@ plot(data$Ozone)
 - First *argument* is plotted on the x axis, second *argument* on the y axis
 
 ```{r fig.width=8,fig.height=4}
-plot(data$Ozone,data$Wind)
+plot(data$Ozone,data$Temp)
 ```
 
+##Other ways of visualising a vector
 
-
-##Multiple comparisons
-
-- The `plot` function will try and *guess* what plot to make based on the data
-- If given a *data frame* it make pairwise comparisons of all columns
-
+If we were interested in the *distribution* of the data, we could use a histogram
 ```{r}
-plot(data[,1:4])
+hist(data$Ozone)
 ```
+
 
 
 #Visualising Distributions
@@ -162,13 +233,33 @@ data
 ##The data
 
 The data are stored in a data frame
+- Each column is a variable representing a different group.
+- We call this wide data
 
 ##The boxplot
+
+If given a data frame, `boxplot` will summarize each column separately and construct the box from the quantiles. Again, the axes and labels are automatically decided
 
 ```{r fig.width=8,fig.height=4}
 boxplot(data)
 ```
 
+
+##Plotting individual points
+
+The `stripchart` or `dotchart` functions can be used to visualise individual points
+
+```{r fig.width=8,fig.height=4}
+stripchart(data)
+```
+
+##Plotting individual points
+
+The `stripchart` or `dotchart` functions can be used to visualise individual points
+
+```{r fig.width=8,fig.height=4}
+dotchart(as.matrix(data))
+```
 
 ##Plotting individual points
 
@@ -187,11 +278,12 @@ stripchart(data,vertical=TRUE,method="jitter")
 ```
 
 ##Plotting individual points
-```{r}
-library(beeswarm)
-beeswarm(data,vertical=TRUE)
-```
 
+- We can *stack* or *jitter* points if required
+
+```{r fig.width=8,fig.height=4}
+stripchart(data,vertical=TRUE,method="stack")
+```
 
 
 ##Overlaying points
@@ -430,10 +522,29 @@ Variables in the data
 - Time 
 - Count 
 - Group (Control vs Treatment)
+- Replicate number (1 to 6)
 
 Want to visualise difference in treatment over time
 
 
 ##Procedure
 
+- Gather columns together according to *group*
+- Calculate avearge values for each time point
+- Calculate a variability measurement (e.g. standard deviation)
+- Plot avearges with error bars
+
+##Example
+
+Subset and create averages
+```{r}
+ctrl <- data[,2:4]
+means <- rowMeans(ctrl,na.rm=TRUE)
+```
+calculate standard deviations
+```{r eval=FALSE}
+vars <- c(sd(ctrl[1,]), sd(ctrl[2,]),...)
+```
+
+Repeat for treatment group
 
