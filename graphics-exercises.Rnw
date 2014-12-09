@@ -28,7 +28,7 @@ BiocStyle::latex()
 \setboolean{includethis}{true} 
 \newcommand{\ifinclude}[1]{\ifthenelse{\boolean{includethis}}{#1}{}} 
 
-\title{Exercises}
+\title{Exercises on Graphics and Data Manipulation in R}
 
 \author{Mark Dunning}
 
@@ -41,9 +41,15 @@ BiocStyle::latex()
 
 \tableofcontents
 
+
 \section{Plotting basics}
 
+This section will provide you with practice on reading several different file formats into R
+
 \subsection{Weather Data}
+
+The dataset introduced in the slides concerns weather conditions in New York City from the summer of 1973. \footnote{More details are available (http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/ozonedoc.txt}. 
+
 
 \exercise Read the ozone data into your Rstudio. Practice using the 'file.choose' to locate the file on your hard drive
 
@@ -66,125 +72,217 @@ head(ozone)
 
 
 
-\exercise Make a Scatter Plot of the temperature variable
-
-<<echo=FALSE>>=
-plot(ozone$Temp)
-@
-
-\subsection{Birth Rate data}
-
-\exercise Data describing birth rates of males and females are given in the file 'UKBirthRate.tsv'. What function do you think you would use to read these data? Using your chosen function, read these data into RStudio and check the dimensions.
+\exercise Make sure you know how to extract the Wind column from the data frame by i) selecting using the column number ii) selecting using the column name. Verify that you get the same answer.
 
 <<>>=
-births <- read.delim("data/UKBirthRate.tsv")
-dim(births)
-head(births)
+ozone[,3]
+ozone$Wind
+@
+
+\exercise Make a scatter plot with index on the x-axis and Wind speed on the y-axis
+
+
+<<echo=FALSE>>=
+plot(ozone$Wind)
+
+@
+
+\exercise Make a scatter plot to compare Wind speed and temperature
+
+<<>>=
+plot(ozone$Wind, ozone$Temp)
+@
+
+The \Rfunction{plot} function in R is flexible and will try to guess the most appropriate type of plot based on the data that you give it. If given a data frame with numeric data, it will make pairwise scatter plots of all variables. In our case, this will allow us to compare all combinations of variables on the same plot.
+
+\exercise Say we want to compare Ozone, Solar Radiation, Wind and Temperature variables only. Create a new data frame that consists of only these columns and save as a variable.
+
+<<>>=
+subset <- ozone[,1:4]
+@
+
+\exercise Use the plot function on your new data frame. It should look something like the following;
+
+<<eval=TRUE,echo=FALSE>>=
+plot(ozone[1:4])
+@
+
+
+\subsection{Life Expectancy data}
+
+\exercise Data describing the life expectancy of males and females born in particular years are given in the file 'UKLifeExpectancy.tsv' \footnote{These data come from a Guardian blog of 8th June 2011 http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health}. What function do you think you would use to read these data? Using your chosen function, read these data into RStudio and check the dimensions.
+
+<<>>=
+life <- read.delim("data/UKLifeExpectancy.tsv")
+dim(life)
+head(life)
 @
 HINT: You should get 243 columns and 4 rows.
 
-\exercise Plot how the Male birth rate changes over the years
+\exercise Plot how the Male life expectancy rate changes over the years
 
 <<>>=
-plot(births$Age, births$Male.babies)
+plot(life$Age, life$Male.babies)
 @
 
 
-\exercise Plot the difference between Male and Female birth rate
+\exercise Plot the difference between Male and Female Life Expectancy
 
 <<>>=
-plot(births$Male.babies, births$Female.babies)
+plot(life$Male.babies, life$Female.babies)
 @
 
 
 
+\subsection{Acute Bacterial Meningitis data}
+These data concern 581 patients having acute viral, or acute bacterial meningitis \footnote{
+http://lib.stat.cmu.edu/S/Harrell/data/descriptions/abm.html}. 
 
-\subsection{Chick weight data}
-
-\exercise: Load the in-built dataset `chickwts`
-
-<<>>=
-data(chickwts)
-head(chickwts)
-@
-
-
-\exercise: Visualise the difference in weight of chicks that were fed with different diets
-
-<<>>=
-boxplot(chickwts$weight ~ chickwts$feed)
-stripchart(chickwts$weight ~ chickwts$feed,vertical = TRUE,add=TRUE)
-@
-
-
-\exercise: Overlay the individual points and try and jitter
-
-<<>>=
-boxplot(chickwts$weight ~ chickwts$feed)
-stripchart(chickwts$weight ~ chickwts$feed,vertical = TRUE,add=TRUE)
-@
-
-\subsection{A.B.M data}
-
-\exercise Read the ABM data using the commands you have seen so far
+\exercise These data are stored in the file 'abm.csv'. What function would you use to read these data? Read the data in using your chosen function and check the dimensions. HINT: you should get 581 rows and 43 columns.
 
 <<>>=
 abm <- read.csv("data//ABM.csv")
 @
 
-\exercise Make a barplot of the race of each subject
+\exercise Use the \Rfunction{table} to tabulate the sex variable. How many categories would you expect? How many are plotted? Make a barplot of the counts from the table.
 
 <<>>=
-barplot(table(abm$race))
+barplot(table(abm$sex))
 @
 
-How many categories do you see
+
+
+\exercise Retreive the 'year' variable from the data frame. Attempt to make a histogram of this variable. What do you notice?
+
+<<>>=
+abm$year[1:10]
+@
+
+You get an error in the following form
+
+<<echo=FALSE>>=
+err <- try(hist(abm$year),silent = TRUE)
+cat(err)
+@
+
+The problem is that the raw data table uses the \Rcode{'.'} symbol to represent missing data. R interprets this as a character, and assumes that any columns that contain this character are all text. Thus, columns that should represent numeric values are incorrectly represented.
+
+\exercise Read the table again, this time set the \Rcode{na.strings} argument to be the character \Rcode{'.'}.  
 
 <<>>=
 abm <- read.csv("data//ABM.csv",na.strings=".")
 @
 
-Now, re-try the barplot
+\exercise Repeat the histogram
 
 <<>>=
-barplot(table(abm$race))
+hist(abm$year)
 @
 
-\exercise Make a histogram of the years
 
-\exercise cross-tabulate the race and gender
+The \Rcode{abm} variable encodes whether each patient had either acute viral (abm = 0) or acute bacterial (abm=1) meningitis. 
+
+\exercise Create a count table of abm status against gender and make a barplot of this table.
+
+<<echo=FALSE>>=
+table(abm$abm, abm$sex)
+@
+
+\exercise
+
+<<>>=
+counts <- table(abm$abm, abm$sex)
+barplot(counts, beside=TRUE,legend = rownames(counts))
+@
 
 
 \section{Plot options}
 
-\subsection{Birth rate date}
+\subsection{Life expectancy data}
 
-\exercise Read the UK birth rate data and plot the male and female birth rates on the same x axis. Choose different colours for male and female. 
+\exercise Read the UK life expectancy data and plot the female life expectancy on the y axis against year on the x axis.  Then overlay the Male life expectancy data using the \Rfunction{points} function. Choose different colours for male and female. 
 
 <<>>=
-births <- read.delim("data/UKBirthRate.tsv")
-plot(births$Age, births$Male.babies, col="red",pch=15,xlab="Year", ylab="Birth Rate",main="Comparison of male and female birth rates")
-points(births$Age, births$Female.babies,col="blue",pch=14, ylab="Birth Rate")
+life <- read.delim("data/UKLifeExpectancy.tsv")
+plot(life$Age, life$Female.babies, col="red",pch=15,xlab="Year", 
+     ylab="Life Expectancy",main="Comparison of male and female life expectancy")
+points(life$Age, life$Male.babies,col="blue",pch=14)
 @
 
-\exercise Add a legend in the top-left corner
+\exercise Add a legend in the top-left corner using the \Rfunction{legend} function. 
 
 <<eval=FALSE>>=
 legend("topleft", legend=c("Male", "Female"), col=c("red","blue"),pch=c(15,14))
 @
 
-\exercise We decide that we are only interested in the 20th century (years 1900 to 2000). Modify your axis accordingly and repeat the plot
+\exercise We decide that we are only interested in the 20th century (i.e. years 1900 to 2000). Create a new plot that only displays years in this range by specifying and appropriate value for the \Rcode{xlim} argument.
 
 <<>>=
-plot(births$Age, births$Male.babies, col="red",pch=15,xlab="Year", ylab="Birth Rate",xlim=c(1900,2000))
-points(births$Age, births$Female.babies,col="blue",pch=14, ylab="Birth Rate")
+plot(life$Age, life$Male.babies, col="red",pch=15,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000))
+points(life$Age, life$Female.babies,col="blue",pch=14)
+@
 
+The easiest way to combine several plots on the same page is to use the \Rfunction{par} function. \Rfunction{par} is used to pre-specify many plotting options \footnote{see ?par for details} by a series of named arguments, the most-common of which are the plot layout and margins. The argument to change the layout is \Rcode{mfrow} which has to be a vector in the form \Rcode{c(rows, columns)} to form a plot layout with the specified number of \textit{rows} and \textit{columns}. e.g. \Rcode{par(mfrow = c(rows,columns))}. The order in which plots are created will fill up the page in the required layout configuration.
+
+\exercise Try and replicate the plot shown below. You will need to use the \Rfunction{par} function to set the layout of the plot to have one row and two columns. Also take care to make sure that you have the same y-axis in both plots.
+
+<<eval=TRUE,fig.show='asis'>>=
+par(mfrow=c(1,2))
+plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
+grid()
+plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
+grid()
+@
+
+
+The life expectancy data also contains annotations about years in the 20th century when the two world wars occurred and would presumably have an influence on the data.
+
+<<eval=TRUE,echo=FALSE>>=
+life[life$Annotations != "",]
+@
+
+The \Rfunction{abline} can be used to add horizontal and vertical lines to an existing plot. As always, you can find out more information about the function by doing \Rcode{?abline}. It can take slope and intercept values, plot the result of a linear model fit (outside the scope of today), or plot horizontal and vertical lines by setting the \Rcode{h} and \Rcode{v} arguments.
+
+\exercise Use \Rfunction{abline} to add vertical lines to indicate periods in which the two world wars took place
+
+
+<<eval=TRUE,fig.show='asis'>>=
+par(mfrow=c(1,2))
+plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="red",lty=2)
+grid()
+plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="blue",lty=2)
+grid()
+@
+
+The \Rfunction{text} function (\Rcode{?text}) is another function that can modify an existing plot. In a similar manner to \Rfunction{points}, it has arguments to specify the x and y coordinates at which text will be written. It also needs a \Rcode{labels} argument which can be used to specify the text to be written to the plot.
+
+\exercise Add text annotations to indicate when World War I and World War II started
+
+<<eval=TRUE,fig.show='asis'>>=
+par(mfrow=c(1,2))
+plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="red",lty=2)
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"))
+grid()
+plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="blue",lty=2)
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"))
+grid()
 @
 
 
 \subsection{Weather data}
 
-\exercise Read the Weather data back into R. Produce a boxplot with the temperature on the y axis, and month on the x axis.
+\exercise Read the Weather data back into R. As seen in the slides, use the formula annotation (\Rcode{y~x}) to produce a boxplot with the temperature on the y axis, and month on the x axis.
 
 <<>>=
 ozone <- read.csv("data/ozone.csv")
@@ -197,7 +295,7 @@ boxplot(ozone$Temp ~ ozone$Month)
 boxplot(ozone$Temp ~ ozone$Month,col=c("Red", "Orange", "Yellow", "Green","Blue"))
 @
 
-\exercise Now, load the \Rpackage{RColorBrewer} package and see what palettes are available using \Rfunction{display.brewer.all()}. Create a palette of length 5 from one of the available options and use this palette to colour the boxplot.
+\exercise Now, load the \Rpackage{RColorBrewer} package and see what palettes are available using \Rfunction{display.brewer.all()}. Use the \Rfunction{brewer.pal} function to create a palette of length 5 from one of the available options and use this palette to colour the boxplot.
 
 <<>>=
 library(RColorBrewer)
@@ -207,7 +305,7 @@ boxplot(ozone$Temp ~ ozone$Month,col=mypal)
 
 We will now re-visit the scatter plot of Ozone level and Temperature
 
-<<>>=
+<<echo=TRUE,eval=TRUE>>=
 plot(ozone$Temp,ozone$Ozone,pch=16)
 @
 
@@ -219,7 +317,9 @@ Step 1: Using the table function on the Month variable, you will see how many ob
 table(ozone$Month)
 @
 
-\exercise Create a vector of the string red repeated 31 times and assign it to a variable. HINT Use the \Rfunction{rep} for this task.
+For simplicity, lets say we want to use \Rcode{"red"}, \Rcode{"orange"}, \Rcode{"yellow"}, \Rcode{"green"} and \Rcode{"blue"} to represent the colours for each month.
+
+\exercise Create a vector of the string \Rcode{"red"} repeated 31 times and assign it to a variable. HINT Use the \Rfunction{rep} for this task.
 
 <<>>=
 vec1 <- rep("red", 31)
@@ -234,94 +334,111 @@ vec4 <- rep("green", 31)
 vec5 <- rep("blue", 30)
 @
 
-\exercise Now combine all your vectors together and use this as the col argument when creating the scatter plot. Check that the length of your combined vector is \Sexpr{nrow(ozone)}.
+\exercise Now combine all your vectors together and use this as the col argument when creating the scatter plot. Check that the length of your combined vector is \Sexpr{nrow(ozone)}. You should get the following plot;
 
-<<>>=
+<<echo=FALSE>>=
+vec1 <- rep("red", 31)
+vec2 <- rep("orange", 30)
+vec3 <- rep("yellow", 31)
+vec4 <- rep("green", 31)
+vec5 <- rep("blue", 30)
 cols <- c(vec1,vec2,vec3,vec4,vec5)
-length(cols)
 plot(ozone$Temp,ozone$Ozone,pch=16,col=cols)
 @
 
-In R, there are usually multiple ways of completing the same task. 
 
-\exercise One can use the \Rfunction{rep} function in a different manner. This time we can use the times argument
-
-
-<<>>=
-cols2 <- rep(mypal, times = table(ozone$Month))
-plot(ozone$Temp,ozone$Ozone,pch=16,col=cols2)
-@
-
-\section{Data Manipulation}
+\section{Data Manipulation - Worked Examples}
 
 \subsection{Calculating new variables}
 
-<<>>=
+In the section, we take data in the format that GraphPad Prism requires for survival analysis, and manipulate them so we can do the analysis in R. The data are to be found in the \file{Two groups.txt} file.
+
+\exercise Read the raw survival data into R and check the dimensions as usual. Create a \Rcode{Time} variable to store the time of each observation.
+
+<<echo=TRUE>>=
 library(survival)
 sdata <- read.delim("data/Two groups.txt")
+head(sdata)
 Time <- sdata$Days.elapsed
 @
 
-<<>>=
-Group <- rep("Control", nrow(sdata))
-Group[which(is.na(sdata$Control))] <- "Treated"
+We also need \Rcode{Group} and \Rcode{Event} information for the survival analysis, but these are less straightforward to obtain from the data frame. Recall that the group needs to be the same length as the number of observations and a particular item indicates which group the observation belongs to. \\
+
+In our dataset, we can identify which group each observation belongs to by looking at the second column (\textit{Control}); if there is a value of 0 or 1 in this column then the observation is in the \textit{Control} group. Similarly, if there is a 0 or 1 in the third column (\textit{Treated}) then the observation belongs to the Treated group.
+
+\exercise Create a vector of the correct length that will describe which group each observation belongs to. HINT: You may wish to use the \Rfunction{rep} function for this.
+
+<<echo=TRUE>>=
+Group <- c(rep("Control",8), rep("Treated", 9))
 @
 
+The \Rfunction{is.na} function is a useful for obtaining a logical (i.e. \Rcode{TRUE} or \Rcode{FALSE}) vector for determining the observations in a vector that are \textit{missing values}. 
 
-<<>>=
+
+\exercise Create a vector, \Rcode{Event}, that is the same as the \Rcode{Control} column in the data frame. Use \Rfunction{which} in conjuction with \Rfunction{is.na} to identify the values that are missing. Replace the corresponding indices in the \Rcode{Event} variable with entries from the \Rcode{Treated} column.
+
+<<echo=TRUE>>=
 Event <- sdata$Control
 Event[which(is.na(Event))] <- sdata$Treated[which(is.na(Event))]
 @
 
+\exercise Produce the survival curve using the following steps.
 
-<<>>=
+<<echo=TRUE,eval=TRUE>>=
+library(survival)
 SurvData <- Surv(Time,Event)
 plot(survfit(SurvData ~ Group))
 @
 
 
-Return to the birth rate data
+Now lets return to the Life Expectancy data. Previously we visualised the life expectancy recorded for each year to look for trends. However, we will now create a new variable that will allow us to split the data by \textit{decade}.
 
-\exercise Read the birth rate data into R
+\exercise Read the Life Expectancy data into R
 
-<<>>=
-births <- read.delim("data/UKBirthRate.tsv")
+<<echo=TRUE>>=
+life <- read.delim("data/UKLifeExpectancy.tsv")
 @
 
 
-\exercise Create a subset of the data that contains just the years 1900 - 2000.
+\exercise Create a subset of the data that contains just the years 1900 - 2000. 
 
-<<>>=
-centdata <- births[births$Age > 1900 & births$Age < 2001,]
+<<echo=TRUE>>=
+centdata <- life[life$Age > 1900 & life$Age < 2001,]
 @
 
 \exercise Create a new variable that captures the decade
 
-<<>>=
+<<echo=TRUE>>=
 decade <- substr(centdata$Age, 3, 3)
 @
 
+We will tidy-up this name to 
 
-\exercise Create a boxplot that shows the increase in Female birth rates for each decade
+<<echo=TRUE>>=
+decade <- paste0(decade, "0s")
+@
 
-<<>>=
+
+\exercise Create a boxplot that shows the increase in Female life expectancy for each decade
+
+<<echo=TRUE>>=
 boxplot(centdata$Female.babies ~ decade,col="mistyrose")
 @
 
-\exercise Add boxes to show the increase in Male birth rate over the same period
+Boxes to show the increase in Male life expectancy over the same period can be added.
 
-<<>>=
-boxplot(centdata$Female.babies ~ decade,col="mistyrose")
+<<echo=TRUE,eval=TRUE>>=
+boxplot(centdata$Female.babies ~ decade,col="mistyrose",xlab="Decade",
+        ylab="Life Expectancy")
 boxplot(centdata$Male.babies ~ decade,col="steelblue",add=TRUE)
+legend("topleft", fill=c("mistyrose", "steelblue"),legend=c("Female","Male"))
 @
 
 
 
 \subsection{Combining data from multiple files}
 
-In this section we will consider the published data from the NKI breast cancer series
-
-http://ccb.nki.nl/data/
+In this section we will consider the published data from the NKI breast cancer series. This is a series of 295 breast cancer patients that have been used to identify and validate various gene expression signatures. Typically, such datasets are spread over various files which give sample and feature annotation, and the actual gene expression values themselves. 
 
 <<>>=
 emat <- read.delim("data/NKI295.exprs.txt",stringsAsFactors=FALSE)
@@ -383,7 +500,7 @@ erVals <- emat[18889,-1]
 
 \subsection{Correlate gene expression with clinical variables}
 
-\exercise Take the gene expression values for ESR1, and 
+\exercise Make a boxplot of ESR1 expression against ER status
 
 <<>>=
 boxplot(as.numeric(erVals) ~ pmat$ER)
