@@ -29,7 +29,7 @@ plot(data[,1],data[,2])
 
 ```{r}
 plot(data[,1], 
-     main="Relationship between ozone level and Solar")
+     main="Relationship between ozone level and Solar Radiation")
 ```
 
 
@@ -42,7 +42,7 @@ plot(data[,1], xlab="Ozone level")
 ##Axis labels
 
 ```{r}
-plot(data[,1], ylab="Solar")
+plot(data[,1], ylab="Solar Radiation")
 ```
 
 ##Axis limits
@@ -54,8 +54,8 @@ plot(data[,1], ylim=c(50,150))
 ##Defining a colour
 
 - R can recognise various strings `red`, `orange`,`green`,`blue`,`yellow`....
-- Or more exotic ones `r sample(colours(),8)`. See `colours()`.
-- See [here](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf)
+- Or more exotic ones `r sample(colours(),8)`..... See `colours()`.
+- See http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
 - Can also use **R**ed **G**reen **Blue** values
 
 ##Use of colours

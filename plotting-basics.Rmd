@@ -105,7 +105,7 @@ dim(data)
 - You may have noticed some `NA` entries in the vector
 - This is R's way of denoting *missing values*
 
-
+i
 
 
 
@@ -233,6 +233,7 @@ data
 ##The data
 
 The data are stored in a data frame
+
 - Each column is a variable representing a different group.
 - We call this wide data
 
@@ -327,6 +328,7 @@ sd(data$Treated)
 
 ##Adding error bars
 
+Something about Mike's functionality....
 ```{r echo=FALSE}
 dpPlot <- function(data){
   
@@ -358,11 +360,21 @@ dpPlot(data)
 points(rep(bp, each=nrow(data)), unlist(data))
 ```
 
+##Histograms
 
-##What to do with long data
+You can also make a histogram 
+- (not very useful in this case)
+
+```{r}
+hist(data$Untreated)
+```
+
+
+##A note about 'long data'
 
 - Recall our weather data
 - We do not have separate columns for each month
+- This is know as 'long data'
 
 ```{r}
 data <- read.csv("data/ozone.csv")
@@ -405,31 +417,11 @@ boxplot(Ozone~Month,data)
 stripchart(Ozone~Month,data,vertical=TRUE,add=TRUE)
 ```
 
-##Melting a dataset
-
-We can convert a dataset from *wide* to *long* using the `reshape` package
-
-```{r}
-library(reshape2)
-data <- read.delim("data/plasma.txt")
-plasma <- melt(data)
-dim(plasma)
-head(plasma)
-```
-
-##Boxplot of the new data
-
-- Compare to before...
-
-```{r}
-boxplot(value ~ variable,plasma)
-```
-
-
-
 #Count data
 
 ##Making a barplot
+
+- Often we have to make a table before constructing a bar plot
 
 ```{r fig.width=8,fig.height=4}
 clinical <- read.delim("data/NKI295.pdata.txt")
@@ -437,10 +429,6 @@ table(clinical$ER)
 barplot(table(clinical$ER))
 ```
 
-##Making a barplot
-```{r fig.width=4,fig.height=4}
-pie(table(clinical$ER))
-```
 
 ##Stacking 
 
@@ -549,3 +537,6 @@ vars <- c(sd(ctrl[1,]), sd(ctrl[2,]),...)
 
 Repeat for treatment group
 
+##Shortcut
+
+Something about Mike's functionality....
