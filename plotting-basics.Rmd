@@ -445,15 +445,16 @@ pie(table(clinical$ER))
 ##Stacking 
 
 ```{r fig.width=8,fig.height=4}
-table(clinical$ER,clinical$grade)
-barplot(table(clinical$grade,clinical$ER))
+counts <- table(clinical$ER,clinical$grade)
+counts
+barplot(counts, legend = rownames(counts))
 ```
 
-##Stacking 
+##Grouping 
 
 ```{r fig.width=8,fig.height=4}
-table(clinical$ER,clinical$grade)
-barplot(table(clinical$grade,clinical$ER),beside=TRUE)
+counts <- table(clinical$ER,clinical$grade)
+barplot(counts,beside=TRUE,legend=rownames(counts))
 ```
 
 #Curves
