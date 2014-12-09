@@ -41,6 +41,13 @@ BiocStyle::latex()
 
 \tableofcontents
 
+\section{Introduction}
+
+The data that you need for this practical are available at ......... Please download this zip file and extract to your computer. You should then change your working directory in RStudio to point to the directory that you have just created. Session -> Change Working directory.
+
+
+At the end of some subsections you may find some {\color{red}{Optional Extensions}}. You can attempt these if you have time in the practical sessions, or on your own after the course.
+
 
 \section{Plotting basics}
 
@@ -108,6 +115,30 @@ plot(ozone[1:4])
 @
 
 
+{\color{red}{[Optional Extensions]}}
+
+The \Rfunction{cor} function can be used to calculate correlations between variables. If given a data frame, it will calculate all pairwise correlations.
+
+
+<<eval=FALSE>>=
+cor(ozone[,1:4],use="c")
+@
+
+We can also test the significance of the association between variables using \Rfunction{cor.test}
+
+<<eval=FALSE>>=
+cor.test(ozone[,1],ozone[,4])
+@
+
+
+
+<<>>=
+mod <- lm(ozone[,4] ~ ozone[,1])
+plot(ozone[,1],ozone[,4])
+abline(mod)
+@
+
+
 \subsection{Life Expectancy data}
 
 \exercise Data describing the life expectancy of males and females born in particular years are given in the file 'UKLifeExpectancy.tsv' \footnote{These data come from a Guardian blog of 8th June 2011 http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health}. What function do you think you would use to read these data? Using your chosen function, read these data into RStudio and check the dimensions.
@@ -130,6 +161,19 @@ plot(life$Age, life$Male.babies)
 
 <<>>=
 plot(life$Male.babies, life$Female.babies)
+@
+
+
+\exercise Visualise the Male life expectancy as a barplot. Which plot (scatter or barplot) displays the data in a better way?
+
+<<echo=TRUE>>=
+barplot(life$Male.babies)
+@
+
+\exercise Similarly, the following is a valid plot in R. Comment on whether the trends in the data are better displayed as a barplot or scatter plot
+
+<<>>=
+barplot(as.matrix(t(life[,c(2,3)])),beside=TRUE)
 @
 
 
@@ -198,6 +242,9 @@ barplot(counts, beside=TRUE,legend = rownames(counts))
 
 \section{Plot options}
 
+In this part of the practical we will revisit some of the same datasets from the previous section, but introduce different ways in which we can customise and extend the basic plots.
+
+
 \subsection{Life expectancy data}
 
 \exercise Read the UK life expectancy data and plot the female life expectancy on the y axis against year on the x axis.  Then overlay the Male life expectancy data using the \Rfunction{points} function. Choose different colours for male and female. 
@@ -215,7 +262,7 @@ points(life$Age, life$Male.babies,col="blue",pch=14)
 legend("topleft", legend=c("Male", "Female"), col=c("red","blue"),pch=c(15,14))
 @
 
-\exercise We decide that we are only interested in the 20th century (i.e. years 1900 to 2000). Create a new plot that only displays years in this range by specifying and appropriate value for the \Rcode{xlim} argument.
+\exercise We decide that we are only interested in the 20th century (i.e. years 1900 to 2000). Create a new plot that only displays years in this range by specifying an appropriate value for the \Rcode{xlim} argument.
 
 <<>>=
 plot(life$Age, life$Male.babies, col="red",pch=15,xlab="Year", 
@@ -238,7 +285,7 @@ grid()
 @
 
 
-The life expectancy data also contains annotations about years in the 20th century when the two world wars occurred and would presumably have an influence on the data.
+The life expectancy data also contains annotations about years in the 20th century when the two World Wars occurred and would presumably have an influence on the data.
 
 <<eval=TRUE,echo=FALSE>>=
 life[life$Annotations != "",]
@@ -270,14 +317,54 @@ par(mfrow=c(1,2))
 plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
      ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
 abline(v=c(1914, 1918, 1939,1945),col="red",lty=2)
-text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"))
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"),srt=45)
 grid()
 plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
      ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
 abline(v=c(1914, 1918, 1939,1945),col="blue",lty=2)
-text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"))
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"),srt=45)
 grid()
 @
+
+{\color{red}{[Optional Extensions]}}
+
+Other arguments to the \Rfunction{text} function include the option to rotate the text (\Rcode{srt}) and use a different font (\Rcode{font}).
+
+\exercise See if you can rotate the text by 45 degrees and use a bold font
+
+<<>>=
+par(mfrow=c(1,2))
+plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="red",lty=2)
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"),srt=45)
+grid()
+plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="blue",lty=2)
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"),srt=45)
+grid()
+@
+
+The \Rfunction{mtext} function allows text to be written in margins around the plot, rather than inside. 
+
+\exercise Use the \Rfunction{mtext} function to write the text labels above the plot. 
+
+<<>>=
+par(mfrow=c(1,2))
+plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="red",lty=2)
+mtext(side = 3,at = c(1914,1935), text = c("WW1", "WW2"),srt=45)
+grid()
+plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
+     ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
+abline(v=c(1914, 1918, 1939,1945),col="blue",lty=2)
+mtext(side = 3,at = c(1914,1935), text = c("WW1", "WW2"),srt=45)
+grid()
+@
+
+
 
 
 \subsection{Weather data}
@@ -286,13 +373,15 @@ grid()
 
 <<>>=
 ozone <- read.csv("data/ozone.csv")
-boxplot(ozone$Temp ~ ozone$Month)
+boxplot(ozone$Temp ~ ozone$Month,
+        xlab="Month",ylab="Temperature")
 @
 
 \exercise Repeat the plot with a different colour for each box. First create a vector with five valid colour names (i.e. the name appears in the output of \Rfunction{colours()}) and use this as the col argument to \Rfunction{plot}.
 
 <<>>=
-boxplot(ozone$Temp ~ ozone$Month,col=c("Red", "Orange", "Yellow", "Green","Blue"))
+boxplot(ozone$Temp ~ ozone$Month,col=c("Red", "Orange", "Yellow", "Green","Blue"),
+        xlab="Month",ylab="Temperature")
 @
 
 \exercise Now, load the \Rpackage{RColorBrewer} package and see what palettes are available using \Rfunction{display.brewer.all()}. Use the \Rfunction{brewer.pal} function to create a palette of length 5 from one of the available options and use this palette to colour the boxplot.
@@ -300,7 +389,8 @@ boxplot(ozone$Temp ~ ozone$Month,col=c("Red", "Orange", "Yellow", "Green","Blue"
 <<>>=
 library(RColorBrewer)
 mypal <- brewer.pal(5, "Set1")
-boxplot(ozone$Temp ~ ozone$Month,col=mypal)
+boxplot(ozone$Temp ~ ozone$Month,col=mypal,
+        xlab="Month",ylab="Temperature")
 @
 
 We will now re-visit the scatter plot of Ozone level and Temperature
@@ -319,7 +409,7 @@ table(ozone$Month)
 
 For simplicity, lets say we want to use \Rcode{"red"}, \Rcode{"orange"}, \Rcode{"yellow"}, \Rcode{"green"} and \Rcode{"blue"} to represent the colours for each month.
 
-\exercise Create a vector of the string \Rcode{"red"} repeated 31 times and assign it to a variable. HINT Use the \Rfunction{rep} for this task.
+\exercise Create a vector of the string \Rcode{"red"} repeated 31 times and assign it to a variable. These will be the colours that data points for the first month will be plotted in. HINT Use the \Rfunction{rep} for this task.
 
 <<>>=
 vec1 <- rep("red", 31)
@@ -346,6 +436,42 @@ cols <- c(vec1,vec2,vec3,vec4,vec5)
 plot(ozone$Temp,ozone$Ozone,pch=16,col=cols)
 @
 
+{\color{red}{[Optional Extensions]}}
+
+\exercise Create a legend in the top-left corner of the plot
+
+<<echo=FALSE>>=
+vec1 <- rep("red", 31)
+vec2 <- rep("orange", 30)
+vec3 <- rep("yellow", 31)
+vec4 <- rep("green", 31)
+vec5 <- rep("blue", 30)
+cols <- c(vec1,vec2,vec3,vec4,vec5)
+plot(ozone$Temp,ozone$Ozone,pch=16,col=cols)
+legend("topleft", col=c("red","orange","yellow","green","blue"),legend = 5:9,pch=16)
+@
+
+\exercise Rather than using numbers to represent month, use abbreviated month names stored in the built-in \Rcode{month.abb} vector
+
+
+<<echo=FALSE>>=
+vec1 <- rep("red", 31)
+vec2 <- rep("orange", 30)
+vec3 <- rep("yellow", 31)
+vec4 <- rep("green", 31)
+vec5 <- rep("blue", 30)
+cols <- c(vec1,vec2,vec3,vec4,vec5)
+plot(ozone$Temp,ozone$Ozone,pch=16,col=cols)
+legend("topleft", col=c("red","orange","yellow","green","blue"),legend = month.abb[5:9],pch=16)
+@
+
+\exercise Check out the help page for \Rfunction{rep} (\Rcode{?rep}), and in particular the \Rcode{times} argument. See if you can construct the vector of colours in a more efficient manner.
+
+<<>>=
+cols2 <- rep(mypal, times = table(ozone$Month))
+plot(ozone$Temp,ozone$Ozone,pch=16,col=cols2)
+
+@
 
 \section{Data Manipulation - Worked Examples}
 
@@ -412,13 +538,6 @@ centdata <- life[life$Age > 1900 & life$Age < 2001,]
 decade <- substr(centdata$Age, 3, 3)
 @
 
-We will tidy-up this name to 
-
-<<echo=TRUE>>=
-decade <- paste0(decade, "0s")
-@
-
-
 \exercise Create a boxplot that shows the increase in Female life expectancy for each decade
 
 <<echo=TRUE>>=
@@ -431,6 +550,18 @@ Boxes to show the increase in Male life expectancy over the same period can be a
 boxplot(centdata$Female.babies ~ decade,col="mistyrose",xlab="Decade",
         ylab="Life Expectancy")
 boxplot(centdata$Male.babies ~ decade,col="steelblue",add=TRUE)
+legend("topleft", fill=c("mistyrose", "steelblue"),legend=c("Female","Male"))
+@
+{\color{red}{[Optional Extensions]}}
+
+<<echo=TRUE,eval=TRUE>>=
+boxplot(centdata$Female.babies ~ decade,col="mistyrose",xlab="Decade",
+        ylab="Life Expectancy",axes=FALSE)
+boxplot(centdata$Male.babies ~ decade,col="steelblue",add=TRUE,axes=FALSE)
+declabel <- unique(paste0(decade, "0s"))
+axis(side=1, at = 1:10,labels = declabel,las=2)
+axis(2)
+box()
 legend("topleft", fill=c("mistyrose", "steelblue"),legend=c("Female","Male"))
 @
 
