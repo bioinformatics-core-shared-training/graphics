@@ -5,10 +5,11 @@ date: "12/12/2014"
 output: beamer_presentation
 ---
 
-#The scatter plot
+#Introducing the plot function
 
 ## Introducing the dataset
-These data were obtained from the [supplementary data](http://faculty.washington.edu/heagerty/Books/Biostatistics/index-chapter.html) to *Biostatistics: A Methodology for the Health Sciences*
+
+Data describing weather conditions in New York City in 1973 were obtained from the [supplementary data](http://faculty.washington.edu/heagerty/Books/Biostatistics/index-chapter.html) to *Biostatistics: A Methodology for the Health Sciences*
 
 
 ```{r echo=FALSE}
@@ -41,6 +42,7 @@ grid.raster(img)
 
 To import these data into R we use the `read.csv` function, which will create a *data-frame* representation
 
+- Many examples of reading data given in the course manual 
 ```{r}
 data <- read.csv("data/ozone.csv")
 ```
@@ -104,10 +106,6 @@ dim(data)
 
 - You may have noticed some `NA` entries in the vector
 - This is R's way of denoting *missing values*
-
-i
-
-
 
 ##Thinking about the data
 What variables do we have?
@@ -365,7 +363,7 @@ points(rep(bp, each=nrow(data)), unlist(data))
 You can also make a histogram 
 - (not very useful in this case)
 
-```{r}
+```{r fig.width=8,fig.height=4}
 hist(data$Untreated)
 ```
 
@@ -384,7 +382,7 @@ head(data)
 ##Boxplot of long data
 
 - Month is a variable in the data frame
-- We use *formula* syntax with the `~` symbol
+- We use *formula* syntax with the `~` symbol. e.g. \Rcode{y ~ x}
 
 ```{r}
 boxplot(data$Ozone~data$Month)
@@ -492,6 +490,8 @@ plot(survfit(survData ~ Group))
 survdiff(survData~Group)
 ```
 
+##Something about Prism format.....
+
 ##Growth Curve
 
 Goal is to produce following 
@@ -540,3 +540,5 @@ Repeat for treatment group
 ##Shortcut
 
 Something about Mike's functionality....
+
+#Break for practical 

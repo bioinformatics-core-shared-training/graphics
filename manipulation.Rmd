@@ -246,3 +246,35 @@ annodata[1:5,1:5]
 - Extract the arrays representing a particular clinical subgroup
 - Plot gene expression against particular clinical variables
 - Compare expression of one gene against another
+
+#Wrap-up
+
+##Things we didn't mention
+
+- loops, if / else etc
+- apply, lapply
+- writing functions
+- ggplot2 http://ggplot2.org/
+- Bioconductor http://bioconductor.org/
+
+
+##Don't be a stranger!
+
+- google!
+- Email if you need help mark.dunning@cruk.cam.ac.uk
+- bioinf-qa001/
+- http://www.meetup.com/Cambridge-R-Users-Group-Meetup/
+
+##Other references
+
+- R cookbook http://www.cookbook-r.com/
+- Quick-R http://www.statmethods.net/
+- UC Riverside guide http://manuals.bioinformatics.ucr.edu/home/R_BioCondManual
+
+##Practice!
+
+- Lots of example datasets are available online
+
+http://vincentarelbundock.github.io/Rdatasets/datasets.html
+
+#Break for final practical

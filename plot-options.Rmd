@@ -5,9 +5,6 @@ date: "12/12/2014"
 output: beamer_presentation
 ---
 
-#Outline
-
-
 # Changing how a plot is created
 
 ## Specifying extra arguments to plot
@@ -154,7 +151,7 @@ boxplot(data, main="Cell counts",xlab="Cell type",
 
 - The `col`, `pch` and `cex` arguments are *vectors*
 - Previously we used a vector of length one that was *recycled*
-- 
+
 ```{r echo=FALSE,fig.width=8,fig.height=4}
 data <- read.delim("data/plasma.txt")
 ```
@@ -167,6 +164,8 @@ boxplot(data, main="Cell counts",xlab="Cell type",
 
 
 ##Don't get carried away
+
+- Each point can have a unique colour, plotting character, size.
 
 ```{r echo=FALSE}
 data <- read.csv("data/ozone.csv")
@@ -192,16 +191,16 @@ plot(data[,1], pch=16, col=mycols)
 ```
 
 
-##Using a pallette
+##Using a palette
 - The `RColorBrewer` package has various ready-made colour schemes
 ```{r}
 library(RColorBrewer)
 display.brewer.all()
 ```
 
-##Creating a pallette
+##Creating a palette
 
-- `brewer.pal` function creates a vector of the specified length comprising colours from the named pallette
+- `brewer.pal` function creates a vector of the specified length comprising colours from the named palette
 
 ```{r echo=FALSE,fig.width=8,fig.height=4}
 data <- read.delim("data/plasma.txt")
@@ -307,7 +306,8 @@ mycols <- rep("black", 153)
 mycols[c(117,62,99,121,30)] <- "red"
 
 plot(data[,1], pch=16, col=mycols)
-text(c(117,62,99,121,30), data[c(117,62,99,121,30),1], labels=c(117,62,99,121,30))
+text(c(117,62,99,121,30), data[c(117,62,99,121,30),1], 
+     labels=LETTERS[1:5])
 ```
 
 ##Adding lines
@@ -334,7 +334,7 @@ grid(col="steelblue")
 ##Adding lines
 
 - `abline` can take a gradient and intercept argument
-- Can be used to draw a *line of best fit*
+- Can be used to draw a *line of best fit* in conjunction with a linear model
 
 ```{r}
 plot(1:10, jitter(1:10))
@@ -363,6 +363,12 @@ Lines can also be added to other plots
 barplot(colMeans(data))
 abline(h=c(4,5,6),col="steelblue")
 ```
+
+##See also
+
+- rect `example(rect)`
+- polygon `example(polygon)`
+- segments `example(segments)`
 
 
 # Plot layout options
@@ -421,7 +427,7 @@ plot(data[,1],data[,2])
 - `png` function prior to code to create plot
 - file is created in your working directory (doesn't need to exist)
 - `dev.off()` afterwards
-
+- can also make jpeg in similar fashion
 ```{r}
 png("mycoolplot.png")
 plot(data[,1],data[,2])
@@ -442,10 +448,13 @@ dev.off()
 ##As a pdf
 
 - However, a pdf can have multiple pages
-
+- Can editted by program such as Photoshop
+- Can specify dimensions, dpi etc
 ```{r}
 pdf("mycoolmultipageplot.pdf")
 plot(data[,1],data[,2])
 plot(data[,1],data[,3])
 dev.off()
 ```
+
+#Break for practical

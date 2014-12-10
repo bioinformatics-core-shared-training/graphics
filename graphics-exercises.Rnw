@@ -16,7 +16,7 @@
 library("knitr")
 opts_chunk$set(tidy=FALSE,dev="png",
                fig.width=8,fig.height=4.5,
-               message=FALSE,eval=TRUE,echo=TRUE)
+               message=FALSE,eval=FALSE,echo=FALSE)
 @ 
 
 <<style, eval=TRUE, echo=FALSE, results="asis">>=
@@ -25,7 +25,7 @@ BiocStyle::latex()
 
 \usepackage{ifthen} 
 \newboolean{includethis} 
-\setboolean{includethis}{true} 
+\setboolean{includethis}{false} 
 \newcommand{\ifinclude}[1]{\ifthenelse{\boolean{includethis}}{#1}{}} 
 
 \title{Exercises on Graphics and Data Manipulation in R}
@@ -111,6 +111,7 @@ subset <- ozone[,1:4]
 \exercise Use the plot function on your new data frame. It should look something like the following;
 
 <<eval=TRUE,echo=FALSE>>=
+ozone <- read.csv("data/ozone.csv")
 plot(ozone[1:4])
 @
 
@@ -120,19 +121,19 @@ plot(ozone[1:4])
 The \Rfunction{cor} function can be used to calculate correlations between variables. If given a data frame, it will calculate all pairwise correlations.
 
 
-<<eval=FALSE>>=
+<<eval=FALSE,echo=TRUE>>=
 cor(ozone[,1:4],use="c")
 @
 
 We can also test the significance of the association between variables using \Rfunction{cor.test}
 
-<<eval=FALSE>>=
+<<eval=FALSE,echo=TRUE>>=
 cor.test(ozone[,1],ozone[,4])
 @
 
 
 
-<<>>=
+<<echo=TRUE>>=
 mod <- lm(ozone[,4] ~ ozone[,1])
 plot(ozone[,1],ozone[,4])
 abline(mod)
@@ -141,7 +142,7 @@ abline(mod)
 
 \subsection{Life Expectancy data}
 
-\exercise Data describing the life expectancy of males and females born in particular years are given in the file 'UKLifeExpectancy.tsv' \footnote{These data come from a Guardian blog of 8th June 2011 http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health}. What function do you think you would use to read these data? Using your chosen function, read these data into RStudio and check the dimensions.
+\exercise Data describing the life expectancy of males and females born in particular years are given in the file 'UKLifeExpectancy.tsv' \footnote{These data come from a Guardian blog of 8th June 2011 http://www.theguardian.com/news/datablog/2011/jun/08/life-expectancy-uk-data-health}. What function do you think you would use to read these data? Using your chosen function, read these data into RStudio and check the dimensions and first few lines of the data frame.
 
 <<>>=
 life <- read.delim("data/UKLifeExpectancy.tsv")
@@ -150,14 +151,14 @@ head(life)
 @
 HINT: You should get 243 columns and 4 rows.
 
-\exercise Plot how the Male life expectancy rate changes over the years
+\exercise Plot how the Male life expectancy rate changes over the years (given in the \Rcode{Age} column)
 
 <<>>=
 plot(life$Age, life$Male.babies)
 @
 
 
-\exercise Plot the difference between Male and Female Life Expectancy
+\exercise Plot the relationship between Male and Female Life Expectancy as a scatter plot. e.g. Male on the x axis and Female on the y axis.
 
 <<>>=
 plot(life$Male.babies, life$Female.babies)
@@ -172,7 +173,7 @@ barplot(life$Male.babies)
 
 \exercise Similarly, the following is a valid plot in R. Comment on whether the trends in the data are better displayed as a barplot or scatter plot. N.B. the \Rfunction{t} function here is transpose and used to reshape the data in the correct dimensions for the barplot.
 
-<<>>=
+<<echo=TRUE>>=
 barplot(as.matrix(t(life[,c(2,3)])),beside=TRUE)
 @
 
@@ -287,7 +288,8 @@ The easiest way to combine several plots on the same page is to use the \Rfuncti
 
 \exercise Try and replicate the plot shown below. You will need to use the \Rfunction{par} function to set the layout of the plot to have one row and two columns. Also take care to make sure that you have the same y-axis in both plots.
 
-<<eval=TRUE,fig.show='asis'>>=
+<<eval=TRUE,fig.show='asis',echo=FALSE>>=
+life <- read.delim("data/UKLifeExpectancy.tsv")
 par(mfrow=c(1,2))
 plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
      ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
@@ -330,12 +332,12 @@ par(mfrow=c(1,2))
 plot(life$Age, life$Male.babies, col="red",pch=16,xlab="Year", 
      ylab="Life Expectancy",xlim=c(1900,2000),main="Male Life Expectancy",ylim=c(40,90))
 abline(v=c(1914, 1918, 1939,1945),col="red",lty=2)
-text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"),srt=45)
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"))
 grid()
 plot(life$Age, life$Female.babies, col="blue",pch=17,xlab="Year", 
      ylab="Life Expectancy",xlim=c(1900,2000),main="Female Life Expectancy",ylim=c(40,90))
 abline(v=c(1914, 1918, 1939,1945),col="blue",lty=2)
-text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"),srt=45)
+text(x = c(1914,1935), y = c(90,90), labels = c("WW1", "WW2"))
 grid()
 @
 
@@ -382,7 +384,11 @@ grid()
 
 \subsection{Weather data}
 
-\exercise Read the Weather data back into R. As seen in the slides, use the formula annotation (\Rcode{y~x}) to produce a boxplot with the temperature on the y axis, and month on the x axis.
+\exercise Read the Weather data back into R. As seen in the slides, use the formula annotation to produce a boxplot with the temperature on the y axis, and month on the x axis.
+
+<<echo=FALSE,eval=TRUE>>=
+ozone <- read.csv("data/ozone.csv")
+@
 
 <<>>=
 ozone <- read.csv("data/ozone.csv")
@@ -416,7 +422,7 @@ Lets consider the steps required to colour each point according to the month tha
 
 Step 1: Using the table function on the Month variable, you will see how many observations are present for each month
 
-<<>>=
+<<echo=TRUE,eval=TRUE>>=
 table(ozone$Month)
 @
 
@@ -439,7 +445,7 @@ vec5 <- rep("blue", 30)
 
 \exercise Now combine all your vectors together and use this as the col argument when creating the scatter plot. Check that the length of your combined vector is \Sexpr{nrow(ozone)}. You should get the following plot;
 
-<<echo=FALSE>>=
+<<echo=FALSE,eval=TRUE>>=
 vec1 <- rep("red", 31)
 vec2 <- rep("orange", 30)
 vec3 <- rep("yellow", 31)
@@ -494,7 +500,7 @@ In the section, we take data in the format that GraphPad Prism requires for surv
 
 \exercise Read the raw survival data into R and check the dimensions as usual. Create a \Rcode{Time} variable to store the time of each observation.
 
-<<echo=TRUE>>=
+<<echo=TRUE,eval=TRUE>>=
 library(survival)
 sdata <- read.delim("data/Two groups.txt")
 head(sdata)
@@ -507,7 +513,7 @@ In our dataset, we can identify which group each observation belongs to by looki
 
 \exercise Create a vector of the correct length that will describe which group each observation belongs to. HINT: You may wish to use the \Rfunction{rep} function for this.
 
-<<echo=TRUE>>=
+<<echo=TRUE,eval=TRUE>>=
 Group <- c(rep("Control",8), rep("Treated", 9))
 @
 
@@ -516,7 +522,7 @@ The \Rfunction{is.na} function is a useful for obtaining a logical (i.e. \Rcode{
 
 \exercise Create a vector, \Rcode{Event}, that is the same as the \Rcode{Control} column in the data frame. Use \Rfunction{which} in conjuction with \Rfunction{is.na} to identify the values that are missing. Replace the corresponding indices in the \Rcode{Event} variable with entries from the \Rcode{Treated} column.
 
-<<echo=TRUE>>=
+<<echo=TRUE,eval=TRUE>>=
 Event <- sdata$Control
 Event[which(is.na(Event))] <- sdata$Treated[which(is.na(Event))]
 @
@@ -541,13 +547,13 @@ life <- read.delim("data/UKLifeExpectancy.tsv")
 
 \exercise Create a subset of the data that contains just the years 1900 - 2000. 
 
-<<echo=TRUE>>=
+<<echo=TRUE,eval=TRUE>>=
 centdata <- life[life$Age > 1900 & life$Age < 2001,]
 @
 
 \exercise Create a new variable that captures the decade
 
-<<echo=TRUE>>=
+<<echo=TRUE,eval=TRUE>>=
 decade <- substr(centdata$Age, 3, 3)
 @
 
@@ -638,7 +644,6 @@ erNegMatix <- emat[,match(erNegSamples, colnames(emat))]
 \exercise Find the probe ID that corresponds to the gene symbol "ESR1". First use \Rfunction{grep} to search for ESR1 in the column that gives gene names. Then, find the probe ID that represents this gene.
 
 <<>>=
-
 grep("ESR1", fmat$symbol)
 fmat$probeID[grep("ESR1", fmat$symbol)]
 @
