@@ -10,6 +10,8 @@ output: beamer_presentation
 - We can add new variables and observations
 - Re-order / sort the existing data
 - Create subsets
+- Create copies of our data
+- Remove old copies using `rm`
 
 ##Calculating new variables
 
@@ -24,7 +26,7 @@ head(data)
 
 - We can add new rows (observations) to a dataset
 - Useful if data are spread across multiple files
-- Take that columns are the same
+- Take care that columns are the same
 
 ```{r}
 newobs <- c(50, 140, 8, 67, 10,1,19.4)
@@ -261,23 +263,45 @@ evalues[1:5,1:5]
 
 - Each row is a *sample*
 - Each column is a different *clinical* variable
-- e.g. first five rows in sample information are first five columns in expression matrix
 - Can have as many columns as you like
+- e.g. first five rows in sample information are first five columns in expression matrix
 
 ```{r}
 clindata <- read.delim("data/NKI295.pdata.txt")
 clindata[1:5,1:5]
 ```
 
+
+##Clinical data
+
+- Can also go from clinical to gene expression matrix
+- e.g. if we know what *rows* in the clinical matrix correspond to ER negatives, we will what  *columns* they are in the gene expression matrix
+
+```{r}
+which(clindata$ER == "Negative")[1:4]
+```
+
+- Columns `r paste(which(clindata$ER == "Negative")[1:4], collapse=",")` are all ER negative samples
+
 ##Gene annotation
 
 - Each row is a *gene* in the experiment
 - Each column is *annotation* about that gene
-
+- e.g. Rows 1 to 5 in the annotation matrix tell us about rows 1 to 5 in the expression matrix
 ```{r}
 annodata <- read.delim("data/NKI295.fdata.txt")
 annodata[1:5,1:5]
 ```
+
+##Gene annotation
+
+- e.g. row 1 in the expression matrix is the gene expression values for GREM2
+
+```{r}
+annodata[1,]
+```
+
+- 
 
 ##Example analyses
 
