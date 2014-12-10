@@ -30,7 +30,8 @@ BiocStyle::latex()
 
 \title{Exercises on Graphics and Data Manipulation in R}
 
-\author{Mark Dunning}
+\author{Mark Dunning, Mike Smith and Sarah Vowler \thanks{Acknowledgements: Thanks to Fran Richards for supplying example data and figures for the practical}}
+\date{Last Document revision: \today}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -41,9 +42,22 @@ BiocStyle::latex()
 
 \tableofcontents
 
-\section{Introduction}
+\section*{Introduction}
 
-The data that you need for this practical are available at ......... Please download this zip file and extract to your computer. You should then change your working directory in RStudio to point to the directory that you have just created. Session $\rightarrow$ Change Working directory.
+The data that you need for this practical are available at
+
+https://sharepoint.cri.camres.org/sites/bioinformatics/Public/GraphicsAndDataManipulation/CourseData.zip 
+
+Please download this zip file and extract to your computer. You should then change your working directory in RStudio to point to the directory that you have just created. Session $\rightarrow$ Change Working directory.
+
+To accompany this course, we have created a small number of utility and plotting functions and bundled them as a R package. You can install the latest version of this package by the following commands in R:
+
+<<echo=TRUE,eval=FALSE>>=
+install.packages("devtools")
+library(devtools)
+install_github(repo = "crukCIMisc", username = "markdunning")
+library(crukCIMisc)
+@
 
 
 At the end of some subsections you may find some {\color{red}{Optional Extensions}}. You can attempt these if you have time in the practical sessions, or on your own after the course.
@@ -131,12 +145,11 @@ We can also test the significance of the association between variables using \Rf
 cor.test(ozone[,1],ozone[,4])
 @
 
-
+The function \Rfunction{lm} can be used to fit a linear relationship between two variables. The procedure for fitting is as follows.
 
 <<echo=TRUE>>=
 mod <- lm(ozone[,4] ~ ozone[,1])
-plot(ozone[,1],ozone[,4])
-abline(mod)
+mod
 @
 
 
@@ -164,7 +177,6 @@ plot(life$Age, life$Male.babies)
 plot(life$Male.babies, life$Female.babies)
 @
 
-
 \exercise Visualise the Male life expectancy as a barplot. Which plot (scatter or barplot) displays the data in a better way?
 
 <<echo=TRUE>>=
@@ -179,6 +191,17 @@ barplot(as.matrix(t(life[,c(2,3)])),beside=TRUE)
 
 {\color{red}{[Optional Extensions]}}
 
+Later in the course we will describe how lines, points and other annotations can be added to a plot. One of the functions for doing this is \Rfunction{abline} which can draw a straight line given slope and intercept arguments.
+
+\exercise Re-plot the relationship between male and female life expectancy and plot a straight line with intercept 0 and gradient 1.
+
+<<>>=
+life <- read.delim("data/UKLifeExpectancy.tsv")
+plot(life$Male.babies, life$Female.babies)
+abline(0,1)
+@
+
+\exercise
 Some of the observations in the data frame are clearly predictions based on previous years. We can make predictions after first fitting a linear model to the data
 
 
@@ -192,66 +215,6 @@ plot(life[161:211,2],newy)
 @
 
 
-\subsection{Acute Bacterial Meningitis data}
-These data concern 581 patients having acute viral, or acute bacterial meningitis \footnote{
-http://lib.stat.cmu.edu/S/Harrell/data/descriptions/abm.html}. 
-
-\exercise These data are stored in the file 'abm.csv'. What function would you use to read these data? Read the data in using your chosen function and check the dimensions. HINT: you should get 581 rows and 43 columns.
-
-<<>>=
-abm <- read.csv("data//ABM.csv")
-@
-
-\exercise Use the \Rfunction{table} to tabulate the sex variable. How many categories would you expect? How many are plotted? Make a barplot of the counts from the table.
-
-<<>>=
-barplot(table(abm$sex))
-@
-
-
-
-\exercise Retreive the 'year' variable from the data frame. Attempt to make a histogram of this variable. What do you notice?
-
-<<>>=
-abm$year[1:10]
-@
-
-You get an error in the following form
-
-<<echo=FALSE>>=
-err <- try(hist(abm$year),silent = TRUE)
-cat(err)
-@
-
-The problem is that the raw data table uses the \Rcode{'.'} symbol to represent missing data. R interprets this as a character, and assumes that any columns that contain this character are all text. Thus, columns that should represent numeric values are incorrectly represented.
-
-\exercise Read the table again, this time set the \Rcode{na.strings} argument to be the character \Rcode{'.'}.  
-
-<<>>=
-abm <- read.csv("data//ABM.csv",na.strings=".")
-@
-
-\exercise Repeat the histogram
-
-<<>>=
-hist(abm$year)
-@
-
-
-The \Rcode{abm} variable encodes whether each patient had either acute viral (abm = 0) or acute bacterial (abm=1) meningitis. 
-
-\exercise Create a count table of abm status against gender and make a barplot of this table.
-
-<<echo=FALSE>>=
-table(abm$abm, abm$sex)
-@
-
-\exercise
-
-<<>>=
-counts <- table(abm$abm, abm$sex)
-barplot(counts, beside=TRUE,legend = rownames(counts))
-@
 
 
 \section{Plot options}
@@ -494,49 +457,11 @@ plot(ozone$Temp,ozone$Ozone,pch=16,col=cols2)
 
 \section{Data Manipulation - Worked Examples}
 
+The following examples to demonstrate data manipulation are a bit more involved and are presented as walkthrough. Please feel free to type the code as it appears, but make sure you understand what is going on at each stage.
+
 \subsection{Calculating new variables}
 
-In the section, we take data in the format that GraphPad Prism requires for survival analysis, and manipulate them so we can do the analysis in R. The data are to be found in the \file{Two groups.txt} file.
-
-\exercise Read the raw survival data into R and check the dimensions as usual. Create a \Rcode{Time} variable to store the time of each observation.
-
-<<echo=TRUE,eval=TRUE>>=
-library(survival)
-sdata <- read.delim("data/Two groups.txt")
-head(sdata)
-Time <- sdata$Days.elapsed
-@
-
-We also need \Rcode{Group} and \Rcode{Event} information for the survival analysis, but these are less straightforward to obtain from the data frame. Recall that the group needs to be the same length as the number of observations and a particular item indicates which group the observation belongs to. \\
-
-In our dataset, we can identify which group each observation belongs to by looking at the second column (\textit{Control}); if there is a value of 0 or 1 in this column then the observation is in the \textit{Control} group. Similarly, if there is a 0 or 1 in the third column (\textit{Treated}) then the observation belongs to the Treated group.
-
-\exercise Create a vector of the correct length that will describe which group each observation belongs to. HINT: You may wish to use the \Rfunction{rep} function for this.
-
-<<echo=TRUE,eval=TRUE>>=
-Group <- c(rep("Control",8), rep("Treated", 9))
-@
-
-The \Rfunction{is.na} function is a useful for obtaining a logical (i.e. \Rcode{TRUE} or \Rcode{FALSE}) vector for determining the observations in a vector that are \textit{missing values}. 
-
-
-\exercise Create a vector, \Rcode{Event}, that is the same as the \Rcode{Control} column in the data frame. Use \Rfunction{which} in conjuction with \Rfunction{is.na} to identify the values that are missing. Replace the corresponding indices in the \Rcode{Event} variable with entries from the \Rcode{Treated} column.
-
-<<echo=TRUE,eval=TRUE>>=
-Event <- sdata$Control
-Event[which(is.na(Event))] <- sdata$Treated[which(is.na(Event))]
-@
-
-\exercise Produce the survival curve using the following steps.
-
-<<echo=TRUE,eval=TRUE>>=
-library(survival)
-SurvData <- Surv(Time,Event)
-plot(survfit(SurvData ~ Group))
-@
-
-
-Now lets return to the Life Expectancy data. Previously we visualised the life expectancy recorded for each year to look for trends. However, we will now create a new variable that will allow us to split the data by \textit{decade}.
+Now lets return to the Life Expectancy data. Previously we visualised the life expectancy recorded for each year to look for trends. However, we will now create a new variable that will allow us to split the data for the 20th century by \textit{decade}.
 
 \exercise Read the Life Expectancy data into R
 
@@ -544,18 +469,41 @@ Now lets return to the Life Expectancy data. Previously we visualised the life e
 life <- read.delim("data/UKLifeExpectancy.tsv")
 @
 
+You should now be familiar with subsetting a data frame using numerical indices and the \Rcode{[]} notation (i.e \Rcode{life[1:10,1]} to get the first 10 rows from the first column of the \Rcode{life} data frame. But what if you didn't know in advance what rows you wanted to extract? We can compare numeric values using \Rcode{>, <, ==} and return a logical vector. This logical vector can then be used to subset a data frame. In our particular example, we want observations where the \Rcode{Age} variable is between \Rcode{1900} and \Rcode{2001}.
 
-\exercise Create a subset of the data that contains just the years 1900 - 2000. 
+
+\exercise Create a logical vector that returns \Rcode{TRUE} or \Rcode{FALSE} depending on whether \Rcode{Age} variable in a given row is after 1900
 
 <<echo=TRUE,eval=TRUE>>=
-centdata <- life[life$Age > 1900 & life$Age < 2001,]
+vec1 <- life$Age > 1900
 @
 
-\exercise Create a new variable that captures the decade
+\exercise Create a second logical vector that returns \Rcode{TRUE} or \Rcode{FALSE} depending on whether \Rcode{Age} variable in a given row is before 2001. Now use the \& operator to combine this vector with the vector you calculated in the previous exercise
 
 <<echo=TRUE,eval=TRUE>>=
+vec2 <- life$Age < 2001
+
+vec1 & vec2
+@
+
+\exercise Now subset the life expectancy data using the combined vector. You should get a data frame with 100 rows.
+
+<<echo=TRUE,eval=TRUE>>=
+centdata <- life[vec1 & vec2,]
+
+dim(centdata)
+@
+
+Here we will use the fact that each year is represented by four digits (we will check this first), and the third digit will represent the number of the decade. 
+
+\exercise Create a new variable that captures the decade.
+
+<<echo=TRUE,eval=TRUE>>=
+nchar(centdata$Age)
 decade <- substr(centdata$Age, 3, 3)
 @
+
+We now have a vector which is the same length as the number of observations in the data frame and can be used to describe different groups in the data. Thus, we can use the $\sim$ notation to create a boxplot with life expectancy on the y-axis, and decade on the x-axis.
 
 \exercise Create a boxplot that shows the increase in Female life expectancy for each decade
 
@@ -563,7 +511,7 @@ decade <- substr(centdata$Age, 3, 3)
 boxplot(centdata$Female.babies ~ decade,col="mistyrose")
 @
 
-Boxes to show the increase in Male life expectancy over the same period can be added.
+Boxes to show the increase in Male life expectancy over the same period can be added in the following manner.
 
 <<echo=TRUE,eval=TRUE>>=
 boxplot(centdata$Female.babies ~ decade,col="mistyrose",xlab="Decade",
@@ -598,21 +546,21 @@ fmat <- read.delim("data/NKI295.fdata.txt")
 pmat <- read.delim("data/NKI295.pdata.txt")
 @
 
-\exercise Check the dimensions of the expression matrix and sample annotation. What do each row and column in the two matrices correspond to.
+\exercise Check the dimensions of the expression matrix and sample annotation. What do each row and column in the two matrices correspond to?
 
-<<>>=
+<<echo=TRUE, eval=TRUE>>=
 dim(emat)
 dim(pmat)
 @
 
 \exercise Use the \Rfunction{==} operator to verify that each column in the expression matrix (excluding the first column) corresponds to each row in the sample information matrix
 
-<<>>=
+<<echo=TRUE, eval=TRUE>>=
 colnames(emat)[-1] == pmat$sampleNames
 
 @
 
-\exercise Similarly, verify that each row in the feature information corresponds to the first column of the expression matrix. You may wish to use the \Rfunction{all}
+\exercise Similarly, verify that each row in the feature information corresponds to the first column of the expression matrix. You may wish to use the \Rfunction{all} to check that you get TRUE for every position
 
 <<echo=TRUE,eval=TRUE>>=
 all(emat[,1] == fmat[,1])
@@ -624,7 +572,7 @@ A common task is to create a subset of the data relating to patients that satisf
 
 \exercise Find the sample names of the ER negative patients. You will first need to identify which column in the phenotypic data holds the ER status of each patient.
 
-<<>>=
+<<echo=TRUE, eval=TRUE>>=
 
 which(pmat$ER == "Negative")
 
@@ -633,24 +581,41 @@ erNegSamples <- pmat$sampleNames[which(pmat$ER == "Negative")]
 
 \exercise Now match these sample names to the columns in the expression matrix to get a vector of column indices. Since each sample should be unique, it is Ok to use the \Rfunction{match} function. Use the column indices to create a subset of the expression matrix that describes only ER negative samples.
 
-<<>>=
+<<echo=TRUE, eval=TRUE>>=
 erNegMatix <- emat[,match(erNegSamples, colnames(emat))]
+@
 
+If we wish, we can write this data matrix to a file.
+
+\exercise Export the data for the ER negative patients as a comma-separated file
+
+<<echo=TRUE, eval=TRUE>>=
+write.csv(erNegMatix, file="erNegativeExpression.csv")
 @
 
 
 \subsection{Retrieving the data for a particular gene}
 
-\exercise Find the probe ID that corresponds to the gene symbol "ESR1". First use \Rfunction{grep} to search for ESR1 in the column that gives gene names. Then, find the probe ID that represents this gene.
+Various functions can be used to see if a defined string (or set of strings) appears in a larger vector. 
+
+\exercise Find the entry in the gene annotation matrix that corresponds to the gene symbol "ESR1". How would you do this using \Rfunction{grep, match, ==}?
+
+<<echo=TRUE, eval=TRUE>>=
+grep("ESR1", fmat$symbol)
+match("ESR1", fmat$symbol)
+which(fmat$symbol =="ESR1")
+which(fmat$symbol %in% "ESR1")
+@
+
+\exercise What is the probe ID for the ESR1 gene?
 
 <<>>=
-grep("ESR1", fmat$symbol)
 fmat$probeID[grep("ESR1", fmat$symbol)]
 @
 
 \exercise Match the probe ID that you just found to relevant row in the expression matrix. Remember that probe IDs are in the first column of the expression matrix.
 
-<<>>=
+<<echo=TRUE, eval=TRUE>>=
 match("18904", emat[,1])
 
 erVals <- emat[18889,-1]
@@ -658,12 +623,47 @@ erVals <- emat[18889,-1]
 
 \subsection{Associating gene expression with clinical variables}
 
+We can now associate the expression of a particular gene with various clinical factors.
+
 \exercise Make a boxplot of ESR1 expression against ER status
 
-<<>>=
+<<echo=TRUE, eval=TRUE>>=
 boxplot(as.numeric(erVals) ~ pmat$ER)
 @
 
 
+{\color{red}{[Optional Extensions]}}
+
+The pam50 gene signature has been widely-used to classify breast cancer into different subtypes. Here we show to retrieve the gene expression values relating to these genes.
+
+
+<<echo=TRUE, eval=TRUE>>=
+pam50Genes <- read.csv("data/pam50Genes.csv")
+head(pam50Genes)
+@
+
+First we match the gene symbols from our gene list to the gene annotation table for our dataset
+
+<<echo=TRUE, eval=TRUE>>=
+match(pam50Genes[,1], fmat$symbol)
+@
+
+However, we notice that some genes are not found in our data. We can use the \Rfunction{na.omit} function to exclude these NA values from the index vector. 
+
+<<echo=TRUE, eval=TRUE>>=
+pam50Anno <- fmat[na.omit(match(pam50Genes[,1], fmat$symbol)),]
+pam50Probes <- fmat[na.omit(match(pam50Genes[,1], fmat$symbol)),1]
+@
+
+We can then just match up the probes to the first column of the expression matrix and subset. For completeness, we can assign the rownames based on the gene name
+
+<<echo=TRUE, eval=TRUE>>=
+pam50Data <- emat[match(pam50Probes,emat[,1]),-1]
+rownames(pam50Data) <- pam50Anno$symbol
+@
+
+<<echo=TRUE, eval=TRUE>>=
+boxplot(as.numeric(pam50Data["ERBB2",]) ~ pmat$Fan.nearest.centroid)
+@
 
 \end{document}

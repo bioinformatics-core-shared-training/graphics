@@ -262,7 +262,7 @@ annodata[1:5,1:5]
 
 - google!
 - Email if you need help mark.dunning@cruk.cam.ac.uk
-- bioinf-qa001/
+- Internal support forum. Go to bioinf-qa001/
 - http://www.meetup.com/Cambridge-R-Users-Group-Meetup/
 
 ##Other references

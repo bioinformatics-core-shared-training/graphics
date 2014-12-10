@@ -96,13 +96,13 @@ plot(data[,1], pch="X")
 
 
 ##Size of points
-
+**C**haracter **ex**pansion
 ```{r}
 plot(data[,1], cex=2)
 ```
 
 ##Size of points
-
+**C**haracter **ex**pansion
 ```{r}
 plot(data[,1], cex=0.2)
 ```
@@ -448,7 +448,7 @@ dev.off()
 ##As a pdf
 
 - However, a pdf can have multiple pages
-- Can editted by program such as Photoshop
+- Can *annotate* by program such as Photoshop
 - Can specify dimensions, dpi etc
 ```{r}
 pdf("mycoolmultipageplot.pdf")
