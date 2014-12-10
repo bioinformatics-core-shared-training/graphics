@@ -5,25 +5,41 @@ date: "12/12/2014"
 output: beamer_presentation
 ---
 
+##Data in R are not static
+
+- We can add new variables and observations
+- Re-order / sort the existing data
+- Create subsets
+
 ##Calculating new variables
 
 ```{r}
 data <- read.csv("data/ozone.csv")
 TempCelc <- (data$Temp - 32)/1.8
-plot(TempCelc)
+data$TempCelc <- TempCelc
+head(data)
 ```
 
-## Revisit the ozone dataset
+##Adding new observations
+
+- We can add new rows (observations) to a dataset
+- Useful if data are spread across multiple files
+- Take that columns are the same
 
 ```{r}
-data <- read.csv("data/ozone.csv")
+newobs <- c(50, 140, 8, 67, 10,1,19.4)
+data2 <- rbind(data,newobs)
+tail(data2)
 ```
+
+
 
 ##Re-ordering and sorting
 
 - At the moment, these data are in date-order
 
 ```{r}
+data <- read.csv("data/ozone.csv")
 head(data)
 ```
 - We might want to know the hottest days
@@ -76,19 +92,37 @@ write.csv(newData, file="reorderedWeather.csv")
 - We can also subset using *logical* vectors
 - i.e. a vector of `TRUE` or `FALSE` values
 - The `TRUE` or `FALSE` values can be derived from a test such as
-  - `<`, `>`, `==`
+  - `<`, `>`, `==`, `!=`
 - Mulitple conditions can be tested using `&` (`and`)  `|` (*or*)
-
+- Also `is.na`, `is.infinite`
 
 ## Adding points
 
 - Suppose we are interested in days with Ozone level over 100
-- We can form a *logical* vector and get the `TRUE` values using the `which` function
+- Use the `>` function 
+- Get a `TRUE` or `FALSE` for every observation
+
+```{r}
+data$Ozone > 100
+```
+
+## Adding points
+
+- Get the `TRUE` indices using the `which` function
 
 ```{r}
 highOzone <- which(data$Ozone > 100)
+highOzone
+```
+
+## Adding points
+
+- Now do the subset
+
+```{r}
 data[highOzone,]
 ```
+- Could write this to a file if we wish....
 
 ## Adding points
 
@@ -167,6 +201,8 @@ clinical[which(clinical$ER == "Negative"),]
 
 ##Alternative
 
+- grep finds indices of all entries that match
+
 ```{r}
 clinical[grep("Negative",clinical$ER),]
 ```
@@ -211,6 +247,7 @@ Not an extensive list
 
 ##Combining data from files
 
+- Now look at typical gene expression matrix
 - Each row corresponds to a *gene*
 - Each column is a *sample*
 
@@ -224,6 +261,8 @@ evalues[1:5,1:5]
 
 - Each row is a *sample*
 - Each column is a different *clinical* variable
+- e.g. first five rows in sample information are first five columns in expression matrix
+- Can have as many columns as you like
 
 ```{r}
 clindata <- read.delim("data/NKI295.pdata.txt")
