@@ -43,7 +43,7 @@ BiocStyle::latex()
 
 \section{Introduction}
 
-The data that you need for this practical are available at ......... Please download this zip file and extract to your computer. You should then change your working directory in RStudio to point to the directory that you have just created. Session -> Change Working directory.
+The data that you need for this practical are available at ......... Please download this zip file and extract to your computer. You should then change your working directory in RStudio to point to the directory that you have just created. Session $\rightarrow$ Change Working directory.
 
 
 At the end of some subsections you may find some {\color{red}{Optional Extensions}}. You can attempt these if you have time in the practical sessions, or on your own after the course.
@@ -170,12 +170,25 @@ plot(life$Male.babies, life$Female.babies)
 barplot(life$Male.babies)
 @
 
-\exercise Similarly, the following is a valid plot in R. Comment on whether the trends in the data are better displayed as a barplot or scatter plot
+\exercise Similarly, the following is a valid plot in R. Comment on whether the trends in the data are better displayed as a barplot or scatter plot. N.B. the \Rfunction{t} function here is transpose and used to reshape the data in the correct dimensions for the barplot.
 
 <<>>=
 barplot(as.matrix(t(life[,c(2,3)])),beside=TRUE)
 @
 
+{\color{red}{[Optional Extensions]}}
+
+Some of the observations in the data frame are clearly predictions based on previous years. We can make predictions after first fitting a linear model to the data
+
+
+<<>>=
+traindata <- life[110:160,]
+mod <- lm(traindata[,2]~traindata[,1])
+mod
+newy <- predict(mod, newdata = data.frame(x=2001:2050))
+
+plot(life[161:211,2],newy)
+@
 
 
 \subsection{Acute Bacterial Meningitis data}
@@ -571,28 +584,37 @@ legend("topleft", fill=c("mistyrose", "steelblue"),legend=c("Female","Male"))
 
 In this section we will consider the published data from the NKI breast cancer series. This is a series of 295 breast cancer patients that have been used to identify and validate various gene expression signatures. Typically, such datasets are spread over various files which give sample and feature annotation, and the actual gene expression values themselves. 
 
-<<>>=
+\exercise Read the files for the dataset in the following manner
+
+<<echo=TRUE, eval=TRUE>>=
 emat <- read.delim("data/NKI295.exprs.txt",stringsAsFactors=FALSE)
 fmat <- read.delim("data/NKI295.fdata.txt")
 pmat <- read.delim("data/NKI295.pdata.txt")
 @
+
+\exercise Check the dimensions of the expression matrix and sample annotation. What do each row and column in the two matrices correspond to.
 
 <<>>=
 dim(emat)
 dim(pmat)
 @
 
-<<>>=
-colnames(emat)[1:10]
-pmat[1:10,1]
-@
+\exercise Use the \Rfunction{==} operator to verify that each column in the expression matrix (excluding the first column) corresponds to each row in the sample information matrix
 
 <<>>=
-emat[1:10,1]
-fmat[1:10,]
+colnames(emat)[-1] == pmat$sampleNames
+
+@
+
+\exercise Similarly, verify that each row in the feature information corresponds to the first column of the expression matrix. You may wish to use the \Rfunction{all}
+
+<<echo=TRUE,eval=TRUE>>=
+all(emat[,1] == fmat[,1])
 @
 
 \subsection{Subsetting the patients}
+
+A common task is to create a subset of the data relating to patients that satisfy various clinical parameters. To achieve this, we rely on the fact that the sample identifiers are the column names for the expression matrix and also appear as a column in the sample information matrix.
 
 \exercise Find the sample names of the ER negative patients. You will first need to identify which column in the phenotypic data holds the ER status of each patient.
 
@@ -603,7 +625,7 @@ which(pmat$ER == "Negative")
 erNegSamples <- pmat$sampleNames[which(pmat$ER == "Negative")]
 @
 
-\exercise Now match these sample names to the columns in the expression matrix
+\exercise Now match these sample names to the columns in the expression matrix to get a vector of column indices. Since each sample should be unique, it is Ok to use the \Rfunction{match} function. Use the column indices to create a subset of the expression matrix that describes only ER negative samples.
 
 <<>>=
 erNegMatix <- emat[,match(erNegSamples, colnames(emat))]
@@ -613,7 +635,7 @@ erNegMatix <- emat[,match(erNegSamples, colnames(emat))]
 
 \subsection{Retrieving the data for a particular gene}
 
-\exercise Find the probe ID that corresponds to the gene symbol "ESR1"
+\exercise Find the probe ID that corresponds to the gene symbol "ESR1". First use \Rfunction{grep} to search for ESR1 in the column that gives gene names. Then, find the probe ID that represents this gene.
 
 <<>>=
 
@@ -621,7 +643,7 @@ grep("ESR1", fmat$symbol)
 fmat$probeID[grep("ESR1", fmat$symbol)]
 @
 
-\exercise Match the probe ID that you just found to relevant row in the expression matrix
+\exercise Match the probe ID that you just found to relevant row in the expression matrix. Remember that probe IDs are in the first column of the expression matrix.
 
 <<>>=
 match("18904", emat[,1])
@@ -629,7 +651,7 @@ match("18904", emat[,1])
 erVals <- emat[18889,-1]
 @
 
-\subsection{Correlate gene expression with clinical variables}
+\subsection{Associating gene expression with clinical variables}
 
 \exercise Make a boxplot of ESR1 expression against ER status
 
