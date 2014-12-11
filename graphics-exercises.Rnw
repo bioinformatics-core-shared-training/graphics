@@ -201,21 +201,57 @@ plot(life$Male.babies, life$Female.babies)
 abline(0,1)
 @
 
-\exercise
-Some of the observations in the data frame are clearly predictions based on previous years. We can make predictions after first fitting a linear model to the data
+\subsection{Survival Data}
 
-
+For this section, you will need to use a couple of functions in the `crukCIMisc` package.
 <<>>=
-traindata <- life[110:160,]
-mod <- lm(traindata[,2]~traindata[,1])
-mod
-newy <- predict(mod, newdata = data.frame(x=2001:2050))
-
-plot(life[161:211,2],newy)
+library(crukCIMisc)
 @
 
+\exercise Read the example file \Rcode{data/Two groups.txt} into R
 
+<<eval=TRUE,echo=TRUE>>=
+svdata <- read.delim("data/Two groups.txt")
+head(svdata)
+@
 
+You should see that the Time variable required for survival analysis can be taken from the first column of the file, and that the Group and Event vectors are encoded in the second and third columns. 
+
+\exercise Use the \Rfunction{extractSurvivalEvent} function to get the Event vector from the data matrix. There is only one argument to this function; a data matrix that contains columns that we want to extract event information from.
+
+<<eval=TRUE,echo=TRUE>>=
+Event <- extractSurvivalEvent(svdata[,2:3])
+@
+
+\exercise Use the \Rfunction{extractSurvivalGroups} function to get the Group vector from the data matrix
+
+<<>>=
+Group <- extractSurvivalGroups(svdata[,2:3])
+@
+
+\exercise Now save the first column of the data matrix as the Time vector and proceed to the survival analysis with the \CRANpkg{survival} package
+
+<<eval=TRUE,echo=TRUE>>=
+library(survival)
+Time <- svdata[,1]
+SurvData <- Surv(Time, Event)
+plot(survfit(SurvData ~ Group))
+@
+
+{\color{red}{[Optional Extensions]}}
+
+\exercise Repeat the steps for the example dataset \Rcode{data/Three groups.txt}
+
+<<>>=
+svdata <- read.delim("data/Three groups.txt")
+head(svdata)
+Time <- svdata$Days
+Event <- extractSurvivalEvent(svdata[,3:5])
+Group <- extractSurvivalGroups(svdata[,3:5])
+SurvData <- Surv(Time, Event)
+plot(survfit(SurvData ~ Group))
+
+@
 
 \section{Plot options}
 
