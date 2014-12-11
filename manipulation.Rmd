@@ -27,7 +27,8 @@ head(data)
 ```{r}
 data <- read.csv("data/ozone.csv")
 TempCelc <- (data$Temp - 32)/1.8
-newdata <- data.frame(TempCelc, MonthName = month.name[data$Month])
+newdata <- data.frame(TempCelc, 
+                      MonthName = month.name[data$Month])
 head(cbind(data, newdata))
 ```
 
@@ -176,6 +177,7 @@ We now consider the clinical characteristics of a breast cancer cohort
 
 ```{r}
 clinical <- read.delim("data/NKI295.pdata.txt")
+table(clinical$ER)
 ```
 
 ##Subsetting by text
@@ -373,7 +375,6 @@ annodata[1,]
 
 ##Don't be a stranger!
 
-- google!
 - Email if you need help mark.dunning@cruk.cam.ac.uk
 - Internal online support forum. Go to bioinf-qa001/ in web-browser
 - http://www.meetup.com/Cambridge-R-Users-Group-Meetup/
