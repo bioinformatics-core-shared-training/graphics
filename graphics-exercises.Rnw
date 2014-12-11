@@ -16,7 +16,7 @@
 library("knitr")
 opts_chunk$set(tidy=FALSE,dev="png",
                fig.width=8,fig.height=4.5,
-               message=FALSE,eval=TRUE,echo=TRUE)
+               message=FALSE,eval=FALSE,echo=FALSE)
 @ 
 
 <<style, eval=TRUE, echo=FALSE, results="asis">>=
@@ -204,7 +204,7 @@ abline(0,1)
 \subsection{Survival Data}
 
 For this section, you will need to use a couple of functions in the `crukCIMisc` package.
-<<>>=
+<<eval=TRUE,echo=TRUE>>=
 library(crukCIMisc)
 @
 
@@ -217,7 +217,7 @@ head(svdata)
 
 You should see that the Time variable required for survival analysis can be taken from the first column of the file, and that the Group and Event vectors are encoded in the second and third columns. 
 
-\exercise Use the \Rfunction{extractSurvivalEvent} function to get the Event vector from the data matrix. There is only one argument to this function; a data matrix that contains columns that we want to extract event information from.
+\exercise Use the \Rfunction{extractSurvivalEvent} function to get the Event vector from the second and third columns of the data matrix. There is only one argument to this function; a data matrix that contains columns that we want to extract event information from.
 
 <<eval=TRUE,echo=TRUE>>=
 Event <- extractSurvivalEvent(svdata[,2:3])
@@ -225,7 +225,7 @@ Event <- extractSurvivalEvent(svdata[,2:3])
 
 \exercise Use the \Rfunction{extractSurvivalGroups} function to get the Group vector from the data matrix
 
-<<>>=
+<<eval=TRUE,echo=TRUE>>=
 Group <- extractSurvivalGroups(svdata[,2:3])
 @
 
@@ -240,7 +240,7 @@ plot(survfit(SurvData ~ Group))
 
 {\color{red}{[Optional Extensions]}}
 
-\exercise Repeat the steps for the example dataset \Rcode{data/Three groups.txt}
+\exercise Repeat the steps for the example dataset \Rcode{data/Three groups.txt}. You will need to decide what column contains the Time data, and which columns include Event and Group information.
 
 <<>>=
 svdata <- read.delim("data/Three groups.txt")
@@ -591,7 +591,7 @@ dim(pmat)
 
 \exercise Use the \Rfunction{==} operator to verify that each column in the expression matrix (excluding the first column) corresponds to each row in the sample information matrix
 
-<<echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=FALSE>>=
 colnames(emat)[-1] == pmat$sampleNames
 
 @

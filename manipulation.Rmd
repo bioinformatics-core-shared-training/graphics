@@ -104,10 +104,20 @@ write.csv(newData, file="reorderedWeather.csv")
 - We have already seen how to subset using numeric indexes
 - We can also subset using *logical* vectors
 - i.e. a vector of `TRUE` or `FALSE` values
+
+```{r}
+myvec <- 1:10
+myvec
+myvec[c(TRUE, TRUE, FALSE,FALSE,TRUE,TRUE,
+        FALSE, FALSE,FALSE,TRUE)]
+```
+
+##General Subsetting
+
 - The `TRUE` or `FALSE` values can be derived from a test such as
   - `<`, `>`, `==`, `!=`
 - Mulitple conditions can be tested using `&` (`and`)  `|` (*or*)
-- Also `is.na`, `is.infinite`
+- Also `is.na`, `is.infinite` and more.....
 
 ## Adding points
 
@@ -288,6 +298,27 @@ clindata <- read.delim("data/NKI295.pdata.txt")
 clindata[1:5,1:5]
 ```
 
+##Matching-up the columns
+
+- Good to check that columns of expression matrix match the clinical data
+```{r}
+length(intersect(colnames(evalues), clindata[,1]))
+setdiff(colnames(evalues), clindata[,1])
+setdiff(clindata[,1],colnames(evalues))
+all(clindata[,1] == colnames(evalues)[-1])
+```
+
+##Matching-up the columns
+
+- Find columns in the clinical data that match the clinical data
+
+```{r}
+neword <- match(clindata[,1], colnames(evalues))
+evalues.reorder <- evalues[,neword]
+```
+
+
+
 
 ##Clinical data
 
@@ -299,6 +330,8 @@ which(clindata$ER == "Negative")[1:4]
 ```
 
 - Columns `r paste(which(clindata$ER == "Negative")[1:4], collapse=",")` are all ER negative samples
+
+
 
 ##Gene annotation
 
@@ -342,7 +375,7 @@ annodata[1,]
 
 - google!
 - Email if you need help mark.dunning@cruk.cam.ac.uk
-- Internal support forum. Go to bioinf-qa001/
+- Internal online support forum. Go to bioinf-qa001/ in web-browser
 - http://www.meetup.com/Cambridge-R-Users-Group-Meetup/
 
 ##Other references
@@ -350,6 +383,7 @@ annodata[1,]
 - R cookbook http://www.cookbook-r.com/
 - Quick-R http://www.statmethods.net/
 - UC Riverside guide http://manuals.bioinformatics.ucr.edu/home/R_BioCondManual
+- Course Manual
 
 ##Practice!
 

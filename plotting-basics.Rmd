@@ -328,7 +328,7 @@ sd(data$Treated)
 
 ##Adding error bars
 
-Something about Mike's functionality....
+Possible, but recall earlier discussion
 ```{r echo=FALSE}
 dpPlot <- function(data){
   
@@ -384,7 +384,7 @@ head(data)
 ##Boxplot of long data
 
 - Month is a variable in the data frame
-- We use *formula* syntax with the `~` symbol. e.g. \Rcode{y ~ x}
+- We use *formula* syntax with the `~` symbol. e.g. `y ~ x`
 
 ```{r}
 boxplot(data$Ozone~data$Month)
@@ -486,13 +486,17 @@ survData[1:10]
 plot(survfit(survData ~ Group))
 ```
 
-##Testing
+
+##Survival data in Prism
+
+- Prism uses a special format to represent survival data
+- See practical for details
 
 ```{r}
-survdiff(survData~Group)
+sdata <- read.delim("data/Two groups.txt")
+head(sdata)
 ```
 
-##Something about Prism format.....
 
 ##Growth Curve
 
@@ -506,24 +510,14 @@ data <- read.delim("PrimerExamples/Linear regression.txt")
 head(data)
 ```
 
-##Thinking about the data
-
-Variables in the data 
-
-- Time 
-- Count 
-- Group (Control vs Treatment)
-- Replicate number (1 to 6)
-
-Want to visualise difference in treatment over time
-
 
 ##Procedure
 
 - Gather columns together according to *group*
 - Calculate avearge values for each time point
 - Calculate a variability measurement (e.g. standard deviation)
-- Plot avearges with error bars
+- Plot averages with error bars
+- Smooth curve through the points
 
 ##Example
 
@@ -541,6 +535,28 @@ Repeat for treatment group
 
 ##Shortcut
 
-Something about Mike's functionality....
+- We have implemented this in the `crukCIMisc` package that accompanies this course
+- See practical for example 
+
+```{r eval=FALSE}
+install.packages("devtools")
+library(devtools)
+install_github(repo = "crukCIMisc", 
+               username = "markdunning")
+library(crukCIMisc)
+```
+
+
+##Dose response
+
+Goal is to produce following 
+![Dose Response Curve](images//Transform.png)
+
+##Another shortcut
+
+- Data are *similar* format as previous example
+- see `prismDoseResponseCurve` in `crukCIMisc`
+- See package `drc` for more in-depth analysis
+- `install.packages(drc)`
 
 #Break for practical 

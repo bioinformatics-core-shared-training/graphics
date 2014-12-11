@@ -149,6 +149,9 @@ boxplot(data, main="Cell counts",xlab="Cell type",
         ylab="Count",col="red")
 ```
 
+
+
+
 ##What about multiple colours?
 
 - The `col`, `pch` and `cex` arguments are *vectors*
@@ -164,6 +167,22 @@ boxplot(data, main="Cell counts",xlab="Cell type",
         ylab="Count",col=c("red","blue","green"))
 ```
 
+##Applicable to other types of plot
+
+```{r echo=FALSE,message=FALSE}
+svdata <- read.delim("data/Two groups.txt")
+library(crukCIMisc)
+Event <- extractSurvivalEvent(svdata[,2:3])
+Group <- extractSurvivalGroups(svdata[,2:3])
+library(survival)
+Time <- svdata[,1]
+SurvData <- Surv(Time, Event)
+```
+
+```{r echo=TRUE,fig.width=8,fig.height=4}
+plot(survfit(SurvData ~ Group), 
+     col=c(CRUKcol("Pink"),CRUKcol("Blue")))
+```
 
 ##Don't get carried away
 
