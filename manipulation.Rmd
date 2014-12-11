@@ -22,6 +22,17 @@ data$TempCelc <- TempCelc
 head(data)
 ```
 
+##Appending columns
+
+```{r}
+data <- read.csv("data/ozone.csv")
+TempCelc <- (data$Temp - 32)/1.8
+newdata <- data.frame(TempCelc, MonthName = month.name[data$Month])
+head(cbind(data, newdata))
+```
+
+
+
 ##Adding new observations
 
 - We can add new rows (observations) to a dataset
@@ -225,6 +236,12 @@ substr(clinical$sampleNames,1,3)[1:5]
 substr(clinical$sampleNames,1,3)[1:5] == "NKI"
 ```
 
+##Useful functions for manipulating text
+
+- `strtrim` 
+```{r}
+strtrim(clinical$sampleNames,3)[1:5]
+```
 
 
 ##Useful functions for manipulating text
@@ -245,7 +262,7 @@ Not an extensive list
 - `toupper`, `tolower` - convert upper / lower case
 - `gsub` -  substitute text
 - `paste` - combine text
-
+- `intersect`, `setdiff` see which is in common
 
 ##Combining data from files
 
