@@ -106,6 +106,8 @@ dim(data)
 
 - You may have noticed some `NA` entries in the vector
 - This is R's way of denoting *missing values*
+- They can cause problems when we try and calculate averages. Most functions have an `na.rm` option
+- Can also use `na.omit`
 
 ##Thinking about the data
 What variables do we have?
