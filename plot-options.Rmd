@@ -11,7 +11,7 @@ output: beamer_presentation
 
 - The `plot` function creates a very basic plot
 - Many optional arguments can be specified See `?plot`
-- Other plots e.g. `boxplot`, `hist`, `barplot` are special instances of `plot` so can acceot the same arguments
+- Other plots e.g. `boxplot`, `hist`, `barplot` are special instances of `plot` so can accept the same arguments
 
 
 ##Lets re-visit the ozone dataset
