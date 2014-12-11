@@ -11,7 +11,7 @@ output: beamer_presentation
 
 - The `plot` function creates a very basic plot
 - Many optional arguments can be specified See `?plot`
-- Other plots e.g. `boxplot`, `hist`, `barplot` are special instances of `plot` so can acceot the same arguments
+- Other plots e.g. `boxplot`, `hist`, `barplot` are special instances of `plot` so can accept the same arguments
 
 
 ##Lets re-visit the ozone dataset
@@ -149,6 +149,9 @@ boxplot(data, main="Cell counts",xlab="Cell type",
         ylab="Count",col="red")
 ```
 
+
+
+
 ##What about multiple colours?
 
 - The `col`, `pch` and `cex` arguments are *vectors*
@@ -164,6 +167,22 @@ boxplot(data, main="Cell counts",xlab="Cell type",
         ylab="Count",col=c("red","blue","green"))
 ```
 
+##Applicable to other types of plot
+
+```{r echo=FALSE,message=FALSE}
+svdata <- read.delim("data/Two groups.txt")
+library(crukCIMisc)
+Event <- extractSurvivalEvent(svdata[,2:3])
+Group <- extractSurvivalGroups(svdata[,2:3])
+library(survival)
+Time <- svdata[,1]
+SurvData <- Surv(Time, Event)
+```
+
+```{r echo=TRUE,fig.width=8,fig.height=4}
+plot(survfit(SurvData ~ Group), 
+     col=c(CRUKcol("Pink"),CRUKcol("Blue")))
+```
 
 ##Don't get carried away
 
