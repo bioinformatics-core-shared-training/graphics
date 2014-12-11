@@ -230,13 +230,6 @@ data <- read.delim("data/plasma.txt")
 data
 ```
 
-##The data
-
-The data are stored in a data frame
-
-- Each column is a variable representing a different group.
-- We call this wide data
-
 ##The boxplot
 
 If given a data frame, `boxplot` will summarize each column separately and construct the box from the quantiles. Again, the axes and labels are automatically decided
@@ -369,11 +362,36 @@ You can also make a histogram
 hist(data$Untreated)
 ```
 
+##About data formats
+
+- We produce boxplots from data in this format
+- Each group of interest is in a different column
+```{r}
+data <- read.delim("data/plasma.txt")
+data
+```
+
+##About data formats
+
+- Given what we know so far, what format should the data for this plot be in?
+
+```{r echo=FALSE,fig.width=8,fig.height=2}
+data <- read.csv("data/ozone.csv")
+boxplot(data$Ozone~data$Month)
+```
+
+```{r, echo=FALSE}
+df <- data.frame(Month1 = c(41,36,12), Month2 = c(NA,NA,NA), Month3 = c(135,49,32))
+df
+```
+
 
 ##A note about 'long data'
 
 - Recall our weather data
 - We do not have separate columns for each month
+- Ozone observations are *stacked* on top of each other
+- There is an *indicator* variable to tell us the month
 - This is know as 'long data'
 
 ```{r}
@@ -519,23 +537,10 @@ head(data)
 - Plot averages with error bars
 - Smooth curve through the points
 
-##Example
-
-Subset and create averages
-```{r}
-ctrl <- data[,2:4]
-means <- rowMeans(ctrl,na.rm=TRUE)
-```
-calculate standard deviations
-```{r eval=FALSE}
-vars <- c(sd(ctrl[1,]), sd(ctrl[2,]),...)
-```
-
-Repeat for treatment group
 
 ##Shortcut
 
-- We have implemented this in the `crukCIMisc` package that accompanies this course
+- We have implemented this in the `crukCIMisc` package that accompanies this course - `prismTimeSeries`
 - See practical for example 
 
 ```{r eval=FALSE}
@@ -555,7 +560,7 @@ Goal is to produce following
 ##Another shortcut
 
 - Data are *similar* format as previous example
-- see `prismDoseResponseCurve` in `crukCIMisc`
+- see `prismDoseResponse` in `crukCIMisc`
 - See package `drc` for more in-depth analysis
 - `install.packages(drc)`
 
