@@ -72,7 +72,7 @@ This section will provide you with practice on reading several different file fo
 The dataset introduced in the slides concerns weather conditions in New York City from the summer of 1973. \footnote{More details are available (http://faculty.washington.edu/heagerty/Books/Biostatistics/DATA/ozonedoc.txt}. 
 
 
-\exercise Read the ozone data into your Rstudio. Practice using the 'file.choose' to locate the file on your hard drive
+\exercise Read the ozone data into your Rstudio. Practice using the 'file.choose' function to locate the file on your hard drive
 
 <<echo=TRUE,eval=FALSE>>=
 myfile <- file.choose()
@@ -98,6 +98,7 @@ head(ozone)
 <<>>=
 ozone[,3]
 ozone$Wind
+all.equal(ozone[,3], ozone$Wind)
 @
 
 \exercise Make a scatter plot with index on the x-axis and Wind speed on the y-axis
@@ -162,7 +163,7 @@ life <- read.delim("data/UKLifeExpectancy.tsv")
 dim(life)
 head(life)
 @
-HINT: You should get 243 columns and 4 rows.
+HINT: You should get 243 rows and 4 columns.
 
 \exercise Plot how the Male life expectancy rate changes over the years (given in the \Rcode{Age} column)
 
@@ -305,7 +306,7 @@ The life expectancy data also contains annotations about years in the 20th centu
 life[life$Annotations != "",]
 @
 
-The \Rfunction{abline} can be used to add horizontal and vertical lines to an existing plot. As always, you can find out more information about the function by doing \Rcode{?abline}. It can take slope and intercept values, plot the result of a linear model fit (outside the scope of today), or plot horizontal and vertical lines by setting the \Rcode{h} and \Rcode{v} arguments.
+The \Rfunction{abline} can be used to add horizontal and vertical lines to an existing plot. As always, you can find out more information about the function by doing \Rcode{?abline}. It can take slope and intercept values, plot the result of a linear model fit (outside the scope of today), or plot horizontal and vertical lines by setting the \Rcode{h} and \Rcode{v} arguments. The appearance of the line can be modified by the \Rcode{lty} and \Rcode{lwd} arguments. For instance, specifying \Rcode{lty = 2 } creates a dotted line.
 
 \exercise Use \Rfunction{abline} to add vertical lines to indicate periods in which the two world wars took place
 
@@ -526,17 +527,28 @@ vec1 & vec2
 
 <<echo=TRUE,eval=TRUE>>=
 centdata <- life[vec1 & vec2,]
-
 dim(centdata)
 @
 
+Note that we didn't have to store the logical vectors in \Rcode{vec1} and \Rcode{vec2} and could have done the subsetting in one go; the following is also valid. However, when you're learning R, you might find it useful to bring tasks down into subtasks in this fashion.
+
+<<echo=TRUE,eval=TRUE>>=
+
+centdata <- life[life$Age > 1900 & life$Age < 2001,]
+dim(centdata)
+@
+
+
+
 Here we will use the fact that each year is represented by four digits (we will check this first), and the third digit will represent the number of the decade. 
 
-\exercise Create a new variable that captures the decade.
+\exercise Create a new variable that captures the decade and use the \Rfunction{table} and \Rfunction{unique} functions to check that it is correct.
 
 <<echo=TRUE,eval=TRUE>>=
 nchar(centdata$Age)
 decade <- substr(centdata$Age, 3, 3)
+table(decade)
+unique(decade)
 @
 
 We now have a vector which is the same length as the number of observations in the data frame and can be used to describe different groups in the data. Thus, we can use the $\sim$ notation to create a boxplot with life expectancy on the y-axis, and decade on the x-axis.
@@ -556,6 +568,8 @@ boxplot(centdata$Male.babies ~ decade,col="steelblue",add=TRUE)
 legend("topleft", fill=c("mistyrose", "steelblue"),legend=c("Female","Male"))
 @
 {\color{red}{[Optional Extensions]}}
+
+\exercise Specify the \Rcode{axes=FALSE} option to the boxplot function to supress the plotting of the axis. Then use the \Rfunction{axis} function to create an axis with labels 00s, 10s, 20s, 30s etc rather than 0,1,2,...
 
 <<echo=TRUE,eval=TRUE>>=
 boxplot(centdata$Female.babies ~ decade,col="mistyrose",xlab="Decade",
@@ -667,10 +681,15 @@ We can now associate the expression of a particular gene with various clinical f
 boxplot(as.numeric(erVals) ~ pmat$ER)
 @
 
+We can test the signficance of the association using the \Rfunction{t.test} function.
+
+<<echo=TRUE, eval=TRUE>>=
+t.test(as.numeric(erVals) ~ pmat$ER)
+@
 
 {\color{red}{[Optional Extensions]}}
 
-The pam50 gene signature has been widely-used to classify breast cancer into different subtypes. Here we show to retrieve the gene expression values relating to these genes.
+The pam50 gene signature has been widely-used to classify breast cancer into different subtypes. Here we show to retrieve the gene expression values relating to these genes \footnote{this table was extracted from the \Biocpkg{genefu} Bioconductor package}.
 
 
 <<echo=TRUE, eval=TRUE>>=
