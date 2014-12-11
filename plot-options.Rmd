@@ -11,10 +11,12 @@ output: beamer_presentation
 
 - The `plot` function creates a very basic plot
 - Many optional arguments can be specified See `?plot`
+- Other plots e.g. `boxplot`, `hist`, `barplot` are special instances of `plot` so can acceot the same arguments
+
 
 ##Lets re-visit the ozone dataset
 
-The default plots are ugly; No title, Meaningless labels, No colour
+The default plots are ugly; No title, un-helpful labels, No colour
 
 ```{r fig,width=4,fig.height=4}
 data <- read.csv("data/ozone.csv")
@@ -50,10 +52,10 @@ plot(data[,1], ylim=c(50,150))
 
 ##Defining a colour
 
-- R can recognise various strings `red`, `orange`,`green`,`blue`,`yellow`....
+- R can recognise various strings `"red"`, `"orange"`,`"green"`,`"blue"`,`"yellow"`....
 - Or more exotic ones `r sample(colours(),8)`..... See `colours()`.
 - See http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
-- Can also use **R**ed **G**reen **Blue** values
+- Can also use **R**ed **G**reen **Blue** , hexadecimal, values
 
 ##Use of colours
 
@@ -325,7 +327,7 @@ abline(h = 115)
 
 ##Adding lines
 
-```{r}
+```{r fig.height=4,fig.width=8}
 
 plot(data[,1], pch=16, col=mycols)
 grid(col="steelblue")
@@ -334,9 +336,10 @@ grid(col="steelblue")
 ##Adding lines
 
 - `abline` can take a gradient and intercept argument
+- for `y = x` use `a=0` and `b=1`
 - Can be used to draw a *line of best fit* in conjunction with a linear model
 
-```{r}
+```{r fig.height=4,fig.width=8}
 plot(1:10, jitter(1:10))
 abline(0,1)
 ```
