@@ -133,9 +133,6 @@ What are we interested in?
 - Trend
 - Relationship
 
-Any repeated observations?
-
-- No
 
 ##Thinking about the plot
 
