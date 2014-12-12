@@ -38,6 +38,17 @@ grid.raster(img)
 - Use column headings in file?
 - Skip any rows?
 
+##Word of caution
+Leo Tolstoy:
+
+> Happy families are all alike; every unhappy family is unhappy in its own way.
+
+Hadley Wickham:
+
+> Like families, tidy datasets are all alike but every messy dataset is messy in its own way
+
+http://vimeo.com/33727555
+
 ##Reading the data
 
 To import these data into R we use the `read.csv` function, which will create a *data-frame* representation
@@ -46,6 +57,8 @@ To import these data into R we use the `read.csv` function, which will create a 
 ```{r}
 data <- read.csv("data/ozone.csv")
 ```
+
+
 
 ##Reading the data
 
@@ -120,9 +133,6 @@ What are we interested in?
 - Trend
 - Relationship
 
-Any repeated observations?
-
-- No
 
 ##Thinking about the plot
 
@@ -375,7 +385,7 @@ data
 
 - Given what we know so far, what format should the data for this plot be in?
 
-```{r echo=FALSE,fig.width=8,fig.height=2}
+```{r echo=FALSE,fig.width=8,fig.height=4}
 data <- read.csv("data/ozone.csv")
 boxplot(data$Ozone~data$Month)
 ```
