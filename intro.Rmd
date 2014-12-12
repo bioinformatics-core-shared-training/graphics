@@ -1,6 +1,6 @@
 ---
-title: "Course Introduction"
-author: "Mark Dunning"
+title: "R graphics and data manipulation"
+author: "Mark Dunning, Mike Smith, Sarah Vowler"
 date: "12 December 2014"
 output: beamer_presentation
 ---
@@ -15,6 +15,12 @@ output: beamer_presentation
 - Practical
 - Manipulating data (Mark)
 - Practical 
+
+##What the course is not
+
+- Introduction to R from scratch
+- Advanced / specialised graphics
+- 'Programming' in R
 
 ## Other resources
 
