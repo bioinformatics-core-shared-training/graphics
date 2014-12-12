@@ -1,0 +1,23 @@
+---
+title: "Course Introduction"
+author: "Mark Dunning"
+date: "12 December 2014"
+output: beamer_presentation
+---
+
+## About this course
+
+- Common types of plot; What makes a good plot? (Sarah)
+- Creating basic plots in R (Mark)
+- Practical
+- Customising a plot (Mark)
+- Tea / Coffee / Biscuits
+- Practical
+- Manipulating data (Mark)
+- Practical 
+
+## Other resources
+
+- A course manual
+- An R package; crukCIMisc
+- An online support forum; bioinf-qa001/
