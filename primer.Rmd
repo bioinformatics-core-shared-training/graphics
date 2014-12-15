@@ -1,13 +1,14 @@
 ---
-title: 'Data  Manipulation and Visualisation: An R primer'
+title: 'Data Manipulation and Visualisation: An R primer'
 author: "Mark Dunning and Mike Smith"
-Last compiled: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   pdf_document:
     toc: yes
+    toc_depth: 3
   html_document:
     toc: yes
     toc_depth: 3
+
 ---
 
 #Introduction
@@ -1028,10 +1029,6 @@ barplot(table(abm$sex,abm$race),beside=TRUE,col=c("red","blue"))
 legend("topright", fill=c("red","blue"),legend=c("female","male"))
 ```
 
-###'dynamite-plunger' plot
-
-
-
 ###A boxplot
 
 The boxplot is a convenient way of comparing the distributions of numeric data. If given a numeric matrix, or data frame, it will construct a box from the quartiles of the data . The whiskers are plotted at 1.5 times the inter-quartile range. Outliers are defined to be more than 1.5 times away from the box and plotted as circle.
@@ -1089,9 +1086,12 @@ stripchart(as.data.frame(mydata),add=TRUE,vertical=TRUE)
 
 dotchart(mydata,vertical=TRUE)
 
-##Survival Curve
+###Survival Curve
 
 
+###Growth curve
+
+##Replicating GraphPad Prism plots in R
 
 ##Exporting a plot
 
