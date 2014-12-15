@@ -1,26 +1,42 @@
 ---
 title: 'Data  Manipulation and Visualisation: An R primer'
 author: "Mark Dunning and Mike Smith"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+Last compiled: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     toc: yes
     toc_depth: 3
-  pdf_document:
-    toc: yes
 ---
 
 #Introduction
 
-This document will guide you through the key concepts and techniques required to manipulate and process data in R. It is intended to be a reference document that you can refer to when you need to perform a particular task in R. 
+**Document last updated** : `r Sys.time()`
 
-1. Read the data into R
-  + What format are the data in? 
-2. Manipulate the data
-  + What columns / rows are needed for the analysis? Do any additional calculations need to be performed?
-3. Plot the data
-  + What type of plot do you need to convey your message? What type of data do you need for the plot
-  
+This document will guide you through the key concepts and techniques required to manipulate and process data in R. It is intended to be a reference document that you can refer to when you need to perform a particular task in R. We have also created an R package to accompany this manual and automate the creation of several graphs.
+
+##The crukCIMisc package
+
+We have created an R package `crukCIMisc` to accompany this manual. The source code is available on [github](https://github.com/markdunning/crukCIMisc) and can be installed in the following manner (you will need to install the `devtools` package as shown below)
+
+
+```{r eval=FALSE}
+install.packages("devtools")
+library(devtools)
+install_github(repo = "crukCIMisc", username = "markdunning")
+library(crukCIMisc)
+```
+
+
+##Getting help with R
+
+You are of course welcome to email us, mark.dunning@cruk.cam.ac.uk and mike.smith@cruk.cam.ac.uk, with any questions about R and the contents of this manual. However, we encourage you to use the online support forum (similar to the popular [stackoverflow](http://stackoverflow.com/questions/tagged/r)) that the Bioinformatics Core has installed. Go to;
+
+http://bioinf-qa001/
+
+If you get stuck on something in R, there is a good chance that someone else has experienced the same problem before. Tracking such problems will allow us to build-up a useful resource of commonly-asked questions, and solutions.
+
 #Recommended references
 
 Much [freely-available](http://cran.r-project.org/other-docs.html) documentation about R is available from CRAN. In particular, the R [reference card](http://cran.r-project.org/doc/contrib/Short-refcard.pdf) is recommended. 
