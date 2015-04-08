@@ -1,0 +1,395 @@
+---
+title: "Data Manipulation"
+author: "Mark Dunning"
+date: "12/12/2014"
+output: beamer_presentation
+---
+
+##Data in R are not static
+
+- We can add new variables and observations
+- Re-order / sort the existing data
+- Create subsets
+- Create copies of our data
+- Remove old copies using `rm`
+
+##Calculating new variables
+
+```{r}
+data <- read.csv("data/ozone.csv")
+TempCelc <- (data$Temp - 32)/1.8
+data$TempCelc <- TempCelc
+head(data)
+```
+
+##Appending columns
+
+```{r}
+data <- read.csv("data/ozone.csv")
+TempCelc <- (data$Temp - 32)/1.8
+newdata <- data.frame(TempCelc, 
+                      MonthName = month.name[data$Month])
+head(cbind(data, newdata))
+```
+
+
+
+##Adding new observations
+
+- We can add new rows (observations) to a dataset
+- Useful if data are spread across multiple files
+- Take care that columns are the same
+
+```{r}
+newobs <- c(50, 140, 8, 67, 10,1,19.4)
+data2 <- rbind(data,newobs)
+tail(data2)
+```
+
+
+
+##Re-ordering and sorting
+
+- At the moment, these data are in date-order
+
+```{r}
+data <- read.csv("data/ozone.csv")
+head(data)
+```
+- We might want to know the hottest days
+
+##Re-ordering and sorting
+
+```{r}
+sort(data$Temp)
+```
+
+##Re-ordering and sorting
+
+```{r}
+sort(data$Temp,decreasing = TRUE)
+```
+
+##Re-ordering and sorting
+
+- What is the difference between the output of `sort` and `order`?
+```{r}
+tempOrder <- order(data$Temp, decreasing = TRUE)
+length(tempOrder)
+tempOrder
+```
+
+##Re-ordering and sorting
+
+- `sort` gives the *values* in sorted order
+- `order` gives *indices*
+- we can use the result of `order` to subset the data
+```{r} 
+tempOrder[1:5]
+data[tempOrder[1:5],]
+```
+
+##Writing a new file
+
+- At this point, we might want to write our re-ordered data to a file
+
+```{r}
+newData <- data[tempOrder,]
+dim(newData)
+write.csv(newData, file="reorderedWeather.csv")
+```
+
+
+##General Subsetting
+
+- We have already seen how to subset using numeric indexes
+- We can also subset using *logical* vectors
+- i.e. a vector of `TRUE` or `FALSE` values
+
+```{r}
+myvec <- 1:10
+myvec
+myvec[c(TRUE, TRUE, FALSE,FALSE,TRUE,TRUE,
+        FALSE, FALSE,FALSE,TRUE)]
+```
+
+##General Subsetting
+
+- The `TRUE` or `FALSE` values can be derived from a test such as
+  - `<`, `>`, `==`, `!=`
+- Mulitple conditions can be tested using `&` (`and`)  `|` (*or*)
+- Also `is.na`, `is.infinite` and more.....
+
+## Adding points
+
+- Suppose we are interested in days with Ozone level over 100
+- Use the `>` function 
+- Get a `TRUE` or `FALSE` for every observation
+
+```{r}
+data$Ozone > 100
+```
+
+## Adding points
+
+- Get the `TRUE` indices using the `which` function
+
+```{r}
+highOzone <- which(data$Ozone > 100)
+highOzone
+```
+
+## Adding points
+
+- Now do the subset
+
+```{r}
+data[highOzone,]
+```
+- Could write this to a file if we wish....
+
+## Adding points
+
+- The `points` funtion is used to add points to an existing plot
+- We need to give it a set of *x* and *y* coordinates
+- The *x* values are the indices we've just computed. 
+- *y* values are obtained by subsetting the *Ozone* variable
+
+```{r}
+newX <- highOzone
+newY <- data$Ozone[newX]
+```
+
+## Adding points
+
+
+```{r fig.width=8,fig.height=4}
+highOzone <- which(data$Ozone > 100)
+plot(data$Ozone)
+abline(h=100)
+points(newX, newY,col="red",pch=16)
+```
+
+
+##Subsetting by text
+
+We now consider the clinical characteristics of a breast cancer cohort
+
+```{r}
+clinical <- read.delim("data/NKI295.pdata.txt")
+table(clinical$ER)
+```
+
+##Subsetting by text
+
+We might wish to know the identity of *ER negative* samples
+
+- Note the double `==`
+
+```{r}
+
+clinical$ER == "Negative"
+
+```
+
+##Returning indices
+
+```{r}
+which(clinical$ER == "Negative")
+```
+
+##Potential trap number 1.
+
+```{r}
+which(clinical$ER == "negative")
+```
+
+##Potential trap number 2.
+
+
+```{r}
+which(clinical$er == "Negative")
+```
+
+##Potential trap number 3.
+
+```{r}
+match("Negative", clinical$ER)
+```
+
+
+##Use in subsetting
+
+```{r}
+clinical[which(clinical$ER == "Negative"),]
+```
+
+##Alternative
+
+- grep finds indices of all entries that match
+
+```{r}
+clinical[grep("Negative",clinical$ER),]
+```
+
+##Match multiple strings
+
+```{r}
+clinical[which(clinical$Fan.nearest.centroid %in% 
+                 c("Basal", "HER2")),]
+```
+
+
+##Useful functions for manipulating text
+
+- `substr` 
+```{r}
+substr(clinical$sampleNames,1,3)[1:5]
+substr(clinical$sampleNames,1,3)[1:5] == "NKI"
+```
+
+##Useful functions for manipulating text
+
+- `strtrim` 
+```{r}
+strtrim(clinical$sampleNames,3)[1:5]
+```
+
+
+##Useful functions for manipulating text
+
+- `strsplit`
+
+```{r}
+strsplit(as.character(clinical$sampleNames), "_")[[1]]
+matrix(unlist(strsplit(as.character(clinical$sampleNames), "_"))
+       ,ncol=2,byrow=TRUE)
+```
+
+
+##Useful functions for manipulating text
+
+Not an extensive list
+
+- `toupper`, `tolower` - convert upper / lower case
+- `gsub` -  substitute text
+- `paste` - combine text
+- `intersect`, `setdiff` see which is in common
+
+##Combining data from files
+
+- Now look at typical gene expression matrix
+- Each row corresponds to a *gene*
+- Each column is a *sample*
+
+```{r}
+evalues <- read.delim("data/NKI295.exprs.txt")
+dim(evalues)
+evalues[1:5,1:5]
+```
+
+##Clinical data
+
+- Each row is a *sample*
+- Each column is a different *clinical* variable
+- Can have as many columns as you like
+- e.g. first five rows in sample information are first five columns in expression matrix
+
+```{r}
+clindata <- read.delim("data/NKI295.pdata.txt")
+clindata[1:5,1:5]
+```
+
+##Matching-up the columns
+
+- Good to check that columns of expression matrix match the clinical data
+```{r}
+length(intersect(colnames(evalues), clindata[,1]))
+setdiff(colnames(evalues), clindata[,1])
+setdiff(clindata[,1],colnames(evalues))
+all(clindata[,1] == colnames(evalues)[-1])
+```
+
+##Matching-up the columns
+
+- Find columns in the clinical data that match the clinical data
+
+```{r}
+neword <- match(clindata[,1], colnames(evalues))
+evalues.reorder <- evalues[,neword]
+```
+
+
+
+
+##Clinical data
+
+- Can also go from clinical to gene expression matrix
+- e.g. if we know what *rows* in the clinical matrix correspond to ER negatives, we will what  *columns* they are in the gene expression matrix
+
+```{r}
+which(clindata$ER == "Negative")[1:4]
+```
+
+- Columns `r paste(which(clindata$ER == "Negative")[1:4], collapse=",")` are all ER negative samples
+
+
+
+##Gene annotation
+
+- Each row is a *gene* in the experiment
+- Each column is *annotation* about that gene
+- e.g. Rows 1 to 5 in the annotation matrix tell us about rows 1 to 5 in the expression matrix
+```{r}
+annodata <- read.delim("data/NKI295.fdata.txt")
+annodata[1:5,1:5]
+```
+
+##Gene annotation
+
+- e.g. row 1 in the expression matrix is the gene expression values for GREM2
+
+```{r}
+annodata[1,]
+```
+
+- 
+
+##Example analyses
+
+- Extract the expression values for a given gene
+- Extract the arrays representing a particular clinical subgroup
+- Plot gene expression against particular clinical variables
+- Compare expression of one gene against another
+
+#Wrap-up
+
+##Things we didn't mention
+
+- loops, if / else etc
+- apply, lapply
+- writing functions
+- ggplot2 http://ggplot2.org/
+- Bioconductor http://bioconductor.org/
+
+
+##Don't be a stranger!
+
+- Email if you need help mark.dunning@cruk.cam.ac.uk
+- Internal online support forum. Go to bioinf-qa001/ in web-browser
+- http://www.meetup.com/Cambridge-R-Users-Group-Meetup/
+
+##Other references
+
+- R cookbook http://www.cookbook-r.com/
+- Quick-R http://www.statmethods.net/
+- UC Riverside guide http://manuals.bioinformatics.ucr.edu/home/R_BioCondManual
+- Course Manual
+
+##Practice!
+
+- Lots of example datasets are available online
+
+http://vincentarelbundock.github.io/Rdatasets/datasets.html
+
+#Break for final practical

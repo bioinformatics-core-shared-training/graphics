@@ -1,0 +1,29 @@
+---
+title: "R graphics and data manipulation"
+author: "Mark Dunning, Mike Smith, Sarah Vowler"
+date: "12 December 2014"
+output: beamer_presentation
+---
+
+## About this course
+
+- Common types of plot; What makes a good plot? (Sarah)
+- Creating basic plots in R (Mark)
+- Practical
+- Customising a plot (Mark)
+- Tea / Coffee / Biscuits
+- Practical
+- Manipulating data (Mark)
+- Practical 
+
+##What the course is not
+
+- Introduction to R from scratch
+- Advanced / specialised graphics
+- 'Programming' in R
+
+## Other resources
+
+- A course manual
+- An R package; crukCIMisc
+- An online support forum; bioinf-qa001/

@@ -1,0 +1,482 @@
+---
+title: "Customising a Plot"
+author: "Mark Dunning"
+date: "12/12/2014"
+output: beamer_presentation
+---
+
+# Changing how a plot is created
+
+## Specifying extra arguments to plot
+
+- The `plot` function creates a very basic plot
+- Many optional arguments can be specified See `?plot`
+- Other plots e.g. `boxplot`, `hist`, `barplot` are special instances of `plot` so can accept the same arguments
+
+
+##Lets re-visit the ozone dataset
+
+The default plots are ugly; No title, un-helpful labels, No colour
+
+```{r fig,width=4,fig.height=4}
+data <- read.csv("data/ozone.csv")
+plot(data[,1],data[,2])
+```
+
+
+##Adding a title
+
+```{r}
+plot(data[,1], 
+     main="Relationship between ozone level and Solar Radiation")
+```
+
+
+##Axis labels
+
+```{r}
+plot(data[,1], xlab="Ozone level")
+```
+
+##Axis labels
+
+```{r}
+plot(data[,1], ylab="Solar Radiation")
+```
+
+##Axis limits
+
+```{r}
+plot(data[,1], ylim=c(50,150))
+```
+
+##Defining a colour
+
+- R can recognise various strings `"red"`, `"orange"`,`"green"`,`"blue"`,`"yellow"`....
+- Or more exotic ones `r sample(colours(),8)`..... See `colours()`.
+- See http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+- Can also use **R**ed **G**reen **Blue** , hexadecimal, values
+
+##Use of colours
+
+Changing the `col` argument to `plot` changes the colour that the points are plotted in
+
+```{r}
+plot(data[,1],col="red")
+```
+
+
+##Plotting characters
+
+- R can use a variety of *p*lotting *ch*aracters
+- Each of which has a numeric *code* 
+```{r}
+plot(data[,1], pch=16)
+```
+
+##Plotting characters
+
+```{r echo=FALSE}
+par(mar=c(0.1,0.1,0.1,0.1))
+i <- 0:24
+
+x <- floor(i /5) + 1
+y <- i %%5
+
+plot(1:10, type="n", xlim = c(1,5), ylim=c(-1,5),axes=F,xlab="",ylab="")
+points(x,y,pch=i+1)
+text(x,y-0.3,i+1)
+```
+
+
+##Plotting characters
+- Or you can specify a character
+
+```{r}
+plot(data[,1], pch="X")
+```
+
+
+##Size of points
+**C**haracter **ex**pansion
+```{r}
+plot(data[,1], cex=2)
+```
+
+##Size of points
+**C**haracter **ex**pansion
+```{r}
+plot(data[,1], cex=0.2)
+```
+
+
+##Multiple options at the same time
+
+```{r eval=FALSE,fig.width=4,fig.height=4}
+plot(data[,1], pch=16,col="red",
+     main="Relationship between ozone level and Solar",
+     xlab="Ozone level",
+     ylab="Solar")
+
+```
+
+##Multiple options at the same time
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+plot(data[,1], pch=16,col="red",
+     main="Relationship between ozone level and Solar",
+     xlab="Ozone level",
+     ylab="Solar")
+
+```
+
+
+
+##Applicable to other types of plot
+
+```{r eval=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+data
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col="red")
+```
+
+##Applicable to other types of plot
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col="red")
+```
+
+
+
+
+##What about multiple colours?
+
+- The `col`, `pch` and `cex` arguments are *vectors*
+- Previously we used a vector of length one that was *recycled*
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+```
+
+
+```{r fig.width=8,fig.height=4}
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col=c("red","blue","green"))
+```
+
+##Applicable to other types of plot
+
+```{r echo=FALSE,message=FALSE}
+svdata <- read.delim("data/Two groups.txt")
+library(crukCIMisc)
+Event <- extractSurvivalEvent(svdata[,2:3])
+Group <- extractSurvivalGroups(svdata[,2:3])
+library(survival)
+Time <- svdata[,1]
+SurvData <- Surv(Time, Event)
+```
+
+```{r echo=TRUE,fig.width=8,fig.height=4}
+plot(survfit(SurvData ~ Group), 
+     col=c(CRUKcol("Pink"),CRUKcol("Blue")))
+```
+
+##Don't get carried away
+
+- Each point can have a unique colour, plotting character, size.
+
+```{r echo=FALSE}
+data <- read.csv("data/ozone.csv")
+```
+
+
+```{r echo=FALSE}
+plot(data[,1], pch=1:20, col=sample(colours(), nrow(data)))
+```
+
+##Can modify specific points
+
+- Suppose we know that observations 117, 62, 99, 121 and 30 were the highest ozone level
+- We may wish to plot them a different colour
+- *a* Solution: Create a vector of colours the required length and modify the appropriate entries
+
+```{r fig.width=8,fig.height=4}
+
+mycols <- rep("black", 153)
+mycols[c(117,62,99,121,30)] <- "red"
+
+plot(data[,1], pch=16, col=mycols)
+```
+
+
+##Using a palette
+- The `RColorBrewer` package has various ready-made colour schemes
+```{r}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+##Creating a palette
+
+- `brewer.pal` function creates a vector of the specified length comprising colours from the named palette
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+```
+
+
+```{r fig.height=4,fig.width=8}
+
+mypal <- brewer.pal(3, "Set1")
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col=mypal)
+```
+
+
+
+# Modifying an existing plot
+
+##Initial plot
+
+```{r}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+```
+
+##The points function
+
+- `points` can be used to set of points to an *existing* plot
+- it requires a vector of x and y coordinates
+- Note that axis limits of the existing plot are not altered
+
+##Adding points
+
+```{r}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind)
+```
+
+##Adding points
+
+`points` can also use the `pch`, `col` arguments. Useful for distinguishing between variables
+
+```{r fig.height=4,fig.width=8}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind,pch=15,col="red")
+```
+
+
+##Adding points
+
+- Each set of points can have a different colour and shape
+- Axis labels and title and limits are defined by the plot
+- You can add points ad-nauseum. Try not to make the plot cluttered!
+- A call to `plot` will start a new graphics window
+
+```{r fig.height=4,fig.width=8}
+data <- read.csv("data/ozone.csv")
+plot(data$Ozone, data$Solar.R,pch=16)
+points(data$Ozone, data$Wind,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+```
+
+
+
+##Adding points
+
+- Be careful about the order in which you add points
+
+```{r fig.height=4,fig.width=8}
+plot(data$Ozone, data$Wind,pch=16)
+points(data$Ozone, data$Solar.R,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+```
+
+##Adding points
+
+- Can define suitable axis limits in initial plot
+
+```{r fig.height=4,fig.width=8}
+plot(data$Ozone, data$Wind,pch=16,ylim=c(0,350))
+points(data$Ozone, data$Solar.R,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+```
+
+
+
+
+## Adding a legend
+
+```{r fig.height=4,fig.width=8}
+plot(data$Ozone, data$Wind,pch=16,ylim=c(0,350))
+points(data$Ozone, data$Solar.R,pch=15)
+points(data$Ozone, data$Temp,pch=17)
+legend("topright", legend=c("Solar","Wind","Temp"), 
+       col="black", pch=c(16,15,17))
+```
+
+##Adding text
+
+```{r fig.height=4,fig.width=8}
+mycols <- rep("black", 153)
+mycols[c(117,62,99,121,30)] <- "red"
+
+plot(data[,1], pch=16, col=mycols)
+text(c(117,62,99,121,30), data[c(117,62,99,121,30),1], 
+     labels=LETTERS[1:5])
+```
+
+##Adding lines
+
+```{r fig.height=4,fig.width=8}
+mycols <- rep("black", 153)
+mycols[c(117,62,99,121,30)] <- "red"
+
+plot(data[,1], pch=16, col=mycols)
+abline(h = 115)
+
+```
+
+
+
+##Adding lines
+
+```{r fig.height=4,fig.width=8}
+
+plot(data[,1], pch=16, col=mycols)
+grid(col="steelblue")
+```
+
+##Adding lines
+
+- `abline` can take a gradient and intercept argument
+- for `y = x` use `a=0` and `b=1`
+- Can be used to draw a *line of best fit* in conjunction with a linear model
+
+```{r fig.height=4,fig.width=8}
+plot(1:10, jitter(1:10))
+abline(0,1)
+```
+
+
+##Adding lines
+
+Lines can also be added to other plots
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.delim("data/plasma.txt")
+```
+
+```{r fig.height=4,fig.width=8}
+boxplot(data, main="Cell counts",xlab="Cell type",
+        ylab="Count",col="red")
+abline(h=c(4,5,6),col="steelblue")
+```
+
+##Adding lines
+
+Lines can also be added to other plots
+
+```{r fig.height=4,fig.width=8}
+barplot(colMeans(data))
+abline(h=c(4,5,6),col="steelblue")
+```
+
+##See also
+
+- rect `example(rect)`
+- polygon `example(polygon)`
+- segments `example(segments)`
+
+
+# Plot layout options
+
+##The `par` function
+
+- Using the `par` function prior to creating a plot allows several plot defaults to be set
+- ?par for details
+
+```{r}
+
+```
+
+
+##Multiple figures
+
+- We can have *m*ultiple *f*igures per *row* using `mfrow`
+- e.g. one row and three columns
+- each new call to plot is added in a new panel
+- see also `mfcol`
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+data <- read.csv("data/ozone.csv")
+```
+
+```{r fig.height=4,fig.width=8}
+par(mfrow=c(1,3))
+plot(data[,1],data[,2])
+plot(data[,1],data[,3])
+plot(data[,1],data[,4])
+
+```
+
+##Margin size
+
+- the `mar` vector specifies that amount of space around each edge of the plot
+-  `c(bottom, left, top, right)`
+
+
+```{r echo=FALSE,results='hide'}
+dev.off()
+```
+
+
+```{r echo=FALSE,fig.width=8,fig.height=4}
+
+par(mar = c(5,1,5,1))
+plot(data[,1],data[,2])
+
+
+```
+
+#Exporting a plot
+
+##As a png
+- `png` function prior to code to create plot
+- file is created in your working directory (doesn't need to exist)
+- `dev.off()` afterwards
+- can also make jpeg in similar fashion
+```{r}
+png("mycoolplot.png")
+plot(data[,1],data[,2])
+dev.off()
+```
+
+
+##As a pdf
+
+- As before, except use `pdf`
+
+```{r}
+pdf("mycoolplot.pdf")
+plot(data[,1],data[,2])
+dev.off()
+```
+
+##As a pdf
+
+- However, a pdf can have multiple pages
+- Can *annotate* by program such as Photoshop
+- Can specify dimensions, dpi etc
+```{r}
+pdf("mycoolmultipageplot.pdf")
+plot(data[,1],data[,2])
+plot(data[,1],data[,3])
+dev.off()
+```
+
+#Break for practical

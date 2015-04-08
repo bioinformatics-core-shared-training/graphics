@@ -1,0 +1,1720 @@
+---
+title: 'Data Manipulation and Visualisation: An R primer'
+author: "Mark Dunning and Mike Smith"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+  html_document:
+    toc: yes
+    toc_depth: 3
+
+---
+
+#Introduction
+
+**Document last updated** : `r Sys.time()`
+
+This document will guide you through the key concepts and techniques required to manipulate and process data in R. It is intended to be a reference document that you can refer to when you need to perform a particular task in R. We have also created an R package to accompany this manual and automate the creation of several graphs.
+
+##The crukCIMisc package
+
+We have created an R package `crukCIMisc` to accompany this manual. The source code is available on [github](https://github.com/markdunning/crukCIMisc) and can be installed in the following manner (you will need to install the `devtools` package as shown below)
+
+
+```{r eval=FALSE}
+install.packages("devtools")
+library(devtools)
+install_github(repo = "crukCIMisc", username = "markdunning")
+library(crukCIMisc)
+```
+
+
+##Getting help with R
+
+You are of course welcome to email us, mark.dunning@cruk.cam.ac.uk and mike.smith@cruk.cam.ac.uk, with any questions about R and the contents of this manual. However, we encourage you to use the online support forum (similar to the popular [stackoverflow](http://stackoverflow.com/questions/tagged/r)) that the Bioinformatics Core has installed. Go to;
+
+http://bioinf-qa001/
+
+If you get stuck on something in R, there is a good chance that someone else has experienced the same problem before. Tracking such problems will allow us to build-up a useful resource of commonly-asked questions, and solutions.
+
+#Recommended references
+
+Much [freely-available](http://cran.r-project.org/other-docs.html) documentation about R is available from CRAN. In particular, the R [reference card](http://cran.r-project.org/doc/contrib/Short-refcard.pdf) is recommended. 
+
+There is no shortage of other R tutorials available online. Some that have provided particular inspiration in the construction of this document are listed below:
+
+- [R cookbook](http://www.cookbook-r.com/)
+- [Quick-R](http://www.statmethods.net/)
+- [UC Riverside R & Bioconductor manual](http://manuals.bioinformatics.ucr.edu/home/R_BioCondManual)
+
+#Running R and RStudio
+
+Our recommended way of using R is via the RStudio interface. Like R, this software is freely to download and available on any operating system. You will need to download the latest versions of R and RStudio.
+
+##Installing R
+
+Download links for R can be found on the [CRAN](http://cran.r-project.org/) page (Comprehensive R Archive Network). There are separate downloads for [Windows](http://cran.r-project.org/bin/windows/base/R-3.1.1-win.exe) and [Mac OSX](http://cran.r-project.org/bin/macosx/R-3.1.1-snowleopard.pkg). Unix, or advanced users will need to find the appropriate link to their distribuion, or consider downloading the [source code](http://cran.r-project.org/src/base/R-3/R-3.1.1.tar.gz). 
+
+##Installing RStudio
+
+RStudio was created by a third-party company and available as a free download. You can find an *installer* for your platform on the [download](http://www.rstudio.com/products/rstudio/download/) page. Make sure that you are downloading the **Desktop** version of RStudio, rather than the *server* version.
+
+##About this document
+
+This document was written in RStudio using the **markdown** format. If you see a section like this, you can copy-and-paste the text into RStudio and execute it. 
+ 
+```{r eval=FALSE}
+print("Hello World")
+```
+
+
+Often the output from R will be displayed after the R command. You can compare this to the output that you get from running the command yourself.
+
+```{r}
+print("Hello World")
+```
+
+Sometimes the graphics produced by R will be displayed too.
+
+```{r}
+plot(runif(1:10))
+```
+
+#Reading data into R
+
+The first stage of doing an analysis in R is to import some raw data that is presented a *spreadsheet-like* format. By which we mean data organised in rows and columns like we usually see in a spreadsheet program such a Microsoft Excel.
+
+Unfortunately, importing data can be the source of many errors and frustrations; sometimes halting an analysis before it has even begun. *Well-formatted* data should be easy to read using a small selection of functions, although the user will have to decide which function to use. The key first steps are to locate the relevant raw data file on your hard drive and decide what format it is in. As a *rule-of-thumb*, [tab-delimited](#tab-delimited-file) files have file extensions *.txt* or *.tsv*, whereas [comma-separated](#comma-separated-file) have an extension *.csv* .
+
+More information on reading files into R can be found online at the [R data manual](http://cran.r-project.org/doc/manuals/R-data.html) or [an introduction to data cleaning with R](http://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
+
+##Specify a path to the file
+
+R needs to know where the file is located on your hard drive in order to read it. If the file is located within your *working directory* then you can just specify the name of the file. You can find out the location of your working directory using the `getwd` function.
+
+```{r eval=FALSE}
+getwd()
+```
+
+You can also interrogate the contents of your working directory using the `dir` function
+
+```{r eval=FALSE}
+dir()
+```
+The `dir` function has a useful argument `pattern` which will list files that contain a particular *string* of text. For instance, we can list all files of type `.csv` and `.txt` in the current working directory that could potentially be read into R.
+
+```{r eval=FALSE}
+dir(pattern=".csv")
+dir(pattern=".txt")
+```
+
+If the file you want to read is not in your working directory, then you will need to specify thepath to the file. A useful function in this situation is `file.choose`, which will open a dialog box allowing you to navigate to the file. The location can be stored as a variable.
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+When specifying the file location manually, it has to giving within *quote marks*, as in the following example
+
+
+```{r}
+myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
+```
+
+We will now discuss various ways of loading tabular data into R. The examples should cover most file types that you might encounter (e.g. csv, txt, tsv, xlsx files). If you have an example file that doesn't seem to fit any of these example, please let us know. Please note that R is not able to import GraphPad Prism files, as this file format is proprietary. You will have to use a commercial version of Prism to export the data table into a text-file. 
+
+Once a file has been read into R, we recommend that you **check the dimensions and contents**. Sometimes R will read a file without error, but may not have been able to interpret the structure of the data correctly, which will cause problems for further analysis.
+
+##What separator should be used?
+
+```{r}
+count.fields("PrimerExamples/Indepentent two-sample t-test_v2_long.txt",sep="\t")
+count.fields("PrimerExamples/Indepentent two-sample t-test_v2_long.txt",sep=",")
+
+```
+
+
+##Tab-delimited file
+
+As a *rule-of-thumb*, tab-delimited files have file extensions *.txt* or *.tsv*. If your file is tab-delimited and you have specified the location using the previous section, you will be able to use the `read.delim` function. The `file.exists` is a useful function for checking that the file location is correct; returning `TRUE` if so.
+
+```{r}
+myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
+file.exists(myfile)
+mydata <- read.delim(myfile)
+```
+
+Assuming that the function does not produce an error, you should now have a variable `mydata` in your R workspace. This is *data frame* object, described in more detail in the [appendix](#data-frames). At this point, it is highly recommended that you check the contents of the variable. The `View` command should open a new tab in RStudio.
+
+```{r eval=FALSE}
+View(mydata)
+```
+
+The dimensions and structure of the data can be further interrogated using the following [useful functions](#useful-functions-to-know).
+
+```{r}
+dim(mydata)
+str(mydata)
+head(mydata)
+```
+
+In this case, the object has `r ncol(mydata)` columns and `r nrow(mydata)` rows; as we would expect.
+
+Now notice what happens if we read the file by (incorrectly) calling the `read.csv` function on a *tab-delimited* file
+
+```{r}
+myfile <- "PrimerExamples/Indepentent two-sample t-test_v2_long.txt"
+mydata <- read.csv(myfile)
+dim(mydata)
+str(mydata)
+head(mydata)
+```
+
+R was able to read the file without error, but the dimensions of the resulting object are incorrect. In particular, it has been unable to separate the columns because an incorrect s
+eparator was used (a `,` rather than a tab). 
+
+##Comma-separated file
+
+Files that have columns separated by commas can be read using the `read.csv` function. The file location needs to be specified by either using the `file.choose` function as follows;
+
+```{r eval=FALSE}
+myfile <- file.choose()
+```
+
+Or by specifying the path to the file within quote marks. Once the file has been read, we check the dimensions and general structure.
+
+```{r}
+myfile <- "PrimerExamples/One-sample t-test.csv"
+mydata <- read.csv(myfile)
+
+dim(mydata)
+str(mydata)
+head(mydata)
+```
+
+
+##Excel file
+
+R is even able to read Excel spreadsheets. This requires an additional *package* to be installed; `gdata`. This package is loaded as follows;
+
+```{r}
+library(gdata)
+```
+
+It is not uncommon for a package to print text to the screen upon loading. You should not mistake this text for an *error* message.
+
+However, if you do not have `gdata` installed you will get an error message in the following form.
+
+```{r echo=FALSE,warning=FALSE}
+
+error <- try(library(foo),silent = TRUE)
+message(gsub("foo", "gdata",error[1]))
+```
+
+If this error occurs, the package will need to be installed and then loaded
+```{r,eval=FALSE}
+install.packages("gdata")
+library(gdata)
+```
+
+Note that you will only need to install the package once for a particular R *version*. However, you will need to load this library in every new R session when you require the functionality to read Excel files.
+
+We can now call the `read.xls` function from `gdata` to create a *data frame* from your input file.
+
+```{r}
+myfile <- "PrimerExamples//Indepentent two-sample t-test_v2_long.xlsx"
+
+mydata <- read.xls(myfile)
+dim(mydata)
+head(mydata)
+```
+
+##Specifying a different separator
+
+If your file is neither `tab` or `comma` separated, then `read.csv` and `read.delim` will not be able to read the file correctly with their default arguments. In the following example, we try and use to `read.csv` on a file with columns that are separated with a space (`" "`).
+
+```{r}
+myfile <- "PrimerExamples/space-separated.csv"
+mydata <- read.csv(myfile)
+dim(mydata)
+head(mydata)
+```
+
+We see that the dimensions of the data object are incorrect. Both `read.csv` and `read.delim` have the option to specify a different separator. 
+
+```{r}
+mydata <- read.csv(myfile, sep=" ")
+dim(mydata)
+head(mydata)
+```
+
+
+##SPSS file
+R is able to read data created by SPSS. This requires an additional *package* to be loaded; `foreign`.
+
+```{r}
+library(foreign)
+```
+
+You only need to load the library *once* per R-session. We can now call the `read.spss` function from `foreign` to create a *data frame* from your input file.
+
+```{r}
+myfile <- "PrimerExamples/p004.sav"
+
+mydata <- read.spss(myfile,to.data.frame = TRUE)
+dim(mydata)
+head(mydata)
+```
+
+The `foreign` package is also able to read files in `SAS` (`read.export`) and `STATA` (`read.dta`) formats, but sadly not Graphpad Prism.
+
+##Further options for reading files
+Sometimes we might be faced with 'messy' data that do not have a straightforward format of rows and columns. 
+`read.csv` and `read.delim` are in fact specialised versions of a generic `read.table` function. This function has many options to allow finer-grain control over how files are read into R, as you will see from the manual page. 
+
+```{r eval=FALSE}
+?read.table
+```
+
+We now summarise the options that prove to be most useful
+
+###Skipping lines
+
+By default, R will assume that your data table starts on the first line of the file and that the column headers are found on the first line. However, sometimes the data table can be preceeded with several lines of header information. The header may contain useful information for the user, such as the date the file was generated and software versions etc, but is not relevant when we try and read the data table into R. 
+
+If we try and use the default settings of `read.delim` to read a tab-delimited file with arbitrary header information, the following occurs. In this case, the file contains counts for a number of barcodes detected on a particular lane of sequencing. Naturally, we might want to read these data into R and perform some exploratory analysis and diagnostics.
+
+```{r}
+myfile <- "PrimerExamples/file-with-header.txt"
+mydata <- read.delim(myfile)
+head(mydata)
+```
+
+You will notice that R has tried to interpret the header information as lines of the data table, and therfore the data is not imported correctly.
+
+Fortunately, both `read.csv` and `read.delim` have a `skip` argument so that we can start reading the data table from a pre-determined position in the file. In this example we have to *skip* the first 11 lines of the file in order to reach the table.
+
+```{r}
+mydata <- read.delim(myfile, skip=11)
+head(mydata)
+```
+
+In practice, you may have to try different values for the `skip` argument in order to obtain the correct result. Use of the `head` and `dim` functions should help you determine when the data has been read correctly.
+
+###Files with no header
+
+Conversely, sometimes files can be created without any column names. By default, R assumes that the first row in the file contains column headings. This can have unexpected consequences when a file does not contain column headings. 
+
+
+```{r}
+myfile <- "PrimerExamples/file-with-no-header.csv"
+mydata <- read.csv(myfile)
+head(mydata)
+dim(mydata)
+colnames(mydata)
+```
+
+In this example, R took the first line of the file to be the column headings and so we have column names `r paste(colnames(mydata),collapse=" & ")`. Moreover, the data frame produced has `r nrow(mydata)` rows rather than `r nrow(mydata)+1`. The remedy is to set the `header` argument to `FALSE`. Both `read.csv` and `read.delim` are able to recognise the `header` argument.
+
+```{r}
+myfile <- "PrimerExamples/file-with-no-header.csv"
+mydata <- read.csv(myfile,header=FALSE)
+head(mydata)
+dim(mydata)
+colnames(mydata)
+```
+
+You can modify the column names of the `mydata` object.
+
+```{r}
+colnames(mydata) <- c("Month", "Value")
+```
+
+
+###Reading a pre-determined number of lines
+
+It is possible to read only a fixed number of rows by using the `nrows` argument. Useful if you just want to see the first few lines in a file.
+
+```{r}
+subset <- read.csv("PrimerExamples/One-sample t-test.csv",nrows=4)
+subset
+```
+
+
+
+###Invalid characters
+
+Consider the following file, which we are told has the expression levels of 20 genes. We use `read.delim` to read the file (as it is tab-delimited)
+
+```{r}
+myfile <- "PrimerExamples/DiffGenes.tsv"
+mydata <- read.delim(myfile)
+head(mydata)
+dim(mydata)
+```
+
+However, the number of rows comes out as `r nrow(mydata)`. We can use the `tail` function (analagous to `head`) to look at the last few rows in the file.
+
+```{r}
+tail(mydata)
+```
+
+Problems of this nature are usually due to an extraneous quotation mark `"` or `'` being found somewhere in the file. We can tell `read.delim` to ignore quotation marks in the following way. Of course, we could have editted the raw data to remove the quote mark, but this might not be practical for larger files.
+
+```{r}
+mydata <- read.delim(myfile,quote = "")
+```
+
+We now look at a second example file, which upon first impressions loads without any problems.
+
+```{r}
+myfile <- "PrimerExamples/DiffGenes2.tsv"
+mydata <- read.delim("PrimerExamples/DiffGenes2.tsv",header=FALSE)
+head(mydata)
+dim(mydata)
+```
+A natural data exploration step would be to calculate the mean of the gene expression values, which are stored in the second column. However, we cannot do this even if we tell R to ignore any `NA` values. We can discover that the second has not been treated as numeric values by R.
+
+```{r}
+mean(mydata[,2])
+mean(mydata[,2],na.rm=TRUE)
+summary(mydata[,2])
+str(mydata)
+```
+
+The issue is that our collaborator has chosen to use a `?` to denote a missing value in the second column. This causes R to think that this column contains characters rather than numbers. A solution is to use the `na.strings` argument to specify a particular value that is used to denote a missing value.
+
+```{r}
+myfile <- "PrimerExamples/DiffGenes2.tsv"
+mydata <- read.delim("PrimerExamples/DiffGenes2.tsv",header=FALSE,na.strings="?")
+
+head(mydata)
+str(mydata)
+summary(mydata[,2])
+mean(mydata[,2],na.rm=TRUE)
+```
+
+
+
+###If all else fails...
+
+The `readLines` function can be used. This is a *low-level* function for reading data into R and reads each line in the file as avector, along with the characters used to separate the columns. For example, if we read a file with a `.txt` extension.
+
+```{r}
+temp <- readLines("PrimerExamples/Indepentent two-sample t-test_v2_long.txt")
+head(temp)
+```
+
+The fact that a `\t` character can be seen in each item of the vector tells us that we should be using the `read.delim` function. Likewise, with a `.csv`
+
+```{r}
+temp <- readLines("PrimerExamples/One-sample t-test.csv")
+head(temp)
+```
+each item in the vector has a `,` character which is used to separate the data into two columns. We should read this file using `read.csv`
+
+If we have a file with `header` information, we can use `readLines` to identify the line on which the data table begins, and hence what we should use as a `skip` argument.
+
+```{r}
+temp <- readLines("PrimerExamples/file-with-header.txt")
+temp[1:15]
+```
+In this case, we can see the column headings for the data table start on line 12. Thus, we should read the file with `skip=11` in the function `read.delim`.
+
+
+##Strings as factors
+
+R is primarily a statistics language so much of its functionality is geared-up to make things ameanable to statistical analysis. For instance, it will prefer to work with [Factors](#factors) rather than characters. When a data table is read into R, as stored as a data frame, the default behaviour is to store character [vectors](#vectors) as factors. This may not always be neccesary. 
+
+```{r}
+myfile <- "PrimerExamples/One-sample t-test.csv"
+mydata <- read.csv(myfile)
+str(mydata)
+```
+
+We do not plan to take advantage of this behaviour and can easily work with the months in character form. Therefore we can set the argument `stringsAsFactors=FALSE`
+
+```{r}
+myfile <- "PrimerExamples/One-sample t-test.csv"
+mydata <- read.csv(myfile,stringsAsFactors=FALSE)
+str(mydata)
+```
+
+
+
+##Data in multiple files
+
+If the dataset you want to import is spread over several data files, you will have to read each file individually and combine the respective data frames into a single object. 
+
+##Data from online sources
+
+The `repmis` package (misellaneous tools for reproducible research) contains useful functions to retrieve online data. 
+
+```{r eval=FALSE}
+install.packages("repmis")
+```
+
+A useful resource for such data is the Github page of [Vincent Arel-Bundock](http://vincentarelbundock.github.io/Rdatasets/datasets.html), which has csv version of example datasets found in many R packages. We can download data from this page using the `source_data` function. For example, if we browse the web page we can see there is an dataset containing Ovarian Cancer survival data. We can copy the URL of the corresponding `.csv` file and paste into R.
+
+```{r eval=FALSE}
+library(repmis)
+surv <- source_data("http://vincentarelbundock.github.io/Rdatasets/csv/survival/ovarian.csv")
+head(surv)
+```
+
+
+#Using pre-built datasets
+
+R comes with the `datasets` package which contains many example datasets ready for exploration and analysis. To see what datasets are available, along with brief descriptions, enter the following;
+
+```{r eval=FALSE}
+data()
+```
+
+If you see a dataset that might be interesting (e.g. the `DNase` dataset which measures the density of a protein at various concentrations), it can be loaded into R in the following manner. 
+
+```{r}
+data(DNase)
+head(DNase)
+```
+Further details on the dataset can be found on its help page.
+```{r eval=FALSE}
+?DNase
+```
+
+
+```{r echo=FALSE}
+par(ask=FALSE)
+```
+
+Moreover, example plots and code can be generated using the `example` function.
+
+```{r}
+example(DNase)
+```
+
+#Data manipulation
+
+The term *data manipulation* is used here to describe the steps that occur after having [read data into R](#reading-data-into-r) and prior to [plotting](#plotting) and/or [statistical analysis](#statistical-analysis).
+
+##Selecting columns from a data frame
+
+We will illustrate using the `mtcars` data, one of the in-built datasets in R. We can load the data using the `data` function and query the dimensions and print the first few lines using `dim` and `head`. 
+
+Subsetting in R **always** uses the `[row,column]` notation.
+
+###By column number
+
+```{r}
+data(mtcars)
+head(mtcars)
+dim(mtcars)
+```
+
+Columns in the data frame can be retrived using a numeric index. The *first* column can be retrieved by specifying the *column* as 1 in `[row,column]` notation. However, we if we want values for all observations (rows) we can neglect to specify a value before the `,`. e.g.
+
+
+```{r}
+mtcars[,1]
+```
+
+The output is a [vector](#vectors) and it's length will be the same as the number of rows in the data frame. Note that we have not altered the `mtcars` data frame in any way. It will still have the same number of columns. 
+
+```{r}
+dim(mtcars)
+```
+
+If we want to do some further calculations on the vector we have extracted, we need to assign it to a variable
+
+```{r}
+myvector <- mtcars[,1]
+length(myvector)
+myvector
+```
+
+
+The notation is very similar to retrieve the second column
+
+```{r}
+myvector <- mtcars[,2]
+length(myvector)
+myvector
+```
+
+If we want to retrieve the first and second columns *at the same time*, we can construct a [vector](*vectors), using the `c` function, comprising the indices we want to retrive and use this in the `[]` notation. The result is a *data frame* itself.
+
+```{r}
+mydf <- mtcars[,c(1,2)]
+head(mydf)
+dim(mydf)
+```
+
+We can also use the `:` shortcut to generate a sequence of consecutive integers
+
+```{r}
+mydf <- mtcars[,c(1:3)]
+head(mydf)
+dim(mydf)
+```
+
+###By column name (Recommended)
+
+We can also extract data using the names of columns. This is the recommended approach, as you might not be sure that the same variables will *always* be stored in the same column. 
+
+
+```{r}
+myvec <- mtcars[,"mpg"]
+head(myvec)
+```
+
+The column names can be combined using the `c` function
+```{r}
+mydf <- mtcars[,c("mpg","cyl")]
+head(mydf)
+```
+
+We can also access columns by name using the `$` operator. By default, this will return all values in the column. This approach can be used in conjunction with *tab-completion*; meaning that you start typing the name of the column and press the `TAB` key. A list of possible column names will then appear.
+
+```{r}
+myvec <- mtcars$mpg
+myvec
+```
+
+
+
+##Row subsetting
+
+###Subset rows by index
+
+If we know the index of the row we want to retrieve, we can supply these indices in the `[]` notation. The get the first row, we can do
+
+```{r}
+mtcars[1,]
+```
+
+Muliple rows can be specified at a time. For example using the `:` shortcut
+
+```{r}
+mtcars[1:5,]
+```
+
+###Logical indexing
+
+The term `logical` is used to describe values that are either `TRUE` or `FALSE` (sometimes called `Boolean` values in other languages). We can combine logical values into a [vector](#vectors) and use for subsetting. In particular, they can be used to specify exactly which elements we extract from a vector. In this example, we create a vector of length 10, and another `logical` vector of the same length. Using the logical vector within the square brackets `[]` will tell R to extract elements *only* when the corresponding value in the the logical vector is `TRUE`
+
+```{r}
+myvec <- 1:10
+myvec
+logvec <- c(TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE)
+logvec
+myvec[logvec]
+
+```
+
+In this case, `logvec` has `TRUE` values in positions `r paste(which(logvec),collapse=",")`. So these are the elements of `myvec` that can extracted in `myvec[logvec]`.
+
+There are several arithmetic operations that perform comparisons and produce a logical vector as output. The most common of these are  `>,<,==`. Where `==` is used to test that two numerical values are the same.
+
+If we wanted to restrict the data frame to rows where the `mpg` is less than `15`, we would first create a vector that will test all values of `mpg` to see if they are less than 15. Notice that the vector created is the same length as the number of rows in the data frame (`r nrow(mtcars)`).
+
+```{r}
+myind <- mtcars$mpg < 15
+myind
+length(myind)
+```
+
+The logical vector, can now be used to subset the data frame. Only rows where `myind` has a value of `TRUE` will be returned.
+
+```{r}
+mtcars[myind,]
+```
+
+Note that in the previous command we have created a *subset* of the data frame and not altered the original object; the number of rows is still `r nrow(mtcars)`
+
+```{r}
+subset <- mtcars[myind,]
+subset
+dim(subset)
+dim(mtcars)
+```
+
+
+Logical vectors can be used in combination, provided they are the same length. Now if we wanted all cars with `mpg < 15` *and* `drat > 3` we can combine the two conditions using the `&` operation.
+
+```{r}
+myind <- mtcars$mpg < 15 & mtcars$drat > 3
+myind
+length(myind)
+```
+
+Notice that `myind` is still length `r nrow(mtcars)`. 
+
+```{r}
+subset <- mtcars[myind,]
+subset
+
+```
+
+Other ways of combining logical vectors include `|` (*or*) and `!` (*negation*).
+
+###%in%
+A common task in exploratory data analysis is to ask whether a specific value or values exists in a larger R object.  For example you may want to know whether a specific gene name appears in a long list of names you've just read in.  To achieve this we can use the `%in%` command. Note that we have to specify each gene name within quotation marks `""`. 
+
+```{r eval=TRUE}
+"BRCA1" %in% c("RAS", "MYC", "BRCA1", "TP53")
+```
+
+In the case above we were only interested in a single text query.  The example below demonstrates both that `%in%` is equally happy working with numeric values, and that a [vector](#vectors) of queries can be used in a single command.  Here a vector of `TRUE` or `FALSE` values the same length as the number of queries will be returned. This is far more efficient that trying each in turn.
+
+```{r eval=TRUE}
+c(1,5,11) %in% 1:10
+```
+
+In our particular example, we could restrict the analysis to just rows that correspond to particular cars. The car names appear in the `rownames` of the data frame. 
+
+```{r}
+rownames(mtcars)
+myInd <- rownames(mtcars) %in% c("Merc 230", "Merc 280")
+myInd
+mtcars[myInd,]
+```
+
+`myInd` is a *logical* [vector](#vectors) (i.e. either `TRUE` or `FALSE`) of length `r nrow(mtcars)`, where each denotes whether that particular rownames is one of the supplied vector. This logical vector can then be used to subset the data frame.
+
+###match,
+
+While the `%in%` command is useful for telling you whether a query appears somewhere, it doesn't specify where in the subject you will find it.  However there are several ways to achieve just this, where perhaps the most straightforward is `which()`.
+
+```{r eval=TRUE}
+which(c("RAS", "MYC", "BRCA1", "TP53") == "BRCA1")
+```
+
+However this approach falls down if one is interested in multiple queries.
+```{r eval=TRUE}
+which(c("RAS", "MYC", "BRCA1", "TP53") == c("BRCA1", "RAS"))
+```
+To avoid the confusion this could cause, it is better the employ the function `match()`
+
+
+```{r eval=TRUE}
+match(x = c("BRCA1", "MYC"), table = c("RAS", "MYC", "BRCA1", "TP53"))
+```
+
+If we just wanted to find which row corresponds to `Merc 230` we can use the `match` function to see the index of  the `rownames(mtcars)` vector that corresponds to the *string* `"Merc 230"`.
+
+```{r}
+myInd <- match("Merc 230", rownames(mtcars))
+myInd
+mtcars[myInd,]
+```
+
+However, we have to remember that `match` will only return the index of the *first* occurence. If the string we want to find occurs multiple times, then we may get unexpected results further on in the analysis. Also, the text has to *exactly* match. Sometimes it is safer to use the `grep` function.
+
+###grep 
+
+`grep` will return *all* rownames that contain the string `Merc` *somewhere* in their name we can use the `grep` function.
+
+```{r}
+myInd <- grep("Merc", rownames(mtcars))
+myInd
+mtcars[myInd,]
+```
+We can perform much more complex queries (e.g. only searching for words *starting* with 'Merc', or finding specific patterns of numbers and letter) using a tool called "Regular Expression" or "Regex".  However, this beyond the scope of this document but a comprehensive introduction can be found at [http://www.zytrax.com/tech/web/regex.htm](http://www.zytrax.com/tech/web/regex.htm)
+
+##Adding new columns / variables
+
+##Re-ordering data frames
+
+Often we want to sort data based on one or more properties.  R has several options for performing this type of operation.  
+
+First we'll look at the `order()` function.  In its simplest form this function takes a list of values and returns their ordering in *ascending* value.  So in our example below the 15th entry is the lowest, followed by the 16th, while the 20th entry is the highest.
+
+If we actually want to put the data in this order, we need to use the [subsetting](#row-subsetting) approach.
+
+```{r}
+order(mtcars[,"mpg"])
+mtcars[order(mtcars[,"mpg"]),]
+```
+
+To list the entries in the opposite order we can specify the argument `decreasing = TRUE`.
+
+```{r}
+mtcars[order(mtcars[,"mpg"],decreasing=TRUE),]
+```
+
+Alternatively, R also includes the commnad `sort()`, which will perform the reordering automatically.  It is also useful to note that both `order()` and `sort()` will work on character data too where items will be sorted alphabetically.
+
+```{r}
+sort(mtcars[,"mpg"])
+sort(rownames(mtcars))
+```
+
+##Transpose a matrix
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+dim(mydata)
+mydata.t <- t(mydata)
+mydata.t
+```
+
+
+
+
+##Text manipulation
+
+Since we often begin an anaylsis be reading data from text files or spreadsheets, one frequently finds they require tools to manipulate this text data in ways that make further analysis easier e.g. extracting componant parts from complex sample IDs or manipulating date and time information.
+
+###Finding the number of characters
+
+```{r}
+nchar(rownames(mtcars))
+```
+
+###Changing case
+
+Sometimes it can be useful to standardise the case of any character information you're working with.  It is not uncommon to import data from different sources where alternative choices have been made regarding capitalisation.  For example it is not hard to imagine reading two tables relating to the same experiment where in one the entries are labelled "SAMPLE N" and in the other "Sample N".  It is much easier to try and match entries in these two tables if they are converted to the same format.
+
+R includes the functions `toupper()` and `tolower()` that will perform this transformation for you, rather than needing to edit the data directly.
+
+```{r}
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+toupper(exampleNames)
+tolower(exampleNames)
+```
+
+
+
+###Splitting into parts
+
+The function `strsplit()` allows you to break a string into smaller parts, based on a specified criteria.  In the example below we break our sample names where there is a space.
+
+```{r}
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+strsplit(x = exampleNames, split = " ")
+```
+
+The output from this is a [list](#lists), where the *i*th entry is the result of breaking the *i*th string passed to the function.
+
+In cases like our example above, where we know every entry will be split into a consistent number of parts, it's often easier to transform this output into a matrix where each row represents an entry.  To do this we make use of the `unlist()` function, which transforms our list into a [vector](#vectors) followed by the command to create a [matrix](#matrices).
+
+```{r}
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+namesList <- strsplit(x = exampleNames, split = " ")
+matrix( unlist( namesList ), ncol = 2, byrow = TRUE )
+```
+
+###Extracting substrings
+
+If we only want to retain a portion of a string we can use the `substring` function.  In addition to the strings we want to process this takes two arguments: `start` and `stop` which are integers specifying the first and last characters we want to retain.  In the example below we retain the last 5 characters (note the space is treated just like any other character).
+
+```{r}
+exampleNames <- c("Sample 1", "Sample 2", "Sample 3", "Sample 4")
+substr(exampleNames, start = 4, stop = 8)
+```
+
+###Replacing parts of strings
+
+In addition to extracting portions of strings, you can replace them using the function `sub()`, much like one might use find and replace in a text editor.  In the following example we start with 3 sample names.  We then use the `sub()` command to replace "Person" with "Sample" and include a space before the number.
+
+```{r}
+names <- c("Person1", "Person2", "Person3")
+sub(pattern = "Person", replacement = "Sample ", x = names)
+```
+
+The us a second substitution function called `gsub()`.  This works in much the same way as `sub()`, but replaces every instance of the pattern it finds, where as `sub()` only replaces the first occurance.
+
+```{r}
+repeatExample <- c("Here Here")
+sub(pattern = "Here", replacement = "Hear", x = repeatExample)
+gsub(pattern = "Here", replacement = "Hear", x = repeatExample)
+```
+
+###Combining strings
+
+To combine two strings we can use `paste()`.  The result is a single string.
+
+```{r}
+paste("Hello", "World")
+```
+We can combine more than two strings, as seen below.  This example also highlights how shorter sets of strings (in this case "Month" and "is") will be reused as many times as necessary.
+
+```{r}
+paste("Month", 1:12, "is", month.name)
+```
+
+The default behaviour of `paste()` is to place spaces between the string.  If we want to alter this we need to specify the `sep` argument.  Here we combine the months of the year with the number of characters in each word.
+
+```{r echo=FALSE}
+paste(month.name, nchar(month.name), sep=":")
+```
+
+##Long versus wide format
+
+##Calculating summary statistics
+
+
+```{r}
+mydata <- matrix(runif(1000),ncol=5)
+summary(mydata)
+```
+
+```{r}
+colMeans(mydata)
+rowMeans(mydata)
+```
+
+
+```{r}
+IQR(mydata[,1])
+sd(mydata[,1])
+```
+
+
+##apply, tapply, aggregate
+
+#Writing data to a file
+
+#Plotting
+
+A plot can be created in R simply by calling the `plot` function with a valid R object. 
+
+There are many optional arguments can be altered to change the apperance of the plots e.g adding titles or labels, altering the colour and shapes used to plot, or modifying the range of axes.  Many of these options are available across a multitude of plotting functions.  We'll initially demonstrate them using the histogram function but most can be applied to whatever type of plot you are trying to generate.
+
+###A histogram
+
+The `hist` function requires a *numeric* vector, which could be the result of some calculation you or have performed or the column from a data frame. In this example, we will read an example file
+
+```{r}
+mydata <- read.csv("PrimerExamples/One-sample t-test.csv")
+mydata
+
+```
+
+The data concern (fictional) failure rates for microarrays in Genomics. To visualise the distribution of the failure rates, we could use a histogram using the `hist` function. We have to [select the relevant column](#selecting-columns-from-a-data-frame) from the data frame, in this case the second column. 
+
+
+```{r}
+hist(mydata$Failure.rate)
+```
+
+Unfortunately, the default plot that R creates is not that pretty. As with all plotting functions, there is a [large amount of customisations](#changing-the-plot-appearance) that are possible. Details are on the *help* page for `hist`.
+
+```{r eval=FALSE}
+?hist
+```
+
+
+We can specify an [alternative colour](#specifying-colours) using the `col` argument.
+
+```{r}
+hist(mydata[,2],col="steelblue")
+```
+
+And add more informative labels and titles using `main` and `xlab`
+
+```{r}
+hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate")
+
+```
+
+Technical modifications include displaying frequencies on the y-axis rather than counts.
+
+```{r}
+hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate",freq =  FALSE)
+
+```
+
+We can also specify the number of *breaks*
+
+```{r}
+hist(mydata[,2],col="steelblue",main="Microarray Failure Rates",xlab="Rate",freq =  FALSE,breaks = 12)
+
+```
+
+
+###A scatter plot
+
+The `plot` function is the generic function for plotting in R, and can produce different plots depending on the input. A scatter plot can be generated by specifying a *vector* to go along the x-axis, and a *vector* for the y axis. It is assumed that the first argument supplied is for the x axis, and the second for the y -axis.
+
+```{r}
+mydata <- read.delim("PrimerExamples/Linear regression.txt")
+mydata
+plot(mydata[,1],mydata[,2])
+```
+
+We can in fact just specify one vector, in which case the x axis is assumed to be the *index* of vector. 
+
+```{r}
+plot(mydata[,2])
+```
+
+By default, a open circle is drawn at each x and y combination. If we wish, we can draw a *line* through the points by using the argument `type="l"`
+
+```{r}
+plot(mydata[,2],type="l")
+```
+
+Or choose to have both a line and the points by specifying `type="b"`
+
+```{r}
+plot(mydata[,2],type="b")
+```
+
+Later on, we will show how to add extra lines and points to this basic plot
+
+###Pie chart
+
+
+###A bar plot
+
+```{r}
+mydata <- read.csv("PrimerExamples/One-sample t-test.csv")
+mydata
+
+```
+
+We can add a name underneath each bar by changing the `names.arg` argument.
+
+```{r}
+barplot(mydata[,2],names.arg=mydata[,1])
+```
+
+However, the default positioning of the labels is parallel to the axis and not all of the labels will fit in this space. We can change the orientation of the labels using the `las` argument. 0:= always parallel to the axis [default], 1:
+=always horizontal,2:=always perpendicular to the axis,3:=always vertical.
+
+```{r}
+barplot(mydata[,2],names.arg=mydata[,1],las=2)
+```
+
+The `colMeans` function can be used to calculate the *mean* of each column in a data frame, and returns the result as *vector*. Consequently, we can plot this vector as a barplot. Here we illustrate by first creating a matrix of random numbers.
+
+```{r}
+mydata <- matrix(rnorm(100),ncol=10)
+means <- colMeans(mydata)
+barplot(means)
+```
+
+The [A.B.M](http://lib.stat.cmu.edu/S/Harrell/data/descriptions/abm.html) dataset describes cases of Acute Bacerial Meningitis. 
+
+```{r}
+abm <- read.csv("data//ABM.csv")
+head(abm)
+dim(abm)
+table(abm$sex)
+barplot(table(abm$sex))
+```
+
+We can notice from the table and plot that a third gender category has been included; `.`. In this dataset, the `.` character is being used to represent a missing value. We can change this behaviour at the point of reading the data by changing the `na.strings` argument to `read.csv`. 
+
+```{r}
+abm <- read.csv("data//ABM.csv",na.strings=".")
+table(abm$sex)
+barplot(table(abm$sex))
+```
+
+```{r}
+table(abm$sex,abm$race)
+
+barplot(table(abm$sex,abm$race))
+barplot(table(abm$sex,abm$race),beside=TRUE)
+        
+```
+
+The plot can be improved by [adding a legend](#adding-a-legend) and some [colour](#specifying-colours).
+
+```{r}
+barplot(table(abm$sex,abm$race),beside=TRUE,col=c("red","blue"))
+legend("topright", fill=c("red","blue"),legend=c("female","male"))
+```
+
+###A boxplot
+
+The boxplot is a convenient way of comparing the distributions of numeric data. If given a numeric matrix, or data frame, it will construct a box from the quartiles of the data . The whiskers are plotted at 1.5 times the inter-quartile range. Outliers are defined to be more than 1.5 times away from the box and plotted as circle.
+
+```{r}
+mydata <- matrix(rnorm(100),ncol=10)
+boxplot(mydata)
+```
+
+Outliers can be omitted from the plotting
+
+```{r}
+
+boxplot(mydata,outline = FALSE)
+```
+
+
+
+The title and axis labels can be modified in the [usual manner](#titles-and-axis-labels).
+
+```{r}
+boxplot(mydata,outline = FALSE,main="My boxplot", xlab="Columns")
+```
+
+
+
+A boxplot can also be generated if our data are in *long* rather than *wide* format. One such dataset is the `mtcars` dataset, which is one of the built-in datasets in R.
+
+One of the variables, `cyl` can only take certain values and is therefore a *categorical* variable. We can therefore use it to split our observations into different groups. The `mpg` variable (miles-per-gallon) is continuous. By treating the data in an appropriate way, we can get the distribution of `mpg` values for each distinct value of `cyl` in the data. Such an aggregation is done by specifying a *formula* using the `~` operator; the expression `mtcars$mpg~mtcars$cyl` does just this.
+
+```{r}
+data(mtcars)
+head(mtcars)
+str(mtcars)
+length(mtcars$mpg)
+length(mtcars$cyl)
+table(mtcars$cyl)
+boxplot(mtcars$mpg~mtcars$cyl)
+```
+
+A boxplot can sometimes be misleading, as it does not provide any information about how many observations are in each group. One thing we can do is adjust the widths of the bars to reflect the differing number of observations.
+
+```{r}
+mydata[1:7,1] <- NA
+boxplot(mydata, varwidth = TRUE)
+```
+
+###Dotchart / stripchart
+
+```{r}
+mydata <- matrix(rnorm(100),ncol=10)
+boxplot(mydata)
+stripchart(as.data.frame(mydata),add=TRUE,vertical=TRUE)
+```
+
+dotchart(mydata,vertical=TRUE)
+
+###Survival Curve
+
+
+###Growth curve
+
+##Replicating GraphPad Prism plots in R
+
+##Exporting a plot
+
+R is able to save graphics in a variety of formats. The easiest way of saving a plot is to use the *Export* tab in the plot window in RStudio. You will then have the option of saving the plot as a *.pdf* or a variety of other file formats such as *.jpeg*, *.png*, *.tif*.
+
+N.B. *.pdf* plots can be futher altered in a graphics program such as *Photoshop*, whereas *.jpeg*, *.png* can be more easily inserted into presentations. Journals often require high-resolution images in *.tiff* or *.eps* format.
+
+The lines of code required to save a plot to a file are almost identical to producing the plot within RStudio; the only difference is that you need to send the the plot to an alternative *graphics device* other than RStudio, and close the device afterwards. 
+
+There are various functions can be used to create an alternative graphics device. These include `pdf`, `jpeg`, `png` and have to be called before the code that creates the plot. You have to specify a file name that the plot will be written to. However, the file does not have to exist prior to creating the plot.
+
+In the following example, we will save a boxplot as a *.png* file. We will therefore use the `png` function to write the plot to a file. If you run the code, you will notice that the plot is no longer displayed in RStudio. This is because the plot has been created in an alternative graphics *device*. We therefore have to use the `dev.off` function to close this device and allow us to open the file.
+
+```{r echo=FALSE, results='hide'}
+if(file.exists("myboxplot.png")) file.remove("myboxplot.png")
+```
+
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+file.exists("myboxplot.png")
+list.files(pattern=".png")
+png("myboxplot.png")
+boxplot(mydata)
+dev.off()
+
+
+```
+
+You should notice that a file `myboxplot.png` has been created in your working directory. We can verify this using the `file.exists` and `list.files` functions.
+
+```{r}
+file.exists("myboxplot.png")
+list.files(pattern=".png")
+```
+
+To create a *.jpeg* instead of a *.png*, we simply use `jpeg` instead of `png`.
+
+```{r}
+jpeg("myboxplot.jpeg")
+boxplot(mydata)
+dev.off()
+```
+
+You can specify the height and width of the plot by adjusting the `height` and `width` arguments. This can be done in the same way for the `jpeg` and `png` functions. The values for `height` and `width` should be the required number of pixels. 
+
+
+```{r}
+jpeg("myboxplot2.jpeg",width=800,height=500)
+boxplot(mydata)
+dev.off()
+```
+
+
+*.pdf* documents as created in much the same way using the `pdf` function. However, you should note that the dimensions of the plot are specified in *inches* rather than *pixels*.
+
+```{r}
+pdf("myboxplot.pdf",width=8,height=4)
+boxplot(mydata)
+dev.off()
+```
+
+An important different between *.jpeg*, *.png* and *.pdf* is that *.pdf* documents can have multiple pages. In the following example, we have multiple lines of code between the `pdf` and `dev.off` lines. Each plot is saved onto a separate page in the pdf document.
+
+```{r}
+pdf("myplots.pdf")
+hist(mydata[,1])
+hist(mydata[,2])
+boxplot(mydata)
+dev.off()
+```
+
+
+##Changing the plot appearance
+
+###Titles and axis labels
+
+It is always a good idea to use informative titles and axis labels on your plots. Unfortunately, the default plots produced by R try and *guess* labels from the data, which may not be that useful. The `plot` function has `main`, `ylab` and `xlab` arguments that can be used to specify these labels (which must be a character vector). Moreover, other plotting functions such as `boxplot`, `barplot` and `histogram` also use the same argument names. 
+
+```{r}
+mydata <- read.delim("PrimerExamples/Linear regression.txt")
+plot(mydata[,1],mydata[,2],main="My Title", xlab="X axis", ylab="Y axis")
+```
+
+```{r}
+randMat <- matrix(runif(100),ncol=10)
+boxplot(randMat, main="Some Random numbers" ,xlab="Column",ylab="Value")
+```
+
+```{r}
+barplot(randMat[,1], main="Barplot of random values",ylab="Value",xlab="Column")
+```
+
+```{r}
+hist(randMat[,1],main="A random histogram", xlab="Value", ylab="Frequency of value")
+
+```
+
+Functions such as `points`, `lines`, `text` and `abline` cannot modify the title or axis labels. We can set the plot title to be blank (the empty string `""`) at the time the plot is created, and add a title manually later-on using the `title` function. The following also demonstrates that the colour and font of the title can be modified.
+
+```{r}
+plot(randMat, main = "")
+title(main = list("Pairwise plots of the random matrix", cex = 1.5,
+                   col = "red", font = 3))
+```
+
+###Adding custom axes
+
+It is possible to create your own axes. First, you can to create a plot with the `axes=FALSE` argument. You will see in the resulting plot that no axes are plotted
+
+```{r}
+plot(randMat, axes=FALSE)
+```
+
+We can use the `axis` function to plot an axis at each side of the plot (1=below, 2=left, 3=above and 4=right). Each time the `axis` function is called, a new axis is overlaid on the current plot.
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+```
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+axis(2)
+```
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+axis(2)
+axis(3)
+```
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1)
+axis(2)
+axis(3)
+axis(4)
+```
+
+You don't need to specify an axis for each side of the plot. The `box` function will enclose the remaining sides without giving an axis.
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(2)
+box()
+```
+
+The font and colour of each axis can also be changed
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1,font=1,col="red")
+axis(2,font=2,col="orange")
+axis(3,font=3,col="yellow")
+axis(4,font=4,col="blue")
+```
+
+We can change the position and labels of the tick marks
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1,font=1,col="red",at=seq(0,1,length.out = 4))
+axis(2,font=2,col="orange",at=seq(0,1,length.out = 5),labels=letters[1:5])
+axis(3,font=3,col="yellow",at=seq(0,1,length.out = 6),labels=month.name[1:6])
+axis(4,font=4,col="blue",at=seq(0.2,1,length.out = 3),labels=c("Low","Medium","High"))
+```
+
+The tick labels can be rotated so that they are perpendicular to the axis
+
+```{r}
+plot(randMat, axes=FALSE)
+axis(1,font=1,col="red",at=seq(0,1,length.out = 4),las=2)
+axis(2,font=2,col="orange",at=seq(0,1,length.out = 5),labels=letters[1:5],las=2)
+axis(3,font=3,col="yellow",at=seq(0,1,length.out = 6),labels=month.name[1:6])
+axis(4,font=4,col="blue",at=seq(0.2,1,length.out = 3),labels=c("Low","Medium","High"),las=2)
+```
+
+
+###Specifying Colours
+
+The simplest way of specifying a colour in R is to use a pre-defined character string. There are `r length(colors())` preset values you can use, and their names can be printed to the screen using the `colors` function.
+
+```{r eval=FALSE}
+colors()
+```
+
+There is a [colour chart](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) available online that can be used to display the colors alongside the names.
+
+**You should make sure that the colour scheme that you choose is suitable for those with colour-blindness**. e.g. avoiding red / green colour schemes. One way of ensuring this is to use predfined pallettes in the `RColorBrewer` package. 
+
+```{r fig.height=10,fig.width=10}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+You can pick one of these palette using the `brewer.pal()` function, where we specify first the number of distinct colours we want and then the name of the palette taken from the list in the image above.
+
+To use the colours in a figure, most plotting functions include the argument `col` to indicate the colours you wish to use.
+
+```{r}
+mypal <- brewer.pal(8, "Set1")
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1], col = mypal, pch = 19)
+```
+
+If you wish to use Cancer Research Uk or Cambridge University branding, you can use the colours defined in the `crukCIMisc` package. This package includes a function, `CRUKcol` which can be used to generate the Cancer Research UK blue or pink colours.
+
+
+```{r}
+library(crukCIMisc)
+plot(mydata[,1], col=CRUKcol("Blue"),pch=16)
+points(mydata[,2],col=CRUKcol("Pink"),pch=16)
+
+```
+
+```{r}
+boxplot(mydata, col=c(CRUKcol("Blue"),CRUKcol("Pink")))
+```
+
+###Plotting characters and their values
+
+You may have noticed that in some of the example scatter plots above not only the colour of the points has been changing, but also the shape that is being drawn.  The default is an open circle, but R has a variety of alternative shapes, which are listed in the diagram below.
+
+```{r echo=FALSE}
+par(mar=c(0.1,0.1,0.1,0.1))
+i <- 0:24
+
+x <- floor(i /5) + 1
+y <- i %%5
+
+plot(1:10, type="n", xlim = c(1,5), ylim=c(-1,5),axes=F,xlab="",ylab="")
+points(x,y,pch=i+1)
+text(x,y-0.3,i+1)
+
+```
+
+We can specify a new plotting character using the `pch` argument. For example `pch=16` uses filled rather than open circles.
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1],pch=16)
+```
+
+Rather than being a single value, `pch` can be a vector of values that will be cycled through as each data point is plotted.
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+```
+
+
+###Adding lines, points to a plot
+
+Once a plot has been created, we have various options to modify it. Firstly we can add vertical and horzontal lines to the plot using `abline` (read as *ab line*) with the `v` and `h` arguments respectively. Here we construct a scatter plot as before, and 
+
+
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+abline(h=1300)
+abline(v=10)
+```
+
+The appearance of the line can be modified, for example to be [coloured differently](#specifying-colours).
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+abline(h=1000,col="steelblue")
+abline(v=5,col="orange")
+
+```
+
+A dotted line be drawn by specifying `lty=2` (line type) and the width can be changed using the `lwd`(line width) argument.
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+abline(h=1000, col="steelblue", lty=2, lwd=5)
+abline(v=5,col="orange",lty=3,lwd=10)
+
+```
+
+The `grid` function can be used to draw horizontal and vertical lines at regular intervals in the background.
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+grid()
+```
+
+The colour of the grid lines can be changed in the [usual way](#specifying-colours). 
+
+```{r}
+plot(mydata[,1],pch=1:nrow(mydata))
+grid(col="steelblue")
+```
+
+
+Another use for the `abline` function is to specify an intercept and coefficient for the line (the *a* and *b* in the `abline` name). For instance, if we wanted the line corresponding to equality of two vectors, *y = x*, we can say.
+
+```{r}
+mydata <- read.csv("PrimerExamples/Paired two-sample t-test.csv")
+plot(mydata[,1],mydata[,2])
+abline(a=0,b=1)
+```
+
+The `points` function can be used to add points to an existing plot. You need to specify vectors of *x* and *y* positions at which the points will be plotted.
+
+
+```{r}
+data <- read.delim("PrimerExamples/Linear regression.txt")
+plot(data[,1],data[,2])
+points(data[,1],data[,3])
+```
+
+We can [modify the colours](#specifying-colours) in which points are plotted. 
+
+```{r}
+plot(data[,1],data[,2],col="steelblue")
+points(data[,1],data[,3],col="orange")
+
+```
+
+Or change the [plotting characters](#plotting-characters-and-their-values)
+
+```{r}
+plot(data[,1],data[,2],col="steelblue",pch=16)
+points(data[,1],data[,3],col="orange",pch=17)
+```
+
+The `arrows` function can be used to connect pairs of points on an existing plot. We have to supply *start* ane *end* x and y coordinates. In the example below, we draw and arrow from *(2,1.5)* to *(10,4)*.
+
+```{r}
+plot(data[,2])
+arrows(2, 1.5, 10, 4)
+```
+
+
+Customisations of the arrow are possible and multiple arrows can be drawn by supplying the coordinates as vectors. See the help page for more information.
+
+
+```{r eval=FALSE}
+?arrows
+```
+
+
+This function may not seem very useful initially, but it can be used as a means of drawing *error bars* on a plot. 
+
+```{r}
+randMat <- matrix(rnorm(100),ncol=10)
+
+means <- colMeans(randMat)
+plot(means,ylim=c(-2,2))
+
+err <- apply(randMat, 1, sd)
+
+arrows(1:10, means-err,1:10,means+err,code=3,angle=90)
+
+```
+
+So far in this section, we have shown how to modify scatter plots using `lines`, `points` etc. However, the same modifications can be applied to other types of plot too. 
+
+```{r}
+par(mfrow = c(1,2))
+# Boxplot
+boxplot(randMat)
+abline(h = 0,col="red")
+points(1:10, y = seq(-3,3,length.out = 10),pch=16,col="steelblue")
+text(1:10, y= seq(3,-3,length.out = 10),labels = LETTERS[1:10],col="orange")
+
+# Barplot
+barplot(colMeans(randMat),ylim=c(-3,3))
+abline(h = 0,col="red")
+points(1:10, seq(-0.2, 0.6, length.out=10),col="steelblue",pch=16)
+text(1:10, y= seq(0.6,-0.2,length.out = 10),labels = LETTERS[1:10],col="orange")
+```
+
+###Adding a legend
+
+The `legend` function can be used to add a legend to an existing plot. In the following example, we generate a random matrix and plot the second, third and fourth columns against the first. We use red circles, blue squares and orange triangles respectively to represent these variables and we will use the legend to indicate this mapping.
+
+The names to be used in the legend are defined by the `legend` argument, while `col` and `pch` can be used to define the relevant colours and plotting characters in the same way as they are in the plot itself.  For fine control over the position of the legend we can specify the x and y coordinates of where the legend will appear. However this can be tedious if you change the size of the plot, so the strings `topleft`, `topright`, `bottomleft` and `bottomright` are conveniant shortcuts for the most common locations. 
+
+```{r}
+randMat <- matrix(rnorm(100),ncol=10)
+plot(randMat[,1],randMat[,2],ylim=c(-3,4),pch=16,col="red",xlab="Column1",ylab="y")
+points(randMat[,1],randMat[,3], pch=15,col="steelblue")
+points(randMat[,1],randMat[,4], pch=17,col="chocolate3")
+
+legend(x = "topleft", legend=c("Column 2", "Column 3","Column 4"), col = c("red", "steelblue", "chocolate3"), pch=c(16,15,17))
+```
+
+A legend can be added to all types of plots; as shown here for a [boxplot](#a-boxplot). Unlike the previous example, here we're not interested in the shape off the plotting character and only wanted to indicte the colour in the legend.  To achieve this we need to use `fill` argument instead of the combination of `pch` & `col` we used before.
+
+```{r}
+boxplot(randMat[,1:4],col=c("bisque1", "red", "steelblue","chocolate3"))
+legend("bottomright", legend=c("Column 1", "Column 2", "Column 3","Column 4"), fill = c("bisque1","red", "steelblue", "chocolate3"))
+
+```
+
+###Adding text to plots
+
+A common task is to add labels to points in a plot.  This can be achieved using the function `text()`, which adds text to an existing plot.  In the example below we first plot 10 points.  These same values are used in the `text` command to position the labels.  The argument `pos = 4` indicates we want to text to be placed to the right of the specified coordinates; if we didn't specify this the label would cover the points. The in this example the labels are the first 10 letters of the alphabet, but the could equally be longer words such as the names of samples.
+
+```{r}
+plot(data[,1], data[,2], col="steelblue", pch=16)
+text(x = data[,1], y = data[,2], pos = 4, labels=LETTERS[1:10])
+```
+
+Sometimes, we want to add annotations to the plot outside of the plotting window. This can be achieved by using the `mtext` function. We use the [paste](#paste) function to construct our labels and have to specify the x coordinates at which to put the text. The `line` argument specifies how far from the border of the plot to plot to write the text.
+
+```{r}
+data(mtcars)
+boxplot(mtcars$mpg~mtcars$cyl)
+table(mtcars$cyl)
+labs <- paste("n=", table(mtcars$cyl))
+labs
+mtext(side=3, at=1:3,text=labs,line=2,col="blue",font=3)
+```
+
+In the above example, we set the x coordinates to be 1,2,3 because we had three groups in the boxplot. Unfortunately, the `barplot` function does not place the centers of the bars in such a uniform manner.
+
+```{r}
+barplot(1:10)
+box()
+mtext(side=1, at=1:10,text=LETTERS[1:10])
+```
+
+To get around this, we can assign the result of `barplot` to a variable. This variable then contains the midpoints of each bar, which we can then use as input for the `mtext` function.
+
+```{r}
+bp <- barplot(1:10)
+bp
+box()
+mtext(side=1, at=bp,text=LETTERS[1:10])
+```
+
+
+
+##The `par` function 
+
+The `par` function can be used to alter various graphical parameters. These parameters will be applied to the next plot to be created. We will now go through some of the most-popular uses of the par function. For a comprehensive list of parameters that can be changed, see the help page for `par`; `?par`.
+
+###Adding extra space around a plot
+
+Taking the `mtcars` dataset as an example, we can sometimes create a plot where they is not adequate space to fit all the labels. Here we make a barplot of the `mpg` variable and [modify the axes](#adding-custom-axes). However, we see there is not enough room to fit the labels
+
+```{r}
+data(mtcars)
+barplot(mtcars$mpg,names.arg = rownames(mtcars),las=2)
+```
+
+We can use the `par` function before the plot is created to give us more room. The variable we need to change is `mar` which should be a vector of length 4; referring to the amount of space 1) below 2) left 3) above 4) to the right. The default setting is `c(1,1,1,1)` which gives one line of space at each edge of the plot. In this example, we allow more lines below the plot.
+
+```{r}
+data(mtcars)
+par(mar=c(8,2,1,1))
+barplot(mtcars$mpg,names.arg = rownames(mtcars),las=2)
+```
+
+
+###Combining multiple plots
+
+The `mfrow` variable can be set by the `par` function, which will change the layout of future plots. It requires a vector of length 2 corresponding to how many *rows* and *columns* the plotting device is divided into. The following arranges the plotting window into 3 rows and 1 column
+
+
+```{r}
+data(mtcars)
+par(mfrow=c(3,1)) 
+hist(mtcars$wt)
+hist(mtcars$mpg)
+hist(mtcars$disp)
+```
+
+Similarly, we could have 1 row and 3 columns;
+
+```{r}
+data(mtcars)
+par(mfrow=c(1,3)) 
+hist(mtcars$wt)
+hist(mtcars$mpg)
+hist(mtcars$disp)
+```
+
+We are not restricted to having the same type of plot, or even the same dataset plotted in each cell.
+
+```{r}
+data(mtcars)
+randMat <- matrix(rnorm(100),ncol=10)
+par(mfrow=c(1,3)) 
+hist(mtcars$wt,main="Histogram of wt")
+barplot(mtcars$mpg, main="barplot of miles per gallon")
+boxplot(randMat, main="boxplot of random matrix")
+```
+
+
+
+
+
+#Statistical Analysis
+
+#Appendix
+
+##Vectors
+
+Vectors are the fundamental data type in R and are composed of an ordered group of single items of data.  There are several ways to construct a vector, but perhaps the simplest and most commonly used is `c()` function. This may seem like an unintuative name (you'll get used to some of R's idosyncracies if you use it long enough), but it stands for *concatenate* as what the function is actually doing is sticking together a number of smaller objects.
+
+```{r}
+numericVector <- c(1, 2, 3, 4)
+```
+
+When you create a variable with a single value, you are still creating a vector - it just has a length of one.  This is why we can describe vectors as the fundamental data type in R, there is nothing smaller to break them down into.
+
+```{r}
+shortVariable <- 1
+shortVariable
+shortVariable[1]
+```
+
+Vectors don't have to contain numbers, they work equally well for storing character data.
+
+```{r}
+characterVector <- c("one", "two", "three", "four")
+```
+
+One important thing to note is the all the values in a vector must be of the same type.  For instance you cannot have numeric and character data in the same vector.  However R won't neccessarily report and error if you try to do this, as the example below shows:
+
+```{r}
+mixedVector <- c(1, 2, "three", "four")
+mixedVector
+```
+
+You can see in the output that all four values have quotation marks around them.  This indicates that R has automatically converted the numeric value to character strings.  If you wanted to keep the distinct data types you may wish to use a data frame, which we'll discuss later.
+
+##Matrices
+
+Sometimes it's useful to store values in two dimensions (rows and columns) rather than in a linear fashion as we can with vectors.  For example if you have an experiment with several samples and multiple time points it may make sense to store data in a format where the rows are samples and columns represent times.  
+
+In order to achieve this we can use a matrix object.  The code below generates two small matrices, each containing the number 1 to 16.  
+
+```{r}
+matrix1 <- matrix(1:16, nrow = 4)
+matrix1
+```
+
+```{r}
+matrix2 <- matrix(1:16, nrow = 2)
+matrix2
+```
+
+The `nrow` argument allows use to specify the dimensions of the matrix we create.  Similarly we can specify the argument `byrow` to change the order in which the values are placed in the matrix.  The default value of this agument is `FALSE`, specifying that the matrix is filled going down the columns.  In the example below we change this behaviour and fill and the values are placed going across columns instead.
+
+```{r}
+matrix(1:16, nrow = 2, byrow = TRUE)
+```
+
+As with vectors, matrices can only contain a single type of data; you can't mix numbers and characters in the same matrix.
+
+##Data Frames
+
+If we want to store multiple types of data in a single object with the row and column structure you might expect from a spreadsheet or printed table, we need to use a new object type: the *data frame*.  In the example below we'll create a data frame using two of the vectors created in the previous section.
+
+```{r}
+ charNumFrame <- data.frame(numericVector, characterVector)
+ charNumFrame
+```
+
+##Lists
+
+Although it's easy to think of vectors as 'lists' of values, within R a list is a distinct type of object.  Lists are used when you want to group together disparate types of information.  For example, one could store several vectors of numbers, but they need not be the same length, something that a matrix or data frame could not cope with.  Alternatively, a list could contain four elements that are a vector, a matrix, a data frame and another list respectively.
+
+```{r}
+list1 <- list(vec1 = 1:2, vec2 = 3:5, vec3 = 6:9, vec4 = 10:13)
+list2 <- list(vec = 1:10, mat = matrix(1:10, nrow = 2), dat = data.frame(a = 1:5, b = 6:10), lis = list1)
+```
+
+
+##Subsetting
+
+Sometimes you only want to use a subset of the data stored in an object; perhaps you only want the first five items from a long vector, or you're only interested in the second column from a data frame.  To extract a portion of an object we need to use R subsetting functionality, which is denoted by square brackets `[]`.
+
+```{r}
+ characterVector[2:3]
+ matrix1[3:4, ]
+```
+
+In the example above the first line extracts the 2nd and 3rd entries from a vector, while the second line selects rows 3 and 4 from a matrix.  If we wanted to obtain the same rows, but only for the first column we'd need to specify that too:
+
+```{r}
+ matrix1[3:4, 1]
+```
+
+If you're really paying attention to the example above you'll notice that when we only select one column the format the data is printed to screen in changes. The entries are now next to each other rather than on top of one another. This is because when you only select one column R automatically gives you back a vector rather than a matrix (it assumes you don't need the second dimension).  This behaviour can sometimes be useful and sometimes frustrating, but if you want to ensure it doesn't happen you can use the `drop = FALSE` argument seen below.
+
+```{r error=TRUE}
+ matrix1[3:4, 1, drop=FALSE]
+```
+
+Extracting subsets from a list is slightly more subtle than for other object types.  Where as before we used a single set of square brackets `[ ]`, lists make use of both this and a double set of brackets `[[ ]]`.
+
+When using a single set of brackets on a list, R will return another (probably shorter) list.  In the code below we ask for a list with only the first and third elements (the vector and data frame entries) from the example made earlier.
+
+```{r}
+list2[c(1,3)]
+```
+
+This makes sense if you're interested in getting a few entries but can be a little unintuative if you're only interested in a single element.  Asking for a single entry in the manner shown above will still return a list.  If you wish to reference an element directly you use the double braket notation.  This difference is demonstrated in the example below, where we use the function `class()` to ask R what type of object we've got.  
+
+```{r}
+class( list1[1] )
+class( list1[[1]] )
+```
+
+##Functions
+
+##Useful functions to know
+
+##R version details
+
+The version of R and the packages used in this document are given below.
+
+
+```{r}
+sessionInfo()
+```
+
